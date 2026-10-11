@@ -1,0 +1,50 @@
+# Root .gitignore for dylask-web monorepo
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and Editor Files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.iml
+*.ipr
+*.iws
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Frontend build & dependencies
+**/node_modules/
+**/dist/
+**/dist-ssr/
+*.tsbuildinfo
+
+# Backend build & dependencies (Maven / Gradle)
+**/target/
+**/build/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Local Database & Docker volumes
+mysql_data/
+.docker/
