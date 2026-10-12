@@ -625,18 +625,20 @@
       transition: all 0.15s ease;
     }
 
-    .btn-ai-decompose:hover {
+    .btn-ai-decompose:hover:not(.disabled):not(:disabled) {
       background-color: var(--color-primary);
       color: var(--color-primary-text);
     }
 
-    /* Trạng thái tắt nếu AI chưa kích hoạt */
-    .btn-ai-decompose.disabled {
+    /* Trạng thái tắt nếu AI chưa kích hoạt (mờ, kèm tooltip) */
+    .btn-ai-decompose.disabled,
+    .btn-ai-decompose:disabled {
       color: var(--color-text-muted);
       background-color: var(--color-surface-subtle);
       border-color: var(--color-border);
       cursor: not-allowed;
-      opacity: 0.6;
+      opacity: 0.5;
+      pointer-events: auto;
     }
 
     .checklist-items-list {
@@ -1035,13 +1037,24 @@
           <div class="checklist-modal-header">
             <span class="checklist-title-label">Danh sách kiểm tra (Checklist)</span>
 
-            <!-- Nút "Chia nhỏ bằng AI" -->
-            <button class="btn-ai-decompose" id="btnAiDecompose" type="button" title="Tự động phân tích mục tiêu thành 3–5 bước hành động">
-              <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
-              </svg>
-              <span>Chia nhỏ bằng AI</span>
-            </button>
+            <!-- Nút "Chia nhỏ bằng AI" - Thể hiện 2 trạng thái: Bật (dùng được) và Tắt (mờ, kèm tooltip) -->
+            <div style="display: inline-flex; align-items: center; gap: 6px;">
+              <!-- Trạng thái 1: Bật (Dùng được) -->
+              <button class="btn-ai-decompose" id="btnAiDecompose" type="button" title="Tự động phân tích mục tiêu thành 3–5 bước hành động">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+                </svg>
+                <span>Chia nhỏ bằng AI</span>
+              </button>
+
+              <!-- Trạng thái 2: Tắt (Mờ, kèm tooltip "Chưa bật AI hoặc đã hết 10 lượt thử tháng này") -->
+              <button class="btn-ai-decompose disabled" id="btnAiDecomposeDisabled" type="button" disabled title="Chưa bật AI hoặc đã hết 10 lượt thử tháng này. Cấu hình tại Cài đặt > AI">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+                </svg>
+                <span>Chia nhỏ bằng AI (Tắt)</span>
+              </button>
+            </div>
           </div>
 
           <!-- Danh sách các dòng checklist -->
@@ -1190,10 +1203,8 @@
 
     // Thao tác nút Chia nhỏ bằng AI
     var aiBtn = document.getElementById('btnAiDecompose');
-    aiBtn.addEventListener('click', function() {
-      if (aiBtn.classList.contains('disabled')) {
-        alert('Module AI hiện đang tắt. Vui lòng bật trong Cài đặt > AI.');
-      } else {
+    if (aiBtn) {
+      aiBtn.addEventListener('click', function() {
         // Thêm nhanh gợi ý từ AI
         var container = document.getElementById('checklistContainer');
         var li = document.createElement('li');
@@ -1213,8 +1224,16 @@
           </button>
         `;
         container.appendChild(li);
-      }
-    });
+      });
+    }
+
+    var aiBtnDisabled = document.getElementById('btnAiDecomposeDisabled');
+    if (aiBtnDisabled) {
+      aiBtnDisabled.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('Bật AI và nhập API key trong Cài đặt');
+      });
+    }
       // Đóng Modal trở về danh sách việc
     function closeModal() {
       window.location.href = '../standard-list/layout.html';

@@ -9,7 +9,7 @@
 ### 1.1. Triết lý thiết kế
 - **Dual-Mode Experience:** Cho phép chuyển đổi linh hoạt giữa giao diện tối giản (*Standard Mode*) và giao diện kỹ thuật chuyên sâu (*Developer Mode*).
 - **Automation-First:** Tận dụng tối đa logic quy tắc (rule-based) và Webhook để tự động hóa quy trình mà không làm phát sinh chi phí vận hành.
-- **Cost-Effective AI & Sustainable Model:** Tích hợp mô hình trí tuệ nhân tạo có kiểm soát hạn mức (Quota-based). Gói Free hỗ trợ hạn mức dùng thử mỗi tháng hoặc tùy chọn tự cung cấp khóa API riêng (BYOK - Bring Your Own Key); gói Premium mở khóa toàn bộ tính năng AI nâng cao và hạn mức mở rộng.
+- **Cost-Effective AI:** Bãi bỏ cơ chế freemium và gói trả phí. Để hỗ trợ người dùng mới hoặc chưa quen lấy API key, hệ thống cấp sẵn **10 lượt gọi AI dùng thử/tháng** (tự động làm mới vào ngày 1 hàng tháng). Để sử dụng tiếp hoặc không giới hạn, người dùng tự cung cấp API key riêng (BYOK). Hệ thống hoàn toàn không phát sinh chi phí vận hành AI lớn và không có hệ thống thanh toán gói cước.
 
 ---
 
@@ -34,8 +34,14 @@ Chế độ dành cho nhu cầu cá nhân hóa, giao diện thân thiện, tinh 
 - **Bộ đếm Pomodoro:** Bấm giờ 25 phút làm việc / 5 phút nghỉ ngơi gắn trực tiếp vào task đang thực hiện, hỗ trợ ghi nhận số chu kỳ hoàn thành.
 
 ### 2.4. Module AI hỗ trợ (Tùy chọn Bật/Tắt)
-- **Nhập liệu ngôn ngữ tự nhiên (NLP Quick-Add):** Phân tích câu nhập tự do (ví dụ: *"Đóng tiền điện trước 18h thứ Năm tới"*) thành Task với tiêu đề và hạn chót tương ứng.
-- **Gợi ý chia nhỏ mục tiêu:** Người dùng nhập mục tiêu lớn (ví dụ: *"Dọn dẹp phòng làm việc"*), AI tự sinh 3–5 bước checklist hành động cụ thể.
+- **Quy tắc kích hoạt:** AI chỉ chạy khi đồng thời thỏa mãn 3 điều kiện: (a) công tắc AI trong Cài đặt đang bật, (b) công tắc AI của dự án/danh mục đang bật, (c) người dùng đã nhập API key riêng hợp lệ HOẶC còn lượt gọi dùng thử trong tháng (tối đa 10 lượt/tháng). Nếu hết lượt dùng thử mà chưa nhập API key riêng, hoặc công tắc AI bị tắt, hệ thống sẽ ẩn/vô hiệu hóa nút AI và hiển thị thông báo/liên kết dẫn tới Cài đặt > AI.
+- **Nhập liệu ngôn ngữ tự nhiên (NLP Quick-Add):** Parse bằng luật (thư viện parse ngày giờ) trước, chỉ gọi AI khi parse thất bại. Gửi kèm ngày giờ hiện tại và múi giờ người dùng (mặc định UTC+7) cho AI.
+- **Gợi ý chia nhỏ mục tiêu:** Người dùng nhập mục tiêu lớn (ví dụ: *"Dọn dẹp phòng làm việc"*), AI đề xuất 3–5 bước checklist hành động cụ thể.
+- **Nguyên tắc xử lý AI (Áp dụng toàn hệ thống):**
+  - **Kết quả AI luôn là đề xuất:** Hiển thị cho người dùng xem và xác nhận trước khi tạo task/checklist, không tự ghi vào dữ liệu.
+  - **Định dạng dữ liệu & Xác thực:** AI phải trả về JSON theo schema cố định và được validate trước khi dùng.
+  - **Làm sạch nội dung (Sanitization):** Nội dung Markdown do AI trả về phải được sanitize trước khi hiển thị để phòng chống tấn công XSS.
+  - **Giới hạn đầu vào & Cảnh báo an toàn:** Giới hạn độ dài input gửi AI (tối đa 4.000 ký tự) và hiện cảnh báo: *"Không dán mật khẩu, token hoặc secret vào ô này. Nội dung sẽ được gửi tới nhà cung cấp AI bạn đã chọn."*
 
 ---
 
@@ -70,9 +76,10 @@ Chế độ tối ưu hóa cho quy trình kỹ thuật, thao tác bàn phím, qu
 - **Nhật ký thay đổi (Audit Log):** Ghi nhận chi tiết lịch sử cập nhật trạng thái, thay đổi deadline và phân công nhân sự.
 
 ### 3.5. Module AI hỗ trợ kỹ thuật (Tùy chọn Bật/Tắt)
-- **Sinh tiêu chí nghiệm thu & Test Cases:** Tự động tạo danh sách Acceptance Criteria (AC) và các trường hợp kiểm thử biên (Edge Cases) từ mô tả yêu cầu tính năng.
-- **Tự động sinh Release Notes:** Tổng hợp nội dung các commit và task đã hoàn thành trong Sprint thành bản tin phát hành (Changelog) có cấu trúc.
-- **Phân tích Log lỗi thành Checklist:** Cho phép lập trình viên dán Stack Trace hoặc mã lỗi để AI đề xuất các bước gỡ lỗi (Debug Steps) có hệ thống.
+Tuân thủ đầy đủ quy tắc kích hoạt và nguyên tắc xử lý AI tại mục 2.4 (chỉ chạy khi bật Cài đặt, bật Dự án và có API key riêng hợp lệ HOẶC còn lượt gọi dùng thử trong tháng - 10 lượt/tháng; kết quả luôn là đề xuất để người dùng xác nhận; JSON schema cố định; sanitize Markdown; giới hạn input tối đa 4.000 ký tự kèm cảnh báo không dán secret):
+- **Sinh tiêu chí nghiệm thu & Test Cases:** Đề xuất danh sách Acceptance Criteria (AC) và các trường hợp kiểm thử biên (Edge Cases) từ mô tả yêu cầu tính năng để người dùng duyệt và xác nhận trước khi áp dụng vào task.
+- **Tự động sinh Release Notes:** Tổng hợp nội dung các commit và task đã hoàn thành trong Sprint thành bản tin phát hành (Changelog) dạng Markdown đề xuất có cấu trúc.
+- **Phân tích Log lỗi thành Checklist:** Cho phép lập trình viên dán Stack Trace hoặc mã lỗi (tối đa 4.000 ký tự, có cảnh báo không dán secret) để AI đề xuất các bước gỡ lỗi (Debug Steps) có hệ thống.
 
 ---
 
@@ -106,8 +113,8 @@ Chế độ tối ưu hóa cho quy trình kỹ thuật, thao tác bàn phím, qu
 - Bổ sung thanh tìm kiếm nhanh bằng phím tắt (`Ctrl + K`).
 - Bổ sung bộ đếm Pomodoro và tính năng phân chia danh mục cho Standard Mode.
 
-### Giai đoạn 3: Tích hợp AI có kiểm soát & Hoàn thiện (Tuần 4)
-- Thiết lập trang cấu hình AI Settings: Công tắc Bật/Tắt và ô nhập API Key riêng (BYOK) hoặc kết nối Gemini API.
+### Giai đoạn 3: Tích hợp AI (BYOK & Dùng thử 10 lượt/tháng) & Hoàn thiện (Tuần 4)
+- Thiết lập trang cấu hình AI Settings: Công tắc Bật/Tắt, hiển thị số lượt gọi dùng thử còn lại trong tháng (10 lượt/tháng, reset ngày 1 hàng tháng), chọn nhà cung cấp (Gemini, OpenAI...), ô nhập API key riêng (BYOK), nút "Kiểm tra key".
 - Viết Prompt tạo Subtasks / Checklist (Standard Mode) và tạo Acceptance Criteria / Test Cases (Developer Mode).
 - Đóng gói ứng dụng, cấu hình Dockerfile và triển khai thực tế (Deploy) lên nền tảng đám mây.
 
@@ -123,12 +130,12 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     default_mode VARCHAR(20) DEFAULT 'standard', -- 'standard' hoặc 'developer'
-    subscription_tier VARCHAR(20) DEFAULT 'FREE', -- 'FREE' hoặc 'PREMIUM'
-    subscription_expires_at TIMESTAMP,
-    ai_usage_count INT DEFAULT 0,
-    ai_quota_limit INT DEFAULT 10,
-    quota_reset_at TIMESTAMP,
-    ai_api_key VARCHAR(255),
+    ai_enabled BOOLEAN DEFAULT FALSE,
+    ai_trial_count INT DEFAULT 0, -- Số lượt gọi AI đã dùng trong tháng hiện tại (tối đa 10 lượt cho người dùng chưa quen lấy key)
+    ai_trial_limit INT DEFAULT 10, -- Hạn mức dùng thử hàng tháng (10 lượt/tháng, làm mới vào ngày 1 hàng tháng)
+    ai_trial_reset_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời điểm làm mới lượt dùng thử gần nhất
+    ai_provider VARCHAR(30), -- 'gemini', 'openai'... (khi dùng BYOK)
+    ai_api_key_encrypted VARCHAR(500), -- Mã hóa AES-GCM trước khi lưu, khóa mã hóa để trong biến môi trường, không bao giờ trả nguyên văn về frontend (chỉ hiện 4 ký tự cuối), không ghi vào log
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -139,7 +146,7 @@ CREATE TABLE projects (
     name VARCHAR(150) NOT NULL,
     mode_type VARCHAR(20) NOT NULL, -- 'standard' hoặc 'developer'
     git_repo_url VARCHAR(255),
-    is_ai_enabled BOOLEAN DEFAULT FALSE,
+    is_ai_enabled BOOLEAN DEFAULT FALSE, -- AI chạy khi cả users.ai_enabled và projects.is_ai_enabled đều TRUE
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -168,3 +175,13 @@ CREATE TABLE task_checklists (
     position INT DEFAULT 0
 );
 ```
+
+---
+
+## 7. Bảo mật & quyền riêng tư cho tính năng AI
+
+- **Cơ chế dùng thử minh bạch (10 lượt/tháng):** Đối với người dùng chưa quen lấy API key, hệ thống cấp 10 lượt gọi/tháng qua key mặc định phía máy chủ (giới hạn chặt chẽ theo user và rate limit). Khi người dùng tự nhập key riêng (BYOK), toàn bộ các cuộc gọi AI sẽ chuyển hẳn sang dùng key riêng của người dùng và không còn phụ thuộc hay chịu giới hạn 10 lượt của hệ thống.
+- **Mã hóa khóa API (BYOK):** Khóa API người dùng cung cấp được mã hóa bằng thuật toán AES-GCM trước khi lưu vào cơ sở dữ liệu (`ai_api_key_encrypted`). Khóa mã hóa được lưu trữ an toàn trong biến môi trường máy chủ. Hệ thống không bao giờ trả nguyên văn API key về frontend (chỉ hiển thị 4 ký tự cuối) và không bao giờ ghi khóa vào log hệ thống.
+- **Không ghi log nội dung gửi AI:** Máy chủ tuyệt đối không ghi log nội dung prompt, mô tả task, mã lỗi hay Stack Trace gửi tới các dịch vụ AI.
+- **Minh bạch luồng dữ liệu:** Thông báo rõ ràng cho người dùng biết dữ liệu nào được gửi tới nhà cung cấp AI nào (Gemini, OpenAI...) trước khi gửi yêu cầu.
+- **Thu hồi và xóa khóa an toàn:** Xóa khóa API ngay khi người dùng tắt tính năng AI hoặc yêu cầu xóa tài khoản khỏi hệ thống.
