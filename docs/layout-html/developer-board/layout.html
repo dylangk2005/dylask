@@ -1,0 +1,2011 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Sprint Board (Developer Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 13px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 22px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số 4px - Compact High Density) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Mode Colors (Dark Theme) */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3D1418;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3B1F11;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382C10;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      /* System Status */
+      --color-success: #238636;
+      --color-success-bg: #0F2D17;
+      --color-warning: #D29922;
+      --color-warning-bg: #332408;
+      --color-danger: #F85149;
+      --color-danger-bg: #3E1616;
+      --color-info: #58A6FF;
+      --color-info-bg: #12243D;
+
+      /* Syntax Highlighting Colors */
+      --syntax-keyword: #FF7B72;
+      --syntax-function: #D2A8FF;
+      --syntax-string: #A5D6FF;
+      --syntax-comment: #8B949E;
+      --syntax-variable: #FFA657;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.45;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Utility */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Scrollbar Styling phẳng & kỹ thuật */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       APP SHELL
+       ========================================================================== */
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       1. SIDEBAR TRÁI (220px, thu gọn được)
+       ========================================================================== */
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      z-index: 20;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Context Header (Workspace > Project > Sprint) */
+    .workspace-header {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .workspace-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+      font-weight: var(--font-weight-bold);
+      font-size: 11px;
+    }
+
+    .brand-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-toggle-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .sidebar-toggle-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .project-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+
+    .project-selector .icon {
+      color: var(--color-primary);
+    }
+
+    .sprint-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .sprint-active-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    /* Navigation Menu */
+    .nav-group {
+      padding: var(--space-3) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-group-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+      background-color: var(--color-surface-subtle);
+      border-left: 2px solid var(--color-primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .nav-link.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 5px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Sidebar Footer / Mode Switch */
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 6px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .mode-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .git-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      padding: 2px 4px;
+    }
+
+    .git-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-success);
+    }
+
+    /* ==========================================================================
+       MAIN VIEWPORT
+       ========================================================================== */
+    .main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       2. THANH TRÊN CÙNG (TOP BAR)
+       ========================================================================== */
+    .topbar {
+      height: 48px;
+      min-height: 48px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      user-select: none;
+      z-index: 10;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-sep {
+      color: var(--color-border-strong);
+      font-size: 11px;
+    }
+
+    .breadcrumb-item.current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .sprint-stats-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary-hover);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    /* Command Palette Button (Ctrl+K) */
+    .command-palette-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 30px;
+      padding: 0 var(--space-3);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .command-palette-trigger:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text);
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1px 4px;
+      color: var(--color-text-muted);
+    }
+
+    /* Filters Bar */
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 28px;
+      padding: 0 8px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .filter-chip:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .filter-chip.active {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+      border-color: var(--color-border-strong);
+    }
+
+    .avatar-mini {
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-family: var(--font-mono);
+      color: var(--color-text);
+    }
+
+    .new-task-btn {
+      height: 28px;
+      padding: 0 10px;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .new-task-btn:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    /* ==========================================================================
+       CONTENT AREA (BOARD + DRAWER)
+       ========================================================================== */
+    .board-layout-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       3. SPRINT BOARD (KANBAN 5 CỘT)
+       ========================================================================== */
+    .kanban-viewport {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: var(--space-3);
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    /* Cột Kanban */
+    .kanban-column {
+      width: 280px;
+      min-width: 280px;
+      max-width: 280px;
+      height: 100%;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .column-header {
+      padding: 10px var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      background-color: var(--color-surface);
+    }
+
+    .column-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .column-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .column-count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .column-sp-total {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    /* Danh sách thẻ cuộn dọc độc lập */
+    .column-cards-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    /* Thẻ Task (Task Card) */
+    .task-card {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+      position: relative;
+    }
+
+    .task-card:hover {
+      border-color: var(--color-border-strong);
+      background-color: #262C36;
+    }
+
+    /* Thẻ đang được chọn (ACTIVE / SELECTED) */
+    .task-card.active-selected {
+      border-color: var(--color-primary);
+      background-color: #1A232D;
+    }
+
+    .task-card.active-selected::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: var(--color-primary);
+      border-top-left-radius: var(--radius);
+      border-bottom-left-radius: var(--radius);
+    }
+
+    /* Hàng 1: Mã task, Priority, Story Points */
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .card-id {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      letter-spacing: 0.2px;
+    }
+
+    .task-card.done-card .card-id {
+      color: var(--color-text-muted);
+    }
+
+    .card-badges {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Badge Ưu tiên P1 - P4 */
+    .badge-priority {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: var(--font-weight-bold);
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .badge-priority.p1 {
+      color: var(--priority-p1);
+      background-color: var(--priority-p1-bg);
+      border: var(--border-width) solid rgba(239, 68, 68, 0.3);
+    }
+
+    .badge-priority.p2 {
+      color: var(--priority-p2);
+      background-color: var(--priority-p2-bg);
+      border: var(--border-width) solid rgba(249, 115, 22, 0.3);
+    }
+
+    .badge-priority.p3 {
+      color: var(--priority-p3);
+      background-color: var(--priority-p3-bg);
+      border: var(--border-width) solid rgba(234, 179, 8, 0.3);
+    }
+
+    .badge-priority.p4 {
+      color: var(--priority-p4);
+      background-color: var(--priority-p4-bg);
+      border: var(--border-width) solid rgba(110, 118, 129, 0.3);
+    }
+
+    /* Story Points Badge */
+    .badge-sp {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-muted);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      padding: 1px 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Hàng 2: Tiêu đề Task (NỔI HƠN METADATA) */
+    .card-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      line-height: 1.35;
+    }
+
+    .task-card.done-card .card-title {
+      color: var(--color-text-muted);
+      text-decoration: line-through;
+    }
+
+    /* Hàng 3: Branch / PR liên kết (font mono mờ) */
+    .card-git-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .card-git-row .icon {
+      color: var(--color-text-muted);
+    }
+
+    .card-git-branch {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-pr-tag {
+      color: var(--color-info);
+      background-color: var(--color-info-bg);
+      border: var(--border-width) solid rgba(88, 166, 255, 0.3);
+      padding: 0 4px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* Hàng 4: Nhãn kỹ thuật & Assignee avatar */
+    .card-bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding-top: 4px;
+      border-top: var(--border-width) solid rgba(38, 44, 54, 0.7);
+    }
+
+    .label-tag {
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      border: var(--border-width) solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-text-muted);
+    }
+
+    .label-tag.backend {
+      color: #7EE787;
+      border-color: rgba(35, 134, 54, 0.4);
+      background-color: #0F2D17;
+    }
+
+    .label-tag.frontend {
+      color: #79C0FF;
+      border-color: rgba(88, 166, 255, 0.4);
+      background-color: #12243D;
+    }
+
+    .label-tag.bug {
+      color: #FFA198;
+      border-color: rgba(248, 81, 73, 0.4);
+      background-color: #3E1616;
+    }
+
+    .card-assignee {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-family: var(--font-mono);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    /* Footer thêm thẻ nhanh trong cột */
+    .column-footer-btn {
+      padding: 8px var(--space-3);
+      background: transparent;
+      border: none;
+      border-top: var(--border-width) solid var(--color-border);
+      color: var(--color-text-muted);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .column-footer-btn:hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text);
+    }
+
+    /* ==========================================================================
+       4. DRAWER CHI TIẾT TASK (420px)
+       ========================================================================== */
+    .task-drawer {
+      width: 420px;
+      min-width: 420px;
+      height: 100%;
+      background-color: var(--color-surface);
+      border-left: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 15;
+    }
+
+    .drawer-header {
+      padding: 10px var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--color-surface);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .drawer-header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .drawer-task-id {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .drawer-status-badge {
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      background-color: var(--color-info-bg);
+      color: var(--color-info);
+      border: var(--border-width) solid rgba(88, 166, 255, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .drawer-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .drawer-btn-icon {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .drawer-btn-icon:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .drawer-body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    /* Tiêu đề Task Drawer */
+    .drawer-task-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      line-height: 1.3;
+    }
+
+    /* Grid thuộc tính kỹ thuật */
+    .prop-table {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-2) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prop-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+    }
+
+    .prop-label {
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .prop-val {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Git Integration Box (Automation-First) */
+    .git-context-box {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .branch-snippet {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      gap: 8px;
+    }
+
+    .branch-name-code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .copy-branch-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      padding: 2px 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .copy-branch-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .git-meta-links {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .git-link-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-text-muted);
+    }
+
+    .commit-hash {
+      color: #D2A8FF;
+      background-color: var(--color-surface-subtle);
+      padding: 1px 4px;
+      border-radius: var(--radius-sm);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .pr-link-text {
+      color: var(--color-info);
+      text-decoration: none;
+    }
+
+    .pr-link-text:hover {
+      text-decoration: underline;
+    }
+
+    /* Markdown & Code Block Spec */
+    .markdown-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .markdown-rendered {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      font-size: var(--font-size-xs);
+      line-height: 1.55;
+      color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .markdown-rendered h4 {
+      font-size: 12px;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      border-bottom: var(--border-width) solid var(--color-border);
+      padding-bottom: 4px;
+    }
+
+    .markdown-checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .markdown-check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .check-box-fake {
+      width: 14px;
+      height: 14px;
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .check-box-fake.done {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-primary-text);
+    }
+
+    /* Code Block Box */
+    .code-block-wrapper {
+      background-color: #0B0E12;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .code-block-header {
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      padding: 4px var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-muted);
+    }
+
+    pre.code-block-content {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.5;
+      padding: var(--space-2) var(--space-3);
+      overflow-x: auto;
+      color: var(--color-text);
+    }
+
+    /* Syntax Highlighting elements */
+    .syn-k { color: var(--syntax-keyword); }
+    .syn-f { color: var(--syntax-function); }
+    .syn-s { color: var(--syntax-string); }
+    .syn-c { color: var(--syntax-comment); font-style: italic; }
+    .syn-v { color: var(--syntax-variable); }
+
+    /* Threaded Comments Section */
+    .comments-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .comment-item {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-2) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .comment-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .comment-author {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .comment-author .avatar-mini {
+      width: 16px;
+      height: 16px;
+      font-size: 8px;
+    }
+
+    .comment-time {
+      color: var(--color-text-muted);
+      font-size: 10px;
+    }
+
+    .comment-text {
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      line-height: 1.45;
+    }
+
+    .comment-text code {
+      font-family: var(--font-mono);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 4px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+    }
+
+    /* Input Comment */
+    .comment-input-box {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 6px var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .comment-textarea {
+      background: transparent;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      resize: none;
+      outline: none;
+      min-height: 48px;
+    }
+
+    .comment-textarea::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .comment-submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .comment-hint {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+    }
+
+    .comment-submit-btn {
+      height: 24px;
+      padding: 0 8px;
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      color: var(--color-text);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .comment-submit-btn:hover {
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border-color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ======================================================================
+         1. SIDEBAR TRÁI (220px, thu gọn được)
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        
+        <!-- Workspace > Project > Sprint Context -->
+        <div class="workspace-header">
+          <div class="workspace-row">
+            <div class="brand-group">
+              <div class="brand-mark">D</div>
+              <span class="brand-title">Dylask</span>
+            </div>
+            <button class="sidebar-toggle-btn" type="button" title="Thu gọn Sidebar">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <line x1="9" x2="9" y1="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Project Dropdown Pill -->
+          <a class="project-selector" href="../developer-project-create/layout.html" style="text-decoration: none;" title="Chuyển kho / Tạo dự án mới">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>dylask-api</span>
+            <svg class="icon" style="margin-left: auto;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+
+          <!-- Sprint Badge Indicator -->
+          <div class="sprint-badge-row">
+            <span class="sprint-active-dot"></span>
+            <span>Sprint 3 (Đang chạy)</span>
+          </div>
+        </div>
+
+        <!-- Điều hướng Agile / Technical Views -->
+        <nav class="nav-group">
+          <span class="nav-group-label">Quản lý Sprint</span>
+
+          <a class="nav-link" href="../developer-backlog/layout.html" title="Danh sách tồn đọng">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" x2="21" y1="6" y2="6"></line>
+              <line x1="8" x2="21" y1="12" y2="12"></line>
+              <line x1="8" x2="21" y1="18" y2="18"></line>
+              <line x1="3" x2="3.01" y1="6" y2="6"></line>
+              <line x1="3" x2="3.01" y1="12" y2="12"></line>
+              <line x1="3" x2="3.01" y1="18" y2="18"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">6</span>
+          </a>
+
+          <a class="nav-link active" href="../developer-board/layout.html" title="Bảng Kanban tiến độ">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+              <path d="M8 7v7"></path>
+              <path d="M12 7v4"></path>
+              <path d="M16 7v9"></path>
+            </svg>
+            <span>Board</span>
+            <span class="nav-badge">5</span>
+          </a>
+
+          <a class="nav-link" href="../developer-standup/layout.html" title="Báo cáo tiến độ tự động 24h">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+            <span>Standup</span>
+          </a>
+
+          <a class="nav-link" href="../developer-audit-log/layout.html" title="Nhật ký thay đổi hệ thống">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Audit Log</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <!-- Cuối Sidebar: Công tắc Dual-Mode & Trạng thái Git -->
+      <div class="sidebar-footer">
+        <div class="git-status-bar">
+          <span class="git-status-dot"></span>
+          <span>git: main · syncd</span>
+        </div>
+
+        <div class="mode-switch-group">
+          <a class="mode-btn" href="../standard-list/layout.html" style="text-decoration: none;" title="Chuyển sang chế độ Standard">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-btn active" href="../developer-board/layout.html" style="text-decoration: none;" title="Chế độ Lập trình viên đang bật">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         VÙNG XỬ LÝ CHÍNH
+         ====================================================================== -->
+    <div class="main-viewport">
+
+      <!-- 2. THANH TRÊN CÙNG (TOP BAR) -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <!-- Breadcrumb: Dylask / dylask-api / Sprint 3 -->
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <span class="breadcrumb-item">Dylask</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item">dylask-api</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item current">Sprint 3</span>
+          </nav>
+          <span class="sprint-stats-tag">18 SP · 5 Tasks</span>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Nút Command Palette Ctrl+K dạng thẻ nhỏ -->
+          <a class="command-palette-trigger" href="../developer-command-palette/layout.html" style="text-decoration: none;" title="Mở bảng lệnh phím tắt (Ctrl+K)">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <span>Tìm kiếm & Lệnh</span>
+            <kbd>Ctrl</kbd>
+            <kbd>K</kbd>
+          </a>
+
+          <!-- Nút mở Trợ lý AI kỹ thuật -->
+          <a class="filter-chip" href="../developer-ai-panel/layout.html" style="text-decoration: none; display: flex; align-items: center; gap: 5px; color: var(--color-primary); border-color: var(--color-primary);" title="Mở Trợ lý AI">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            <span>Trợ lý AI</span>
+          </a>
+
+          <!-- Bộ lọc Assignee & Nhãn -->
+          <div class="filter-group">
+            <button class="filter-chip active" type="button">
+              <span>Người phụ trách: Tất cả</span>
+              <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <button class="filter-chip" type="button">
+              <span>Nhãn: All</span>
+              <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Nút tạo Task mới -->
+          <button class="new-task-btn" type="button">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Tạo Task</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- KHUNG BỐ CỤC: BOARD + DRAWER -->
+      <div class="board-layout-container">
+
+        <!-- ====================================================================
+             3. SPRINT BOARD (KANBAN 5 CỘT CUỘN ĐỘC LẬP)
+             ==================================================================== -->
+        <main class="kanban-viewport">
+
+          <!-- CỘT 1: BACKLOG -->
+          <section class="kanban-column">
+            <div class="column-header">
+              <div class="column-title-group">
+                <span class="column-name">Backlog</span>
+                <span class="column-count">1</span>
+              </div>
+              <span class="column-sp-total">3 SP</span>
+            </div>
+
+            <div class="column-cards-container">
+              <!-- Task mẫu Backlog -->
+              <article class="task-card">
+                <div class="card-top-row">
+                  <span class="card-id">DYL-105</span>
+                  <div class="card-badges">
+                    <span class="badge-priority p3">P3</span>
+                    <span class="badge-sp">3 SP</span>
+                  </div>
+                </div>
+                <h3 class="card-title">Viết unit test cho AuthService</h3>
+                <div class="card-git-row">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" x2="6" y1="3" y2="15"></line>
+                    <circle cx="18" cy="6" r="3"></circle>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <path d="M18 9a9 9 0 0 1-9 9"></path>
+                  </svg>
+                  <span class="card-git-branch">test/DYL-105-auth-mock</span>
+                </div>
+                <div class="card-bottom-row">
+                  <span class="label-tag backend">Backend</span>
+                  <div class="card-assignee" title="@huy">H</div>
+                </div>
+              </article>
+            </div>
+
+            <button class="column-footer-btn" type="button">
+              <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Thêm thẻ</span>
+            </button>
+          </section>
+
+          <!-- CỘT 2: TO DO -->
+          <section class="kanban-column">
+            <div class="column-header">
+              <div class="column-title-group">
+                <span class="column-name">To Do</span>
+                <span class="column-count">1</span>
+              </div>
+              <span class="column-sp-total">8 SP</span>
+            </div>
+
+            <div class="column-cards-container">
+              <!-- DYL-104 | Webhook nhận sự kiện GitHub | Backend | P2 | 8 SP | To Do -->
+              <article class="task-card">
+                <div class="card-top-row">
+                  <span class="card-id">DYL-104</span>
+                  <div class="card-badges">
+                    <span class="badge-priority p2">P2</span>
+                    <span class="badge-sp">8 SP</span>
+                  </div>
+                </div>
+                <h3 class="card-title">Webhook nhận sự kiện GitHub</h3>
+                <div class="card-git-row">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" x2="6" y1="3" y2="15"></line>
+                    <circle cx="18" cy="6" r="3"></circle>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <path d="M18 9a9 9 0 0 1-9 9"></path>
+                  </svg>
+                  <span class="card-git-branch">feature/DYL-104-webhook</span>
+                </div>
+                <div class="card-bottom-row">
+                  <span class="label-tag backend">Backend</span>
+                  <div class="card-assignee" title="@ngoc">N</div>
+                </div>
+              </article>
+            </div>
+
+            <button class="column-footer-btn" type="button">
+              <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Thêm thẻ</span>
+            </button>
+          </section>
+
+          <!-- CỘT 3: IN PROGRESS -->
+          <section class="kanban-column">
+            <div class="column-header">
+              <div class="column-title-group">
+                <span class="column-name">In Progress</span>
+                <span class="column-count">1</span>
+              </div>
+              <span class="column-sp-total">5 SP</span>
+            </div>
+
+            <div class="column-cards-container">
+              <!-- DYL-102 | Triển khai xác thực JWT | Backend | P1 | 5 SP | In Progress (ACTIVE / SELECTED) -->
+              <article class="task-card active-selected">
+                <div class="card-top-row">
+                  <span class="card-id">DYL-102</span>
+                  <div class="card-badges">
+                    <span class="badge-priority p1">P1</span>
+                    <span class="badge-sp">5 SP</span>
+                  </div>
+                </div>
+                <h3 class="card-title">Triển khai xác thực JWT</h3>
+                <div class="card-git-row">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" x2="6" y1="3" y2="15"></line>
+                    <circle cx="18" cy="6" r="3"></circle>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <path d="M18 9a9 9 0 0 1-9 9"></path>
+                  </svg>
+                  <span class="card-git-branch">feature/DYL-102-jwt-auth</span>
+                </div>
+                <div class="card-bottom-row">
+                  <span class="label-tag backend">Backend</span>
+                  <div class="card-assignee" title="@dylan">D</div>
+                </div>
+              </article>
+            </div>
+
+            <button class="column-footer-btn" type="button">
+              <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Thêm thẻ</span>
+            </button>
+          </section>
+
+          <!-- CỘT 4: IN REVIEW -->
+          <section class="kanban-column">
+            <div class="column-header">
+              <div class="column-title-group">
+                <span class="column-name">In Review</span>
+                <span class="column-count">1</span>
+              </div>
+              <span class="column-sp-total">3 SP</span>
+            </div>
+
+            <div class="column-cards-container">
+              <!-- DYL-103 | Trang đăng nhập | Frontend | P2 | 3 SP | In Review (PR #14) -->
+              <article class="task-card">
+                <div class="card-top-row">
+                  <span class="card-id">DYL-103</span>
+                  <div class="card-badges">
+                    <span class="badge-priority p2">P2</span>
+                    <span class="badge-sp">3 SP</span>
+                  </div>
+                </div>
+                <h3 class="card-title">Trang đăng nhập</h3>
+                <div class="card-git-row">
+                  <span class="card-pr-tag">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="18" cy="18" r="3"></circle>
+                      <circle cx="6" cy="6" r="3"></circle>
+                      <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                      <line x1="6" x2="6" y1="9" y2="21"></line>
+                    </svg>
+                    <span>PR #14</span>
+                  </span>
+                  <span class="card-git-branch">feature/DYL-103-login-ui</span>
+                </div>
+                <div class="card-bottom-row">
+                  <span class="label-tag frontend">Frontend</span>
+                  <div class="card-assignee" title="@an">A</div>
+                </div>
+              </article>
+            </div>
+
+            <button class="column-footer-btn" type="button">
+              <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Thêm thẻ</span>
+            </button>
+          </section>
+
+          <!-- CỘT 5: DONE -->
+          <section class="kanban-column">
+            <div class="column-header">
+              <div class="column-title-group">
+                <span class="column-name">Done</span>
+                <span class="column-count">1</span>
+              </div>
+              <span class="column-sp-total">2 SP</span>
+            </div>
+
+            <div class="column-cards-container">
+              <!-- DYL-098 | Lỗi 500 khi tạo task trống | Bug | P1 | 2 SP | Done -->
+              <article class="task-card done-card">
+                <div class="card-top-row">
+                  <span class="card-id">DYL-098</span>
+                  <div class="card-badges">
+                    <span class="badge-priority p1">P1</span>
+                    <span class="badge-sp">2 SP</span>
+                  </div>
+                </div>
+                <h3 class="card-title">Lỗi 500 khi tạo task trống</h3>
+                <div class="card-git-row">
+                  <span class="card-pr-tag" style="color: var(--color-success); background-color: var(--color-success-bg); border-color: rgba(35, 134, 54, 0.4);">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Merged #11</span>
+                  </span>
+                </div>
+                <div class="card-bottom-row">
+                  <span class="label-tag bug">Bug</span>
+                  <div class="card-assignee" title="@dylan">D</div>
+                </div>
+              </article>
+            </div>
+
+            <button class="column-footer-btn" type="button">
+              <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Thêm thẻ</span>
+            </button>
+          </section>
+
+        </main>
+
+        <!-- ====================================================================
+             4. DRAWER CHI TIẾT TASK (420px)
+             Hiển thị task DYL-102 đang chọn: Markdown, code block, branch, PR, comment
+             ==================================================================== -->
+        <aside class="task-drawer" aria-label="Chi tiết nhiệm vụ kỹ thuật">
+          
+          <!-- Drawer Header -->
+          <div class="drawer-header">
+            <div class="drawer-header-left">
+              <span class="drawer-task-id">DYL-102</span>
+              <span class="drawer-status-badge">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>In Progress</span>
+              </span>
+            </div>
+
+            <div class="drawer-actions">
+              <a class="drawer-btn-icon" href="../developer-focus/layout.html" title="Mở Chế độ Focus Coding (DYL-102)" style="color: var(--color-primary);">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </a>
+              <button class="drawer-btn-icon" type="button" title="Mở trên tab mới">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" x2="21" y1="14" y2="3"></line>
+                </svg>
+              </button>
+              <button class="drawer-btn-icon" type="button" title="Đóng panel chi tiết">
+                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Drawer Body -->
+          <div class="drawer-body">
+
+            <!-- Tiêu đề lớn -->
+            <h2 class="drawer-task-title">Triển khai xác thực JWT</h2>
+
+            <!-- Bảng thuộc tính kỹ thuật -->
+            <div class="prop-table">
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span>Phụ trách</span>
+                </span>
+                <span class="prop-val">
+                  <span class="avatar-mini">D</span>
+                  <span>@dylan (Backend)</span>
+                </span>
+              </div>
+
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <span>Độ ưu tiên</span>
+                </span>
+                <span class="prop-val">
+                  <span class="badge-priority p1">P1 (Critical)</span>
+                </span>
+              </div>
+
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                  </svg>
+                  <span>Story Points</span>
+                </span>
+                <span class="prop-val mono">5 SP (~16h dự tính)</span>
+              </div>
+
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                  </svg>
+                  <span>Phân loại</span>
+                </span>
+                <span class="prop-val">
+                  <span class="label-tag backend">Backend API</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Tích hợp Git (Automation Context) -->
+            <div class="git-context-box">
+              <span class="section-label">
+                <span>Ngữ cảnh mã nguồn (Git)</span>
+                <span class="sprint-stats-tag" style="font-size: 10px; padding: 1px 5px;">Webhook tự động</span>
+              </span>
+
+              <!-- Branch + Nút Copy chuẩn spec -->
+              <div class="branch-snippet">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+                  <line x1="6" x2="6" y1="3" y2="15"></line>
+                  <circle cx="18" cy="6" r="3"></circle>
+                  <circle cx="6" cy="18" r="3"></circle>
+                  <path d="M18 9a9 9 0 0 1-9 9"></path>
+                </svg>
+                <code class="branch-name-code">feature/DYL-102-jwt-auth</code>
+                <button class="copy-branch-btn" type="button" title="Sao chép tên branch chuẩn">
+                  <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+
+              <!-- PR & Commit link -->
+              <div class="git-meta-links">
+                <div class="git-link-item">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-info);">
+                    <circle cx="18" cy="18" r="3"></circle>
+                    <circle cx="6" cy="6" r="3"></circle>
+                    <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                    <line x1="6" x2="6" y1="9" y2="21"></line>
+                  </svg>
+                  <span>Pull Request:</span>
+                  <a class="pr-link-text" href="#pr12">#12 feat(auth): stateless jwt filter</a>
+                </div>
+
+                <div class="git-link-item">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <line x1="3" x2="9" y1="12" y2="12"></line>
+                    <line x1="15" x2="21" y1="12" y2="12"></line>
+                  </svg>
+                  <span>Commit hash:</span>
+                  <code class="commit-hash">a7b9c4d</code>
+                  <span style="color: var(--color-text-muted); font-size: 10px;">(20m trước)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mô tả Markdown & Code Block -->
+            <div class="markdown-container">
+              <span class="section-label">Mô tả kỹ thuật (Markdown)</span>
+
+              <div class="markdown-rendered">
+                <h4>Yêu cầu kiến trúc Spring Security</h4>
+                <p>Cần triển khai Filter kế thừa <code>OncePerRequestFilter</code> để chặn mọi request tới <code>/api/v1/**</code> ngoại trừ endpoint <code>/auth/**</code>.</p>
+
+                <!-- Checklists tiêu chí nghiệm thu -->
+                <ul class="markdown-checklist">
+                  <li class="markdown-check-item">
+                    <div class="check-box-fake done">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                    <span>Cấu hình thuật toán HMAC-SHA256 với secret key từ env</span>
+                  </li>
+                  <li class="markdown-check-item">
+                    <div class="check-box-fake done">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                    <span>Parse JWT claims và inject vào SecurityContextHolder</span>
+                  </li>
+                  <li class="markdown-check-item">
+                    <div class="check-box-fake"></div>
+                    <span>Xử lý bắt ngoại lệ ExpiredJwtException qua AuthenticationEntryPoint</span>
+                  </li>
+                </ul>
+
+                <!-- Code block mẫu -->
+                <div class="code-block-wrapper">
+                  <div class="code-block-header">
+                    <span>JwtAuthenticationFilter.java</span>
+                    <span>Java 25</span>
+                  </div>
+                  <pre class="code-block-content"><code><span class="syn-k">public class</span> <span class="syn-f">JwtAuthenticationFilter</span> <span class="syn-k">extends</span> OncePerRequestFilter {
+    <span class="syn-k">@Override</span>
+    <span class="syn-k">protected void</span> <span class="syn-f">doFilterInternal</span>(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain chain) {
+        String auth = req.getHeader(<span class="syn-s">"Authorization"</span>);
+        <span class="syn-k">if</span> (auth != <span class="syn-k">null</span> && auth.startsWith(<span class="syn-s">"Bearer "</span>)) {
+            String token = auth.substring(<span class="syn-v">7</span>);
+            <span class="syn-c">// Validate and extract claims</span>
+            Claims claims = jwtService.extractAll(token);
+        }
+        chain.doFilter(req, res);
+    }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bình luận trao đổi theo luồng (Threaded Comments) -->
+            <div class="comments-section">
+              <span class="section-label">Thảo luận kỹ thuật (2)</span>
+
+              <ul class="comment-list">
+                <li class="comment-item">
+                  <div class="comment-meta">
+                    <div class="comment-author">
+                      <div class="avatar-mini" style="background-color: #388BFD; color: #FFF;">L</div>
+                      <span>@lead-dev</span>
+                    </div>
+                    <span class="comment-time">45 phút trước</span>
+                  </div>
+                  <p class="comment-text">Nhớ kiểm tra thời gian sống của token là <code>24 giờ</code> và refresh token là <code>7 ngày</code> theo tài liệu spec nhé @dylan.</p>
+                </li>
+
+                <li class="comment-item">
+                  <div class="comment-meta">
+                    <div class="comment-author">
+                      <div class="avatar-mini" style="background-color: var(--color-primary); color: #0E1116;">D</div>
+                      <span>@dylan</span>
+                    </div>
+                    <span class="comment-time">15 phút trước</span>
+                  </div>
+                  <p class="comment-text">Đã cập nhật cấu hình trong <code>application.yml</code> ở commit <code>a7b9c4d</code>. Chuẩn bị push để chuyển sang In Review.</p>
+                </li>
+              </ul>
+
+              <!-- Khung nhập bình luận mới -->
+              <div class="comment-input-box">
+                <textarea class="comment-textarea" placeholder="Viết bình luận, hỗ trợ Markdown và @member..."></textarea>
+                <div class="comment-submit-row">
+                  <span class="comment-hint">Ctrl + Enter để gửi</span>
+                  <button class="comment-submit-btn" type="button">Bình luận</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleDrawer() {
+      const drawer = document.getElementById('taskDrawer');
+      if (drawer) {
+        drawer.style.display = drawer.style.display === 'none' ? 'flex' : 'none';
+      }
+    }
+    document.querySelectorAll('.task-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const drawer = document.getElementById('taskDrawer');
+        if (drawer) drawer.style.display = 'flex';
+      });
+    });
+    document.querySelectorAll('.drawer-btn-icon[title*="Đóng"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const drawer = document.getElementById('taskDrawer');
+        if (drawer) drawer.style.display = 'none';
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        window.location.href = '../developer-command-palette/layout.html';
+      }
+    });
+  </script>
+</body>
+</html>

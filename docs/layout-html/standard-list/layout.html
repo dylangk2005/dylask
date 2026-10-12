@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Danh sách việc (Standard Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS (STANDARD MODE - LIGHT)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md
+       ========================================================================== */
+    :root {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số 4px) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Standard Mode Colors */
+      --color-bg: #FAFAF7;
+      --color-surface: #FFFFFF;
+      --color-surface-subtle: #F4F3EF;
+      --color-border: #E7E5E0;
+      --color-border-strong: #D1CFCA;
+
+      --color-text: #1C1B18;
+      --color-text-muted: #6B6A63;
+
+      --color-primary: #0F766E;
+      --color-primary-hover: #115E59;
+      --color-primary-subtle: #E6F4F1;
+      --color-primary-text: #FFFFFF;
+
+      /* Standard Priorities */
+      --priority-low: #3B82F6;
+      --priority-medium: #F59E0B;
+      --priority-high: #DC2626;
+
+      /* Status */
+      --color-success: #16A34A;
+      --color-warning: #D97706;
+      --color-danger: #DC2626;
+      --color-info: #2563EB;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Icon Utility */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       APP SHELL LAYOUT
+       ========================================================================== */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       1. SIDEBAR TRÁI (240px)
+       Kém nổi bật hơn vùng trung tâm, dùng nền phụ và viền tối giản
+       ========================================================================== */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      height: 100vh;
+      background-color: var(--color-bg);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .sidebar-top {
+      padding: var(--space-4) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      overflow-y: auto;
+    }
+
+    /* Brand / Logo */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-2);
+      height: 36px;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+    }
+
+    .brand-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+    }
+
+    .brand-badge {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      margin-left: auto;
+    }
+
+    /* Navigation Sections */
+    .nav-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-section-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-2) var(--space-2) var(--space-1);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: background-color 0.15s ease, color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-item.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .nav-item .icon {
+      color: var(--color-text-muted);
+    }
+
+    .nav-item.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-count {
+      margin-left: auto;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      padding: 1px 6px;
+      background-color: var(--color-surface-subtle);
+      border-radius: var(--radius-full);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .nav-count.alert {
+      color: var(--color-danger);
+      background-color: #FEF2F2;
+      border-color: #FECACA;
+    }
+
+    /* Category Items */
+    .category-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-text-muted);
+      flex-shrink: 0;
+    }
+
+    /* Sidebar Footer / Mode Switch */
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      background-color: var(--color-bg);
+    }
+
+    .mode-switch-container {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 3px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .mode-switch-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: 6px 8px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: var(--font-sans);
+      text-decoration: none;
+    }
+
+    .mode-switch-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       2. THANH TRÊN CÙNG (TOP BAR)
+       ========================================================================== */
+    .topbar {
+      height: 52px;
+      min-height: 52px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+      user-select: none;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      width: 320px;
+      height: 34px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 0 var(--space-3);
+      color: var(--color-text-muted);
+      transition: border-color 0.15s ease;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--color-primary);
+      background-color: var(--color-surface);
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    .user-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+    }
+
+    /* ==========================================================================
+       CONTENT SPLIT VIEW: TRỌNG TÂM LIST VIEW & DETAIL PANEL
+       ========================================================================== */
+    .content-area {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       3. NỘI DUNG CHÍNH (TỐI ĐA 720px, CĂN GIỮA)
+       Đây là trọng tâm thị giác của toàn màn hình
+       ========================================================================== */
+    .list-stage {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-6) var(--space-8);
+      display: flex;
+      justify-content: center;
+    }
+
+    .list-container {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    /* Stage Header */
+    .stage-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stage-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.4px;
+    }
+
+    .stage-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    /* Ô Thêm Việc Nhanh (Trọng tâm thao tác) */
+    .quick-add-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      transition: border-color 0.15s ease;
+    }
+
+    .quick-add-card:focus-within {
+      border-color: var(--color-primary);
+    }
+
+    .quick-add-icon {
+      color: var(--color-primary);
+    }
+
+    .quick-add-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      outline: none;
+    }
+
+    .quick-add-input::placeholder {
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-regular);
+    }
+
+    .quick-add-hint {
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      user-select: none;
+    }
+
+    /* Nhóm Công Việc (Task Groups) */
+    .task-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      padding: var(--space-1) 0;
+    }
+
+    .group-header.overdue {
+      color: var(--color-danger);
+    }
+
+    .group-count {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+    }
+
+    .group-header.overdue .group-count {
+      color: var(--color-danger);
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      list-style: none;
+    }
+
+    /* Task Item Card */
+    .task-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+      position: relative;
+    }
+
+    .task-card:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    /* Task Selected State (kết nối với Panel phải) */
+    .task-card.selected {
+      border-color: var(--color-primary);
+      background-color: #FAFDFD;
+    }
+
+    .task-card.selected::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: var(--color-primary);
+      border-top-left-radius: var(--radius);
+      border-bottom-left-radius: var(--radius);
+    }
+
+    /* Custom Flat Checkbox */
+    .task-checkbox {
+      width: 18px;
+      height: 18px;
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      background-color: var(--color-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      color: transparent;
+      transition: all 0.15s ease;
+    }
+
+    .task-checkbox:hover {
+      border-color: var(--color-primary);
+    }
+
+    .task-checkbox.checked {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #FFFFFF;
+    }
+
+    .task-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-card.completed .task-title {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+
+    /* Metadata Row bên trong Task Card */
+    .task-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+    }
+
+    /* Category Tag Badge */
+    .badge-category {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      color: var(--color-text-muted);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Due time badge */
+    .meta-time {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .meta-time.overdue {
+      color: var(--color-danger);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* Checklist progress badge */
+    .meta-checklist {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    /* Priority Indicator (Chấm tròn màu sắc) */
+    .priority-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+    }
+
+    .priority-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    .priority-dot.low {
+      background-color: var(--priority-low);
+    }
+
+    .priority-dot.medium {
+      background-color: var(--priority-medium);
+    }
+
+    .priority-dot.high {
+      background-color: var(--priority-high);
+    }
+
+    /* Nhóm Đã hoàn thành (Thu gọn) */
+    .completed-toggle {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      user-select: none;
+      padding: var(--space-2) 0;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: var(--font-sans);
+    }
+
+    .completed-toggle:hover {
+      color: var(--color-text);
+    }
+
+    /* ==========================================================================
+       4. PANEL PHẢI (320px) - CHI TIẾT TASK
+       Phụ trợ, kém nổi bật hơn trung tâm, hiển thị khi chọn task
+       ========================================================================== */
+    .detail-panel {
+      width: 320px;
+      min-width: 320px;
+      height: 100%;
+      background-color: var(--color-surface);
+      border-left: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .panel-header {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-header-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .panel-close-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .panel-close-btn:hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text);
+    }
+
+    .panel-body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      flex: 1;
+    }
+
+    /* Task Main Detail in Panel */
+    .panel-task-main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .panel-task-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      line-height: 1.35;
+    }
+
+    /* Property Rows */
+    .property-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+    }
+
+    .property-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-sm);
+    }
+
+    .property-label {
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .property-value {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    /* Task Note / Description */
+    .panel-note-box {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .panel-section-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .panel-note-content {
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      line-height: 1.5;
+    }
+
+    /* Checklist Section */
+    .panel-checklist-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .checklist-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .checklist-progress-text {
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 4px;
+      background-color: var(--color-border);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    .checklist-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      padding: 4px 0;
+    }
+
+    .checklist-text {
+      color: var(--color-text);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .checklist-item.done .checklist-text {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+
+    .checklist-add-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      margin-top: 2px;
+      font-family: var(--font-sans);
+    }
+
+    .checklist-add-btn:hover {
+      color: var(--color-primary-hover);
+    }
+
+    /* Pomodoro Action Area */
+    .panel-pomodoro-box {
+      margin-top: auto;
+      padding-top: var(--space-4);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .pomodoro-btn {
+      width: 100%;
+      height: 38px;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .pomodoro-btn:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .pomodoro-meta {
+      text-align: center;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- ======================================================================
+         1. SIDEBAR TRÁI (240px)
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <!-- Logo Brand -->
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="brand-name">Dylask</span>
+          <span class="brand-badge">Standard</span>
+        </div>
+        <div class="nav-section">
+          <a class="nav-item" href="../my-day/layout.html" title="Kế hoạch hôm nay">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="m9 16 2 2 4-4"></path>
+            </svg>
+            <span>Hôm nay</span>
+            <span class="nav-count">3</span>
+          </a>
+
+          <a class="nav-item active" href="../standard-list/layout.html" title="7 ngày tới">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="M8 14h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M16 14h.01"></path>
+            </svg>
+            <span>7 ngày tới</span>
+            <span class="nav-count">8</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html" title="Quá hạn">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="12" x2="8" y2="12"></line>
+              <line x1="12" x2="12.01" y1="16" y2="16"></line>
+            </svg>
+            <span>Quá hạn</span>
+            <span class="nav-count alert">1</span>
+          </a>
+
+          <a class="nav-item" href="../calendar/layout.html" title="Xem lịch">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+            </svg>
+            <span>Lịch</span>
+          </a>
+        </div>
+
+        <!-- Nhóm Danh mục đời sống -->
+        <div class="nav-section">
+          <div class="nav-section-title">Danh mục</div>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span>Học tập</span>
+            <span class="nav-count">2</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>Công việc</span>
+            <span class="nav-count">1</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Cá nhân</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="21" r="1"></circle>
+              <circle cx="19" cy="21" r="1"></circle>
+              <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+            </svg>
+            <span>Mua sắm</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Gia đình</span>
+          </a>
+        </div>
+
+        <!-- Nhóm Hệ thống -->
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a class="nav-item" href="../settings/layout.html" title="Cài đặt hệ thống">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Cài đặt</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Cuối Sidebar: Công tắc Dual-Mode -->
+      <div class="sidebar-footer">
+        <div class="mode-switch-container">
+          <a class="mode-switch-btn active" href="../standard-list/layout.html" title="Chế độ người dùng phổ thông">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-switch-btn" href="../developer-board/layout.html" title="Chuyển sang Chế độ Lập trình viên">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         VÙNG NỘI DUNG CHÍNH (HEADER + STAGE + DETAIL PANEL)
+         ====================================================================== -->
+    <div class="main-wrapper">
+
+      <!-- 2. THANH TRÊN CÙNG -->
+      <header class="topbar">
+        <div class="search-box">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+          </svg>
+          <input class="search-input" type="text" placeholder="Tìm kiếm công việc...">
+        </div>
+
+        <a class="user-profile" href="../settings/layout.html" style="text-decoration: none; cursor: pointer;" title="Cài đặt tài khoản">
+          <span class="user-name">Duy Anh</span>
+          <div class="user-avatar" title="Tài khoản cá nhân">DA</div>
+        </a>
+      </header>
+
+      <!-- KHUNG HIỂN THỊ CHÍNH -->
+      <div class="content-area">
+
+        <!-- ====================================================================
+             3. NỘI DUNG CHÍNH (LIST VIEW - MAX-WIDTH 720px CĂN GIỮA)
+             Trọng tâm thị giác: Ô thêm việc nhanh và Danh sách task
+             ==================================================================== -->
+        <main class="list-stage">
+          <div class="list-container">
+
+            <!-- Tiêu đề "Hôm nay" + Ngày hiện tại -->
+            <div class="stage-header">
+              <h1 class="stage-title">Hôm nay</h1>
+              <p class="stage-subtitle">Thứ Hai, ngày 12 tháng 10</p>
+            </div>
+
+            <!-- Ô Thêm Việc Nhanh (Trọng tâm) -->
+            <div class="quick-add-card">
+              <svg class="icon quick-add-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <input class="quick-add-input" type="text" placeholder="Đóng tiền điện trước 18h thứ Năm tới" aria-label="Thêm việc nhanh">
+              <span class="quick-add-hint">Enter</span>
+            </div>
+
+            <!-- NHÓM 1: QUÁ HẠN (ĐẶT TRÊN CÙNG) -->
+            <section class="task-group">
+              <div class="group-header overdue">
+                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>Quá hạn</span>
+                <span class="group-count">(1)</span>
+              </div>
+
+              <ul class="task-list">
+                <!-- Task quá hạn: Nộp báo cáo thực tập tuần 3 -->
+                <li class="task-card">
+                  <div class="task-checkbox" title="Đánh dấu hoàn thành">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+
+                  <div class="task-content">
+                    <span class="task-title">Nộp báo cáo thực tập tuần 3</span>
+                    <div class="task-meta">
+                      <span class="badge-category">Công việc</span>
+                      <span class="meta-time overdue">
+                        <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Quá hạn 1 ngày</span>
+                      </span>
+                      <span class="priority-indicator" title="Mức độ ưu tiên: Cao">
+                        <span class="priority-dot high"></span>
+                        <span>Cao</span>
+                      </span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </section>
+
+            <!-- NHÓM 2: HÔM NAY -->
+            <section class="task-group">
+              <div class="group-header">
+                <span>Hôm nay</span>
+                <span class="group-count">(3 việc cần làm)</span>
+              </div>
+
+              <ul class="task-list">
+
+                <!-- Task 1: Đóng tiền điện tháng 10 -->
+                <li class="task-card">
+                  <div class="task-checkbox" title="Đánh dấu hoàn thành">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+
+                  <div class="task-content">
+                    <span class="task-title">Đóng tiền điện tháng 10</span>
+                    <div class="task-meta">
+                      <span class="badge-category">Gia đình</span>
+                      <span class="meta-time">
+                        <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>18:00</span>
+                      </span>
+                      <span class="priority-indicator" title="Mức độ ưu tiên: Cao">
+                        <span class="priority-dot high"></span>
+                        <span>Cao</span>
+                      </span>
+                    </div>
+                  </div>
+                </li>
+
+                <!-- Task 2: Ôn từ vựng IELTS Unit 5 (Đang chọn - liên kết panel phải) -->
+                <li class="task-card selected">
+                  <div class="task-checkbox" title="Đánh dấu hoàn thành">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+
+                  <div class="task-content">
+                    <span class="task-title">Ôn từ vựng IELTS Unit 5</span>
+                    <div class="task-meta">
+                      <span class="badge-category">Học tập</span>
+                      <span class="meta-time">
+                        <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>20:00</span>
+                      </span>
+                      <span class="priority-indicator" title="Mức độ ưu tiên: Trung bình">
+                        <span class="priority-dot medium"></span>
+                        <span>Trung bình</span>
+                      </span>
+                      <span class="meta-checklist" title="Tiến độ danh sách kiểm tra">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="9 11 12 14 22 4"></polyline>
+                          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>2/4</span>
+                      </span>
+                    </div>
+                  </div>
+                </li>
+
+                <!-- Task 3: Mua cà phê và sữa tươi -->
+                <li class="task-card">
+                  <div class="task-checkbox" title="Đánh dấu hoàn thành">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+
+                  <div class="task-content">
+                    <span class="task-title">Mua cà phê và sữa tươi</span>
+                    <div class="task-meta">
+                      <span class="badge-category">Mua sắm</span>
+                      <span class="priority-indicator" title="Mức độ ưu tiên: Thấp">
+                        <span class="priority-dot low"></span>
+                        <span>Thấp</span>
+                      </span>
+                    </div>
+                  </div>
+                </li>
+
+              </ul>
+            </section>
+
+            <!-- NHÓM 3: ĐÃ HOÀN THÀNH (THU GỌN Ở CUỐI) -->
+            <section class="task-group">
+              <button class="completed-toggle" type="button">
+                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m6 9 6 6 6-6"></path>
+                </svg>
+                <span>Đã hoàn thành</span>
+                <span class="group-count">(1)</span>
+              </button>
+
+              <ul class="task-list">
+                <li class="task-card completed">
+                  <div class="task-checkbox checked" title="Bỏ đánh dấu hoàn thành">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+
+                  <div class="task-content">
+                    <span class="task-title">Uống 2 lít nước và tập thể dục nhẹ</span>
+                    <div class="task-meta">
+                      <span class="badge-category">Cá nhân</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </section>
+
+          </div>
+        </main>
+
+        <!-- ====================================================================
+             4. PANEL PHẢI (320px) - CHI TIẾT TASK
+             Hiển thị thông tin task đang chọn ("Ôn từ vựng IELTS Unit 5")
+             ==================================================================== -->
+        <aside class="detail-panel">
+          <!-- Panel Header -->
+          <div class="panel-header">
+            <span class="panel-header-title">Chi tiết công việc</span>
+            <button class="panel-close-btn" type="button" title="Đóng bảng chi tiết">
+              <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Panel Body -->
+          <div class="panel-body">
+            <!-- Tiêu đề task trong panel -->
+            <div class="panel-task-main">
+              <h2 class="panel-task-title">Ôn từ vựng IELTS Unit 5</h2>
+            </div>
+
+            <!-- Bảng thuộc tính công việc -->
+            <div class="property-grid">
+              <div class="property-row">
+                <span class="property-label">
+                  <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  </svg>
+                  <span>Danh mục</span>
+                </span>
+                <span class="badge-category">Học tập</span>
+              </div>
+
+              <div class="property-row">
+                <span class="property-label">
+                  <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span>Hạn chót</span>
+                </span>
+                <span class="property-value">Hôm nay, 20:00</span>
+              </div>
+
+              <div class="property-row">
+                <span class="property-label">
+                  <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <span>Ưu tiên</span>
+                </span>
+                <span class="property-value">
+                  <span class="priority-dot medium"></span>
+                  <span>Trung bình</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Ghi chú công việc -->
+            <div class="panel-note-box">
+              <span class="panel-section-title">Ghi chú</span>
+              <p class="panel-note-content">Tập trung 30 từ vựng chuyên sâu chủ đề Environment & Technology trong tài liệu Cambridge 18.</p>
+            </div>
+
+            <!-- Checklist con (2/4 đã xong) -->
+            <div class="panel-checklist-section">
+              <div class="checklist-header-row">
+                <span class="panel-section-title">Danh sách kiểm tra</span>
+                <span class="checklist-progress-text">2 / 4 hoàn thành</span>
+              </div>
+
+              <!-- Thanh tiến độ phẳng (Không gradient, không glow) -->
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width: 50%;"></div>
+              </div>
+
+              <ul class="checklist-items">
+                <li class="checklist-item done">
+                  <div class="task-checkbox checked">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <span class="checklist-text">Đọc danh mục từ mới chủ đề Environment</span>
+                </li>
+
+                <li class="checklist-item done">
+                  <div class="task-checkbox checked">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <span class="checklist-text">Tra phiên âm và ví dụ trong Oxford Learner</span>
+                </li>
+
+                <li class="checklist-item">
+                  <div class="task-checkbox">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <span class="checklist-text">Làm bài tập trắc nghiệm nối nghĩa Unit 5</span>
+                </li>
+
+                <li class="checklist-item">
+                  <div class="task-checkbox">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <span class="checklist-text">Ghi âm phát âm 10 câu ví dụ tự tạo</span>
+                </li>
+              </ul>
+
+              <button class="checklist-add-btn" type="button">
+                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Thêm mục kiểm tra</span>
+              </button>
+            </div>
+
+            <!-- Nút Bắt đầu Pomodoro 25 phút -->
+            <div class="panel-pomodoro-box">
+              <button class="pomodoro-btn" type="button">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="10" x2="14" y1="2" y2="2"></line>
+                  <line x1="12" x2="15" y1="14" y2="11"></line>
+                  <circle cx="12" cy="14" r="8"></circle>
+                </svg>
+                <span>Bắt đầu Pomodoro (25 phút)</span>
+              </button>
+              <p class="pomodoro-meta">25 phút tập trung · 5 phút nghỉ ngơi</p>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

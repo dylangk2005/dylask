@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Cài đặt hệ thống</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS
+       Định nghĩa từ docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root {
+      /* Typography */
+      --font-family-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số của 4px) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Standard Mode Colors */
+      --color-bg: #FAFAF7;
+      --color-surface: #FFFFFF;
+      --color-surface-subtle: #F4F3EF;
+      --color-border: #E7E5E0;
+      --color-border-strong: #D1CFCA;
+
+      --color-text: #1C1B18;
+      --color-text-muted: #6B6A63;
+
+      --color-primary: #0F766E;
+      --color-primary-hover: #115E59;
+      --color-primary-subtle: #E6F4F1;
+      --color-primary-text: #FFFFFF;
+
+      /* System Status Colors */
+      --color-success: #16A34A;
+      --color-success-bg: #F0FDF4;
+      --color-danger: #DC2626;
+      --color-danger-bg: #FEF2F2;
+      --color-warning: #D97706;
+      --color-warning-bg: #FFFBEB;
+      --color-info: #2563EB;
+      --color-info-bg: #EFF6FF;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mono {
+      font-family: var(--font-family-mono);
+    }
+
+    /* ==========================================================================
+       APP SHELL LAYOUT
+       Đồng nhất với standard-list (Sidebar 240px + Top bar 52px)
+       ========================================================================== */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* 1. SIDEBAR TRÁI (240px) */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      height: 100vh;
+      background-color: var(--color-bg);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .sidebar-top {
+      padding: var(--space-4) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-2);
+      height: 36px;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+    }
+
+    .brand-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+    }
+
+    .nav-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-section-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-2) var(--space-2) var(--space-1);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: background-color 0.15s ease, color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-item.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .nav-item .icon {
+      color: var(--color-text-muted);
+    }
+
+    .nav-item.active .icon {
+      color: var(--color-primary);
+    }
+
+    /* Sidebar Footer / Mode Switch */
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      background-color: var(--color-bg);
+    }
+
+    .mode-switch-container {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 3px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .mode-switch-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: 6px 8px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-family-sans);
+      text-decoration: none;
+    }
+
+    .mode-switch-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* 2. THANH TRÊN CÙNG */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 52px;
+      min-height: 52px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+      user-select: none;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      width: 320px;
+      height: 34px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 0 var(--space-3);
+      color: var(--color-text-muted);
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    .user-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      font-family: var(--font-family-mono);
+    }
+
+    /* ==========================================================================
+       VÙNG NỘI DUNG CÀI ĐẶT (SETTINGS STAGE)
+       Tab dọc bên trái trong trang + Khung nội dung bên phải
+       ========================================================================== */
+    .settings-stage {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-6) var(--space-8);
+      display: flex;
+      justify-content: center;
+    }
+
+    .settings-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .settings-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-bottom: var(--border-width) solid var(--color-border);
+      padding-bottom: var(--space-4);
+    }
+
+    .settings-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+    }
+
+    .settings-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    /* Khung chia 2 cột: Tab dọc & Nội dung tab */
+    .settings-layout {
+      display: flex;
+      gap: var(--space-6);
+      align-items: flex-start;
+    }
+
+    /* Tab Dọc Bên Trái (~200px) */
+    .settings-tabs-vertical {
+      width: 200px;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      user-select: none;
+    }
+
+    .settings-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      background: transparent;
+      border: var(--border-width) solid transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      width: 100%;
+    }
+
+    .settings-tab-btn:hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text);
+    }
+
+    .settings-tab-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border-color: var(--color-border);
+    }
+
+    .settings-tab-btn.active .icon {
+      color: var(--color-primary);
+    }
+
+    /* Nội Dung Cài Đặt (Panel phải) */
+    .settings-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Khối cài đặt (Settings Card) */
+    .setting-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .setting-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .setting-label {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .setting-desc {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      line-height: 1.45;
+    }
+
+    /* Toggle Switch Phẳng (Không gradient, không glow) */
+    .switch-toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .switch-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--color-border-strong);
+      border-radius: var(--radius-full);
+      transition: 0.2s;
+    }
+
+    .slider::before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--color-surface);
+      border-radius: var(--radius-full);
+      transition: 0.2s;
+    }
+
+    .switch-toggle input:checked + .slider {
+      background-color: var(--color-primary);
+    }
+
+    .switch-toggle input:checked + .slider::before {
+      transform: translateX(18px);
+    }
+
+    /* Form Fields bên trong Settings */
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .form-row-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .form-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .settings-input {
+      width: 100%;
+      height: 36px;
+      padding: 0 var(--space-3);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .settings-input:focus {
+      border-color: var(--color-primary);
+      background-color: var(--color-surface);
+    }
+
+    .settings-input.mono {
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-xs);
+    }
+
+    .btn-icon-inside {
+      position: absolute;
+      right: 8px;
+      height: 24px;
+      width: 24px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-icon-inside:hover {
+      color: var(--color-text);
+    }
+
+    .form-helper-text {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    /* Radio Selection Cards (Lựa chọn Provider hoặc Chế độ Giao diện) */
+    .selection-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .selection-card {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .selection-card:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    .selection-card.selected {
+      background-color: var(--color-surface);
+      border-color: var(--color-primary);
+    }
+
+    .selection-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+
+    .selection-card-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .radio-circle {
+      width: 14px;
+      height: 14px;
+      border-radius: var(--radius-full);
+      border: var(--border-width) solid var(--color-border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .selection-card.selected .radio-circle {
+      border-color: var(--color-primary);
+    }
+
+    .radio-circle::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-primary);
+      display: none;
+    }
+
+    .selection-card.selected .radio-circle::after {
+      display: block;
+    }
+
+    .selection-card-desc {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    /* Buttons */
+    .btn-action-primary {
+      height: 36px;
+      padding: 0 var(--space-4);
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      cursor: pointer;
+      width: fit-content;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-action-primary:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .btn-action-outline {
+      height: 32px;
+      padding: 0 var(--space-3);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    .btn-action-outline:hover {
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface-subtle);
+    }
+
+    /* Git Integration Row */
+    .git-service-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      gap: var(--space-3);
+    }
+
+    .git-service-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .git-service-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text);
+    }
+
+    .git-service-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .git-service-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .git-status-tag {
+      font-size: 11px;
+      font-family: var(--font-family-mono);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .git-status-tag.connected {
+      color: var(--color-success);
+    }
+
+    .git-status-tag.disconnected {
+      color: var(--color-text-muted);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: currentColor;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- ======================================================================
+         1. SIDEBAR TRÁI (240px)
+         Đồng nhất hoàn toàn với standard-list layout
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <!-- Logo Brand -->
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="brand-name">Dylask</span>
+        </div>
+
+        <!-- Điều hướng công việc -->
+        <div class="nav-section">
+          <a class="nav-item" href="../my-day/layout.html" title="Kế hoạch hôm nay">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="m9 16 2 2 4-4"></path>
+            </svg>
+            <span>Hôm nay</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html" title="7 ngày tới">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="M8 14h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M16 14h.01"></path>
+            </svg>
+            <span>7 ngày tới</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html" title="Quá hạn">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Quá hạn</span>
+          </a>
+
+          <a class="nav-item" href="../calendar/layout.html" title="Xem lịch">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+            </svg>
+            <span>Lịch</span>
+          </a>
+        </div>
+
+        <!-- Nhóm Cấu hình hệ thống -->
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+
+          <a class="nav-item active" href="../settings/layout.html" title="Cài đặt hệ thống">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Cài đặt</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Cuối Sidebar: Công tắc Dual-Mode -->
+      <div class="sidebar-footer">
+        <div class="mode-switch-container">
+          <a class="mode-switch-btn active" href="../standard-list/layout.html" title="Chế độ người dùng phổ thông">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-switch-btn" href="../developer-board/layout.html" title="Chuyển sang Chế độ Lập trình viên">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         VÙNG NỘI DUNG CHÍNH (TOP BAR + SETTINGS STAGE)
+         ====================================================================== -->
+    <div class="main-wrapper">
+
+      <!-- 2. THANH TRÊN CÙNG -->
+      <header class="topbar">
+        <div class="search-box">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+          </svg>
+          <input class="search-input" type="text" placeholder="Tìm kiếm công việc...">
+        </div>
+
+        <a class="user-profile" href="../settings/layout.html" style="text-decoration: none; cursor: pointer;" title="Cài đặt tài khoản">
+          <span class="user-name">Duy Anh</span>
+          <div class="user-avatar" title="Tài khoản cá nhân">DA</div>
+        </a>
+      </header>
+
+      <!-- VÙNG CÀI ĐẶT -->
+      <main class="settings-stage">
+        <div class="settings-container">
+
+          <!-- Tiêu đề trang -->
+          <div class="settings-header">
+            <h1 class="settings-title">Cài đặt</h1>
+            <p class="settings-subtitle">Quản lý hồ sơ cá nhân, giao diện hệ thống và các tiện ích mở rộng.</p>
+          </div>
+
+          <!-- Bố cục: Tab Dọc Bên Trái + Nội Dung Bên Phải -->
+          <div class="settings-layout">
+
+            <!-- TAB DỌC BÊN TRÁI (~200px) -->
+            <nav class="settings-tabs-vertical" aria-label="Danh mục cài đặt">
+              <button class="settings-tab-btn" data-target="tab-profile" type="button">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Hồ sơ</span>
+              </button>
+
+              <button class="settings-tab-btn" data-target="tab-appearance" type="button">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                  <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C21.438 6.5 17.5 2 12 2Z"></path>
+                </svg>
+                <span>Giao diện</span>
+              </button>
+
+              <button class="settings-tab-btn" data-target="tab-notifications" type="button">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                </svg>
+                <span>Thông báo</span>
+              </button>
+
+              <!-- Tab AI làm mặc định active -->
+              <button class="settings-tab-btn active" data-target="tab-ai" type="button">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+                  <path d="M5 3v4"></path>
+                  <path d="M19 17v4"></path>
+                  <path d="M3 5h4"></path>
+                  <path d="M17 19h4"></path>
+                </svg>
+                <span>AI</span>
+              </button>
+
+              <button class="settings-tab-btn" data-target="tab-git" type="button">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="6" x2="6" y1="3" y2="15"></line>
+                  <circle cx="18" cy="6" r="3"></circle>
+                  <circle cx="6" cy="18" r="3"></circle>
+                  <path d="M18 9a9 9 0 0 1-9 9"></path>
+                </svg>
+                <span>Tích hợp Git</span>
+              </button>
+            </nav>
+
+            <!-- NỘI DUNG TỪNG TAB -->
+            <div class="settings-panel">
+
+              <!-- ==============================================================
+                   TAB 4: AI (TRẠNG THÁI MẶC ĐỊNH KHI MỞ)
+                   ============================================================== -->
+              <div class="tab-content active" id="tab-ai">
+
+                <!-- 1. Công tắc Bật/Tắt Module AI -->
+                <div class="setting-card">
+                  <div class="card-header-row">
+                    <div class="setting-info">
+                      <span class="setting-label">Kích hoạt Module Trí tuệ Nhân tạo</span>
+                      <p class="setting-desc">Bật tính năng nhập liệu tự nhiên (NLP Quick-Add) và gợi ý chia nhỏ checklist mục tiêu.</p>
+                    </div>
+                    <label class="switch-toggle" title="Bật/Tắt module AI">
+                      <input type="checkbox" id="aiModuleToggle" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- 2. Lựa chọn nguồn cung cấp mô hình (Gemini Free vs BYOK) -->
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Nguồn cấp API</span>
+                    <p class="setting-desc">Lựa chọn sử dụng hạn mức miễn phí có sẵn hoặc khóa API riêng để không bị giới hạn số lần gọi.</p>
+                  </div>
+
+                  <div class="selection-grid">
+                    <!-- Option 1: Hạn mức miễn phí -->
+                    <div class="selection-card" id="optionFreeQuota" onclick="selectAiProvider('free')">
+                      <div class="selection-card-header">
+                        <span class="selection-card-title">Hạn mức miễn phí</span>
+                        <div class="radio-circle"></div>
+                      </div>
+                      <p class="selection-card-desc">Sử dụng hạn ngạch Gemini Flash mặc định của hệ thống. Phù hợp cho nhu cầu cơ bản hàng ngày.</p>
+                    </div>
+
+                    <!-- Option 2: BYOK (Đang chọn) -->
+                    <div class="selection-card selected" id="optionByok" onclick="selectAiProvider('byok')">
+                      <div class="selection-card-header">
+                        <span class="selection-card-title">Khóa riêng (BYOK)</span>
+                        <div class="radio-circle"></div>
+                      </div>
+                      <p class="selection-card-desc">Tự cung cấp Google Gemini API Key. Tốc độ cao, không phụ thuộc hạn mức dùng chung.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Ô nhập API Key riêng (BYOK) -->
+                <div class="setting-card" id="byokKeySection">
+                  <div class="setting-info">
+                    <span class="setting-label">Google Gemini API Key</span>
+                    <p class="setting-desc">Nhập khóa API nhận từ Google AI Studio để kết nối trực tiếp.</p>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-input-wrapper">
+                      <input class="settings-input mono" id="apiKeyInput" type="password" value="AIzaSyB3X7kQ89aM12bN77z84KxP901Vw" placeholder="AIzaSy..." style="padding-right: 36px;">
+                      <button class="btn-icon-inside" id="toggleApiKeyBtn" type="button" title="Hiện hoặc ẩn API Key">
+                        <svg class="icon" id="keyEyeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      </button>
+                    </div>
+                    <!-- Dòng chú thích theo đúng spec -->
+                    <p class="form-helper-text">
+                      * Khóa API chỉ được mã hóa và lưu trữ riêng cho tài khoản này trên cơ sở dữ liệu của bạn, không chia sẻ với bên thứ ba.
+                    </p>
+                  </div>
+
+                  <button class="btn-action-primary" type="button">
+                    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Lưu cấu hình AI</span>
+                  </button>
+                </div>
+
+              </div>
+
+              <!-- ==============================================================
+                   TAB 1: HỒ SƠ (PROFILE)
+                   ============================================================== -->
+              <div class="tab-content" id="tab-profile">
+                <!-- Thông tin cơ bản -->
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Thông tin cá nhân</span>
+                    <p class="setting-desc">Cập nhật họ tên hiển thị và địa chỉ email đăng nhập của bạn.</p>
+                  </div>
+
+                  <div class="form-row">
+                    <label class="form-row-label">Họ và tên</label>
+                    <input class="settings-input" type="text" value="Nguyễn Duy Anh">
+                  </div>
+
+                  <div class="form-row">
+                    <label class="form-row-label">Địa chỉ email</label>
+                    <input class="settings-input" type="email" value="duyanh@dylask.dev" disabled style="opacity: 0.7; cursor: not-allowed;">
+                    <span class="form-helper-text">Email dùng để đăng nhập và không thể thay đổi trực tiếp.</span>
+                  </div>
+
+                  <button class="btn-action-primary" type="button">
+                    <span>Lưu thay đổi</span>
+                  </button>
+                </div>
+
+                <!-- Đổi mật khẩu -->
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Đổi mật khẩu</span>
+                    <p class="setting-desc">Đảm bảo tài khoản sử dụng mật khẩu mạnh dài ít nhất 8 ký tự.</p>
+                  </div>
+
+                  <div class="form-row">
+                    <label class="form-row-label">Mật khẩu hiện tại</label>
+                    <input class="settings-input" type="password" placeholder="Nhập mật khẩu hiện tại">
+                  </div>
+
+                  <div class="form-row">
+                    <label class="form-row-label">Mật khẩu mới</label>
+                    <input class="settings-input" type="password" placeholder="Nhập mật khẩu mới">
+                  </div>
+
+                  <div class="form-row">
+                    <label class="form-row-label">Xác nhận mật khẩu mới</label>
+                    <input class="settings-input" type="password" placeholder="Nhập lại mật khẩu mới">
+                  </div>
+
+                  <button class="btn-action-primary" type="button">
+                    <span>Cập nhật mật khẩu</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==============================================================
+                   TAB 2: GIAO DIỆN (APPEARANCE)
+                   ============================================================== -->
+              <div class="tab-content" id="tab-appearance">
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Chế độ giao diện mặc định</span>
+                    <p class="setting-desc">Chọn chế độ tự động áp dụng mỗi khi bạn đăng nhập vào Dylask.</p>
+                  </div>
+
+                  <div class="selection-grid">
+                    <!-- Card 1: Standard Mode (Đang chọn) -->
+                    <div class="selection-card selected" onclick="toggleModeSelection(this)">
+                      <div class="selection-card-header">
+                        <span class="selection-card-title">Standard Mode</span>
+                        <div class="radio-circle"></div>
+                      </div>
+                      <p class="selection-card-desc">Giao diện sáng, thoáng đãng, thân thiện. Tập trung vào quản lý công việc cá nhân, gia đình và thói quen hàng ngày.</p>
+                    </div>
+
+                    <!-- Card 2: Developer Mode -->
+                    <div class="selection-card" onclick="toggleModeSelection(this)">
+                      <div class="selection-card-header">
+                        <span class="selection-card-title">Developer Mode</span>
+                        <div class="radio-circle"></div>
+                      </div>
+                      <p class="selection-card-desc">Giao diện tối, mật độ thông tin cao. Tối ưu cho quản lý sprint, Kanban board, Markdown và tự động hóa Git.</p>
+                    </div>
+                  </div>
+
+                  <button class="btn-action-primary" type="button">
+                    <span>Lưu tùy chọn</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==============================================================
+                   TAB 3: THÔNG BÁO (NOTIFICATIONS)
+                   ============================================================== -->
+              <div class="tab-content" id="tab-notifications">
+                <!-- Bật/tắt Popup trình duyệt -->
+                <div class="setting-card">
+                  <div class="card-header-row">
+                    <div class="setting-info">
+                      <span class="setting-label">Thông báo nổi trên trình duyệt</span>
+                      <p class="setting-desc">Hiển thị cảnh báo trực tiếp trên màn hình khi công việc sắp đến hạn hoặc phiên Pomodoro kết thúc.</p>
+                    </div>
+                    <label class="switch-toggle" title="Bật/Tắt pop-up">
+                      <input type="checkbox" checked>
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Bật/tắt Email -->
+                <div class="setting-card">
+                  <div class="card-header-row">
+                    <div class="setting-info">
+                      <span class="setting-label">Email nhắc việc định kỳ</span>
+                      <p class="setting-desc">Gửi email tóm tắt công việc tồn đọng và thông báo việc quá hạn đầu ngày.</p>
+                    </div>
+                    <label class="switch-toggle" title="Bật/Tắt email">
+                      <input type="checkbox">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Thời gian nhắc mặc định -->
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Thời gian nhắc nhở mặc định</span>
+                    <p class="setting-desc">Khoảng thời gian báo trước mốc deadline khi bạn tạo công việc mới.</p>
+                  </div>
+
+                  <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="selection-card" onclick="selectReminderTime(this)">
+                      <div class="selection-card-header">
+                        <span class="selection-card-title">15 phút</span>
+                        <div class="radio-circle"></div>
+                      </div>
+                      <p class="selection-card-desc">Trước giờ đến hạn</p>
+                    </div>
+
+                    <div class="selection-card selected" onclick="selectReminderTime(this)">
+                      <div class="selection-card-header">
+                        <span class="selection-card-title">1 giờ</span>
+                        <div class="radio-circle"></div>
+                      </div>
+                      <p class="selection-card-desc">Trước giờ đến hạn</p>
+                    </div>
+
+                    <div class="selection-card" onclick="selectReminderTime(this)">
+                      <div class="selection-card-header">
+                        <span class="selection-card-title">1 ngày</span>
+                        <div class="radio-circle"></div>
+                      </div>
+                      <p class="selection-card-desc">Trước ngày đến hạn</p>
+                    </div>
+                  </div>
+
+                  <button class="btn-action-primary" type="button">
+                    <span>Lưu cấu hình</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==============================================================
+                   TAB 5: TÍCH HỢP GIT (GIT INTEGRATION)
+                   ============================================================== -->
+              <div class="tab-content" id="tab-git">
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Liên kết nền tảng mã nguồn</span>
+                    <p class="setting-desc">Đồng bộ tự động trạng thái công việc qua Git Branch, Commit và Pull Request Webhook.</p>
+                  </div>
+
+                  <!-- Dịch vụ 1: GitHub (Đã kết nối) -->
+                  <div class="git-service-row">
+                    <div class="git-service-info">
+                      <div class="git-service-icon">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                          <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                        </svg>
+                      </div>
+                      <div class="git-service-meta">
+                        <span class="git-service-name">GitHub</span>
+                        <span class="git-status-tag connected">
+                          <span class="status-dot"></span>
+                          <span>Đã liên kết tài khoản @dylangk2005</span>
+                        </span>
+                      </div>
+                    </div>
+                    <button class="btn-action-outline" type="button" style="color: var(--color-danger);">
+                      <span>Ngắt kết nối</span>
+                    </button>
+                  </div>
+
+                  <!-- Dịch vụ 2: GitLab (Chưa kết nối) -->
+                  <div class="git-service-row">
+                    <div class="git-service-info">
+                      <div class="git-service-icon">
+                        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="m22 13.29-3.41-10.4a.7.7 0 0 0-.66-.49.7.7 0 0 0-.66.49l-2.09 6.36H8.82L6.73 3.38a.7.7 0 0 0-.66-.49.7.7 0 0 0-.66.49L2 13.29a.74.74 0 0 0 .27.83l9.53 6.93a.75.75 0 0 0 .88 0l9.53-6.93a.74.74 0 0 0 .27-.83Z"></path>
+                        </svg>
+                      </div>
+                      <div class="git-service-meta">
+                        <span class="git-service-name">GitLab</span>
+                        <span class="git-status-tag disconnected">
+                          <span class="status-dot"></span>
+                          <span>Chưa kết nối</span>
+                        </span>
+                      </div>
+                    </div>
+                    <button class="btn-action-outline" type="button">
+                      <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                      <span>Kết nối GitLab</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Webhook URL Box -->
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Địa chỉ Webhook nhận sự kiện</span>
+                    <p class="setting-desc">Dán đường dẫn này vào mục Webhooks trên GitHub / GitLab repository của bạn.</p>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-input-wrapper">
+                      <input class="settings-input mono" type="text" value="https://api.dylask.dev/api/v1/webhooks/github/sync" readonly>
+                      <button class="btn-icon-inside" type="button" title="Sao chép Webhook URL">
+                        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                        </svg>
+                      </button>
+                    </div>
+                    <span class="form-helper-text">Sự kiện hỗ trợ: Push events, Pull Request events (Opened, Closed).</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- JavaScript tối giản xử lý chuyển Tab & Ẩn/Hiện API Key -->
+  <script>
+    (function() {
+      // Chuyển đổi Tab Dọc
+      var tabButtons = document.querySelectorAll('.settings-tab-btn');
+      var tabContents = document.querySelectorAll('.tab-content');
+
+      tabButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var targetId = this.getAttribute('data-target');
+
+          tabButtons.forEach(function(b) { b.classList.remove('active'); });
+          tabContents.forEach(function(c) { c.classList.remove('active'); });
+
+          this.classList.add('active');
+          var targetContent = document.getElementById(targetId);
+          if (targetContent) {
+            targetContent.classList.add('active');
+          }
+        });
+      });
+
+      // Ẩn / Hiện API Key
+      var apiKeyInput = document.getElementById('apiKeyInput');
+      var toggleApiKeyBtn = document.getElementById('toggleApiKeyBtn');
+      var keyEyeIcon = document.getElementById('keyEyeIcon');
+      var isKeyVisible = false;
+
+      if (toggleApiKeyBtn && apiKeyInput) {
+        toggleApiKeyBtn.addEventListener('click', function() {
+          isKeyVisible = !isKeyVisible;
+          apiKeyInput.type = isKeyVisible ? 'text' : 'password';
+          if (isKeyVisible) {
+            keyEyeIcon.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line>';
+          } else {
+            keyEyeIcon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle>';
+          }
+        });
+      }
+    })();
+
+    // Lựa chọn AI Provider (Free vs BYOK)
+    function selectAiProvider(type) {
+      var freeCard = document.getElementById('optionFreeQuota');
+      var byokCard = document.getElementById('optionByok');
+      var byokSection = document.getElementById('byokKeySection');
+
+      if (type === 'free') {
+        freeCard.classList.add('selected');
+        byokCard.classList.remove('selected');
+        if (byokSection) byokSection.style.display = 'none';
+      } else {
+        byokCard.classList.add('selected');
+        freeCard.classList.remove('selected');
+        if (byokSection) byokSection.style.display = 'flex';
+      }
+    }
+
+    // Lựa chọn Giao diện
+    function toggleModeSelection(el) {
+      var parent = el.parentElement;
+      var cards = parent.querySelectorAll('.selection-card');
+      cards.forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+
+    // Lựa chọn Thời gian nhắc
+    function selectReminderTime(el) {
+      var parent = el.parentElement;
+      var cards = parent.querySelectorAll('.selection-card');
+      cards.forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+  </script>
+
+</body>
+</html>

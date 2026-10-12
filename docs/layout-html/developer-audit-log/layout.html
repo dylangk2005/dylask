@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Nhật ký thay đổi (Audit Log) (Developer Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 13px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 22px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số 4px - Compact High Density) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Mode Colors (Dark Theme) */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3D1418;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3B1F11;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382C10;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      /* System Status */
+      --color-success: #238636;
+      --color-success-bg: #0F2D17;
+      --color-warning: #D29922;
+      --color-warning-bg: #332408;
+      --color-danger: #F85149;
+      --color-danger-bg: #3E1616;
+      --color-info: #58A6FF;
+      --color-info-bg: #12243D;
+
+      /* Table Metrics */
+      --table-row-height: 40px;
+      --table-header-height: 34px;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.45;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Utility */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Scrollbar phẳng, kỹ thuật */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       APP SHELL LAYOUT
+       ========================================================================== */
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       1. SIDEBAR TRÁI (220px, đồng nhất Developer Mode)
+       ========================================================================== */
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      z-index: 20;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .workspace-header {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .workspace-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+      font-weight: var(--font-weight-bold);
+      font-size: 11px;
+    }
+
+    .brand-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-toggle-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .sidebar-toggle-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .project-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+
+    .project-selector .icon {
+      color: var(--color-primary);
+    }
+
+    .sprint-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .sprint-active-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    /* Navigation Menu */
+    .nav-group {
+      padding: var(--space-3) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-group-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+      background-color: var(--color-surface-subtle);
+      border-left: 2px solid var(--color-primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .nav-link.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 5px;
+      border-radius: var(--radius-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .git-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      padding: 2px 4px;
+    }
+
+    .git-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-success);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 6px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      text-decoration: none;
+    }
+
+    .mode-btn:hover {
+      color: var(--color-text);
+    }
+
+    .mode-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* ==========================================================================
+       MAIN VIEWPORT & TOPBAR
+       ========================================================================== */
+    .main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 48px;
+      min-height: 48px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      user-select: none;
+      z-index: 10;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-sep {
+      color: var(--color-border-strong);
+      font-size: 11px;
+    }
+
+    .breadcrumb-item.current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .audit-stats-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary-hover);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .command-palette-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 28px;
+      padding: 0 var(--space-3);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .command-palette-trigger:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text);
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1px 4px;
+      color: var(--color-text-muted);
+    }
+
+    /* ==========================================================================
+       THANH BỘ LỌC AUDIT LOG (LOẠI THAY ĐỔI, NGƯỜI THỰC HIỆN, KHOẢNG NGÀY)
+       ========================================================================== */
+    .audit-toolbar {
+      padding: var(--space-3) var(--space-4);
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .toolbar-filters-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    /* Select filter box */
+    .filter-select-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .filter-select {
+      height: 28px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 0 24px 0 8px;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .filter-select:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    .filter-select:focus {
+      border-color: var(--color-primary);
+    }
+
+    .select-arrow-icon {
+      position: absolute;
+      right: 7px;
+      pointer-events: none;
+      color: var(--color-text-muted);
+    }
+
+    /* Date range filter */
+    .date-range-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 28px;
+      padding: 0 8px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .date-range-box:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text);
+    }
+
+    .date-range-box .icon {
+      color: var(--color-primary);
+    }
+
+    /* Quick search task ID */
+    .task-search-input-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 28px;
+      padding: 0 8px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      width: 170px;
+    }
+
+    .task-search-input-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      width: 100%;
+    }
+
+    .task-search-input-box input::placeholder {
+      font-family: var(--font-sans);
+      color: var(--color-text-muted);
+    }
+
+    .toolbar-actions-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn-reset-filters {
+      height: 28px;
+      padding: 0 8px;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-reset-filters:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       VÙNG BẢNG AUDIT LOG (MẬT ĐỘ CAO, DÒNG THỜI GIAN)
+       ========================================================================== */
+    .audit-table-container {
+      flex: 1;
+      overflow: auto;
+      background-color: var(--color-bg);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .audit-card-frame {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 900px;
+    }
+
+    .audit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-xs);
+      text-align: left;
+    }
+
+    /* Table Header */
+    .audit-table th {
+      height: var(--table-header-height);
+      padding: 0 var(--space-3);
+      color: var(--color-text-muted);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border-bottom: var(--border-width) solid var(--color-border);
+      background-color: var(--color-bg);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    /* Columns Width */
+    .col-time { width: 155px; min-width: 155px; }
+    .col-actor { width: 165px; min-width: 165px; }
+    .col-type { width: 135px; min-width: 135px; }
+    .col-task { width: 260px; min-width: 260px; }
+    .col-diff { min-width: 240px; }
+
+    /* Table Body */
+    .audit-table td {
+      height: var(--table-row-height);
+      padding: 0 var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      vertical-align: middle;
+      color: var(--color-text);
+      white-space: nowrap;
+    }
+
+    .audit-row {
+      transition: background-color 0.1s ease;
+    }
+
+    .audit-row:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    .audit-row:last-child td {
+      border-bottom: none;
+    }
+
+    /* 1. Cột Thời gian */
+    .timestamp-cell {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* 2. Cột Người thực hiện / Tác nhân Webhook */
+    .actor-cell {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .actor-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border-strong);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-family: var(--font-mono);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      flex-shrink: 0;
+    }
+
+    .actor-name {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      font-size: var(--font-size-xs);
+    }
+
+    /* Dòng tác nhân "GitHub Webhook" chuyên biệt theo spec */
+    .webhook-actor-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary);
+    }
+
+    .webhook-actor-badge .icon {
+      color: var(--color-primary);
+    }
+
+    /* 3. Cột Loại thay đổi */
+    .change-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* Đổi trạng thái */
+    .change-type-badge.status {
+      color: var(--color-info);
+      background-color: var(--color-info-bg);
+      border: var(--border-width) solid var(--color-info);
+    }
+
+    /* Đổi deadline */
+    .change-type-badge.deadline {
+      color: var(--color-warning);
+      background-color: var(--color-warning-bg);
+      border: var(--border-width) solid var(--color-warning);
+    }
+
+    /* Phân công */
+    .change-type-badge.assignee {
+      color: var(--priority-p2);
+      background-color: var(--priority-p2-bg);
+      border: var(--border-width) solid var(--priority-p2);
+    }
+
+    /* 4. Cột Task liên quan */
+    .task-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-code-link {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .task-code-link:hover {
+      text-decoration: underline;
+    }
+
+    .task-snippet-title {
+      color: var(--color-text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* 5. Cột Giá trị cũ -> Giá trị mới (Mono) */
+    .diff-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .diff-old {
+      color: var(--color-danger);
+      background-color: var(--color-danger-bg);
+      border: var(--border-width) solid var(--color-danger);
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      text-decoration: line-through;
+    }
+
+    .diff-arrow {
+      color: var(--color-text-muted);
+      font-weight: bold;
+    }
+
+    .diff-new {
+      color: var(--color-success);
+      background-color: var(--color-success-bg);
+      border: var(--border-width) solid var(--color-success);
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .diff-note {
+      font-size: 10px;
+      color: var(--color-text-muted);
+      margin-left: 2px;
+    }
+
+    /* ==========================================================================
+       CHÂN BẢNG: PHÂN TRANG (PAGINATION)
+       ========================================================================== */
+    .audit-pagination-bar {
+      padding: 8px var(--space-4);
+      background-color: var(--color-surface);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .pagination-info {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .page-btn {
+      min-width: 26px;
+      height: 26px;
+      padding: 0 6px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .page-btn.active {
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border-color: var(--color-primary);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .page-ellipsis {
+      padding: 0 4px;
+      color: var(--color-text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ======================================================================
+         1. SIDEBAR TRÁI (220px, đồng nhất Developer Mode)
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="workspace-header">
+          <div class="workspace-row">
+            <div class="brand-group">
+              <div class="brand-mark">D</div>
+              <span class="brand-title">Dylask</span>
+            </div>
+            <button class="sidebar-toggle-btn" type="button" title="Thu gọn Sidebar">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <line x1="9" x2="9" y1="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+
+          <a class="project-selector" href="../developer-project-create/layout.html" style="text-decoration: none;" title="Chuyển kho / Tạo dự án mới">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>dylask-api</span>
+            <svg class="icon" style="margin-left: auto;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+
+          <div class="sprint-badge-row">
+            <span class="sprint-active-dot"></span>
+            <span>Sprint 3 (Đang chạy)</span>
+          </div>
+        </div>
+
+        <nav class="nav-group">
+          <span class="nav-group-label">Quản lý Sprint</span>
+          <a class="nav-link" href="../developer-backlog/layout.html" title="Danh sách tồn đọng">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" x2="21" y1="6" y2="6"></line>
+              <line x1="8" x2="21" y1="12" y2="12"></line>
+              <line x1="8" x2="21" y1="18" y2="18"></line>
+              <line x1="3" x2="3.01" y1="6" y2="6"></line>
+              <line x1="3" x2="3.01" y1="12" y2="12"></line>
+              <line x1="3" x2="3.01" y1="18" y2="18"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">7</span>
+          </a>
+
+          <a class="nav-link" href="../developer-board/layout.html" title="Bảng Kanban tiến độ">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="2" rx="2"></rect>
+              <path d="M8 7v7"></path>
+              <path d="M12 7v4"></path>
+              <path d="M16 7v9"></path>
+            </svg>
+            <span>Board</span>
+            <span class="nav-badge">5</span>
+          </a>
+
+          <a class="nav-link" href="../developer-standup/layout.html" title="Báo cáo tiến độ tự động 24h">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+            <span>Standup</span>
+          </a>
+
+          <!-- Màn hình hiện tại: Audit Log -->
+          <a class="nav-link active" href="../developer-audit-log/layout.html" title="Nhật ký thay đổi hệ thống">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Audit Log</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="git-status-bar">
+          <span class="git-status-dot"></span>
+          <span>git: main · synced</span>
+        </div>
+        <div class="mode-switch-group">
+          <a class="mode-btn" href="../standard-list/layout.html" title="Chuyển sang chế độ Standard">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-btn active" href="../developer-board/layout.html" style="text-decoration: none;" title="Chế độ Lập trình viên đang bật">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         VÙNG XỬ LÝ CHÍNH
+         ====================================================================== -->
+    <div class="main-viewport">
+
+      <!-- 2. THANH TRÊN CÙNG (TOP BAR) -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <span class="breadcrumb-item">Dylask</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item">dylask-api</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item current">Audit Log</span>
+          </nav>
+          <span class="audit-stats-tag">42 Bản ghi · Lưu vết 30 ngày</span>
+        </div>
+
+        <div class="topbar-right">
+          <a class="command-palette-trigger" href="../developer-ai-panel/layout.html" style="text-decoration: none; color: var(--color-primary); border-color: var(--color-primary);" title="Mở Trợ lý AI">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            <span>Trợ lý AI</span>
+          </a>
+          <a class="command-palette-trigger" href="../developer-command-palette/layout.html" title="Mở bảng lệnh phím tắt">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <span>Tìm kiếm & Lệnh</span>
+            <kbd>Ctrl</kbd>
+            <kbd>K</kbd>
+          </a>
+        </div>
+      </header>
+
+      <!-- 3. THANH BỘ LỌC (LOẠI THAY ĐỔI, NGƯỜI THỰC HIỆN, KHOẢNG NGÀY) -->
+      <div class="audit-toolbar">
+        <div class="toolbar-filters-left">
+
+          <!-- Bộ lọc: Loại thay đổi -->
+          <div class="filter-select-wrapper">
+            <select class="filter-select" id="filterTypeSelect" aria-label="Lọc theo loại thay đổi">
+              <option value="all">Loại: Tất cả thay đổi</option>
+              <option value="status">Đổi trạng thái</option>
+              <option value="deadline">Đổi deadline</option>
+              <option value="assignee">Phân công</option>
+            </select>
+            <svg class="icon select-arrow-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <!-- Bộ lọc: Người thực hiện / Webhook -->
+          <div class="filter-select-wrapper">
+            <select class="filter-select" id="filterActorSelect" aria-label="Lọc theo tác nhân thực hiện">
+              <option value="all">Tác nhân: Tất cả</option>
+              <option value="webhook">GitHub Webhook</option>
+              <option value="dylan">Dylan Nguyen (@dylan)</option>
+              <option value="an">An Tran (@an)</option>
+              <option value="ngoc">Ngoc Pham (@ngoc)</option>
+              <option value="huy">Huy Le (@huy)</option>
+            </select>
+            <svg class="icon select-arrow-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <!-- Bộ lọc: Khoảng ngày -->
+          <div class="date-range-box" id="dateRangeBtn" title="Chọn khoảng ngày tra cứu">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>06/10/2026 – 12/10/2026 (7 ngày)</span>
+            <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <!-- Tìm kiếm nhanh theo mã task -->
+          <div class="task-search-input-box">
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted);">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <input type="text" id="taskSearchInput" placeholder="Lọc theo DYL..." aria-label="Tìm kiếm theo mã task">
+          </div>
+
+        </div>
+
+        <div class="toolbar-actions-right">
+          <button class="btn-reset-filters" type="button" onclick="resetFilters()">
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            <span>Đặt lại bộ lọc</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. BẢNG NHẬT KÝ THAY ĐỔI (THEO DÒNG THỜI GIAN, MỚI NHẤT Ở TRÊN) -->
+      <main class="audit-table-container">
+        <div class="audit-card-frame">
+
+          <table class="audit-table" aria-label="Danh sách nhật ký thay đổi hệ thống">
+            <thead>
+              <tr>
+                <th class="col-time">Thời gian</th>
+                <th class="col-actor">Người thực hiện</th>
+                <th class="col-type">Loại thay đổi</th>
+                <th class="col-task">Task liên quan</th>
+                <th class="col-diff">Giá trị cũ → Giá trị mới</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody">
+
+              <!-- Bản ghi 1 (Mới nhất): GitHub Webhook chuyển trạng thái Merged -->
+              <tr class="audit-row" data-type="status" data-actor="webhook" data-task="DYL-098">
+                <td class="col-time">
+                  <span class="timestamp-cell">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    12/10/2026 08:30:14
+                  </span>
+                </td>
+                <td class="col-actor">
+                  <span class="webhook-actor-badge">
+                    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="18" cy="18" r="3"></circle>
+                      <circle cx="6" cy="6" r="3"></circle>
+                      <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                      <line x1="6" x2="6" y1="9" y2="21"></line>
+                    </svg>
+                    GitHub Webhook
+                  </span>
+                </td>
+                <td class="col-type">
+                  <span class="change-type-badge status">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 3 21 3 21 8"></polyline>
+                      <line x1="4" y1="20" x2="21" y2="3"></line>
+                      <polyline points="21 16 21 21 16 21"></polyline>
+                      <line x1="15" y1="15" x2="21" y2="21"></line>
+                      <line x1="4" y1="4" x2="9" y2="9"></line>
+                    </svg>
+                    Đổi trạng thái
+                  </span>
+                </td>
+                <td class="col-task">
+                  <div class="task-cell">
+                    <a class="task-code-link" href="../developer-board/layout.html">DYL-098</a>
+                    <span class="task-snippet-title">Sửa lỗi 500 khi gửi payload rỗng khi tạo task</span>
+                  </div>
+                </td>
+                <td class="col-diff">
+                  <div class="diff-container">
+                    <span class="diff-old">IN_REVIEW</span>
+                    <span class="diff-arrow">→</span>
+                    <span class="diff-new">DONE</span>
+                    <span class="diff-note">(PR #11 merged)</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Bản ghi 2: Dylan chuyển trạng thái In Progress -->
+              <tr class="audit-row" data-type="status" data-actor="dylan" data-task="DYL-102">
+                <td class="col-time">
+                  <span class="timestamp-cell">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    12/10/2026 08:15:22
+                  </span>
+                </td>
+                <td class="col-actor">
+                  <div class="actor-cell">
+                    <span class="actor-avatar">D</span>
+                    <span class="actor-name">Dylan Nguyen</span>
+                  </div>
+                </td>
+                <td class="col-type">
+                  <span class="change-type-badge status">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 3 21 3 21 8"></polyline>
+                      <line x1="4" y1="20" x2="21" y2="3"></line>
+                      <polyline points="21 16 21 21 16 21"></polyline>
+                      <line x1="15" y1="15" x2="21" y2="21"></line>
+                      <line x1="4" y1="4" x2="9" y2="9"></line>
+                    </svg>
+                    Đổi trạng thái
+                  </span>
+                </td>
+                <td class="col-task">
+                  <div class="task-cell">
+                    <a class="task-code-link" href="../developer-board/layout.html">DYL-102</a>
+                    <span class="task-snippet-title">Triển khai xác thực JWT &amp; phân quyền RBAC</span>
+                  </div>
+                </td>
+                <td class="col-diff">
+                  <div class="diff-container">
+                    <span class="diff-old">TODO</span>
+                    <span class="diff-arrow">→</span>
+                    <span class="diff-new">IN_PROGRESS</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Bản ghi 3: GitHub Webhook chuyển In Review khi mở PR -->
+              <tr class="audit-row" data-type="status" data-actor="webhook" data-task="DYL-103">
+                <td class="col-time">
+                  <span class="timestamp-cell">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    12/10/2026 07:45:00
+                  </span>
+                </td>
+                <td class="col-actor">
+                  <span class="webhook-actor-badge">
+                    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="18" cy="18" r="3"></circle>
+                      <circle cx="6" cy="6" r="3"></circle>
+                      <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                      <line x1="6" x2="6" y1="9" y2="21"></line>
+                    </svg>
+                    GitHub Webhook
+                  </span>
+                </td>
+                <td class="col-type">
+                  <span class="change-type-badge status">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 3 21 3 21 8"></polyline>
+                      <line x1="4" y1="20" x2="21" y2="3"></line>
+                      <polyline points="21 16 21 21 16 21"></polyline>
+                      <line x1="15" y1="15" x2="21" y2="21"></line>
+                      <line x1="4" y1="4" x2="9" y2="9"></line>
+                    </svg>
+                    Đổi trạng thái
+                  </span>
+                </td>
+                <td class="col-task">
+                  <div class="task-cell">
+                    <a class="task-code-link" href="../developer-board/layout.html">DYL-103</a>
+                    <span class="task-snippet-title">Xây dựng giao diện Đăng nhập &amp; Đăng ký</span>
+                  </div>
+                </td>
+                <td class="col-diff">
+                  <div class="diff-container">
+                    <span class="diff-old">IN_PROGRESS</span>
+                    <span class="diff-arrow">→</span>
+                    <span class="diff-new">IN_REVIEW</span>
+                    <span class="diff-note">(PR #14 opened)</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Bản ghi 4: Dylan phân công DYL-104 cho Ngoc -->
+              <tr class="audit-row" data-type="assignee" data-actor="dylan" data-task="DYL-104">
+                <td class="col-time">
+                  <span class="timestamp-cell">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    11/10/2026 18:30:10
+                  </span>
+                </td>
+                <td class="col-actor">
+                  <div class="actor-cell">
+                    <span class="actor-avatar">D</span>
+                    <span class="actor-name">Dylan Nguyen</span>
+                  </div>
+                </td>
+                <td class="col-type">
+                  <span class="change-type-badge assignee">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="8.5" cy="7" r="4"></circle>
+                      <line x1="20" y1="8" x2="20" y2="14"></line>
+                      <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                    Phân công
+                  </span>
+                </td>
+                <td class="col-task">
+                  <div class="task-cell">
+                    <a class="task-code-link" href="../developer-board/layout.html">DYL-104</a>
+                    <span class="task-snippet-title">Webhook nhận &amp; kích hoạt tự động hoá sự kiện GitHub</span>
+                  </div>
+                </td>
+                <td class="col-diff">
+                  <div class="diff-container">
+                    <span class="diff-old">Chưa_gán</span>
+                    <span class="diff-arrow">→</span>
+                    <span class="diff-new">@ngoc</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Bản ghi 5: An Tran đổi deadline DYL-103 -->
+              <tr class="audit-row" data-type="deadline" data-actor="an" data-task="DYL-103">
+                <td class="col-time">
+                  <span class="timestamp-cell">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    11/10/2026 17:10:05
+                  </span>
+                </td>
+                <td class="col-actor">
+                  <div class="actor-cell">
+                    <span class="actor-avatar">A</span>
+                    <span class="actor-name">An Tran</span>
+                  </div>
+                </td>
+                <td class="col-type">
+                  <span class="change-type-badge deadline">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Đổi deadline
+                  </span>
+                </td>
+                <td class="col-task">
+                  <div class="task-cell">
+                    <a class="task-code-link" href="../developer-board/layout.html">DYL-103</a>
+                    <span class="task-snippet-title">Xây dựng giao diện Đăng nhập &amp; Đăng ký</span>
+                  </div>
+                </td>
+                <td class="col-diff">
+                  <div class="diff-container">
+                    <span class="diff-old">13/10/2026</span>
+                    <span class="diff-arrow">→</span>
+                    <span class="diff-new">15/10/2026</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Bản ghi 6: Ngoc Pham đổi deadline DYL-107 -->
+              <tr class="audit-row" data-type="deadline" data-actor="ngoc" data-task="DYL-107">
+                <td class="col-time">
+                  <span class="timestamp-cell">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    11/10/2026 16:20:00
+                  </span>
+                </td>
+                <td class="col-actor">
+                  <div class="actor-cell">
+                    <span class="actor-avatar">N</span>
+                    <span class="actor-name">Ngoc Pham</span>
+                  </div>
+                </td>
+                <td class="col-type">
+                  <span class="change-type-badge deadline">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Đổi deadline
+                  </span>
+                </td>
+                <td class="col-task">
+                  <div class="task-cell">
+                    <a class="task-code-link" href="../developer-board/layout.html">DYL-107</a>
+                    <span class="task-snippet-title">Cấu hình Docker Compose môi trường Staging</span>
+                  </div>
+                </td>
+                <td class="col-diff">
+                  <div class="diff-container">
+                    <span class="diff-old">12/10/2026</span>
+                    <span class="diff-arrow">→</span>
+                    <span class="diff-new">16/10/2026</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Bản ghi 7: Huy Le nhận phân công DYL-105 -->
+              <tr class="audit-row" data-type="assignee" data-actor="huy" data-task="DYL-105">
+                <td class="col-time">
+                  <span class="timestamp-cell">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    11/10/2026 14:00:15
+                  </span>
+                </td>
+                <td class="col-actor">
+                  <div class="actor-cell">
+                    <span class="actor-avatar">H</span>
+                    <span class="actor-name">Huy Le</span>
+                  </div>
+                </td>
+                <td class="col-type">
+                  <span class="change-type-badge assignee">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="8.5" cy="7" r="4"></circle>
+                      <line x1="20" y1="8" x2="20" y2="14"></line>
+                      <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                    Phân công
+                  </span>
+                </td>
+                <td class="col-task">
+                  <div class="task-cell">
+                    <a class="task-code-link" href="../developer-board/layout.html">DYL-105</a>
+                    <span class="task-snippet-title">Viết Unit Test &amp; Integration Test cho AuthService</span>
+                  </div>
+                </td>
+                <td class="col-diff">
+                  <div class="diff-container">
+                    <span class="diff-old">Chưa_gán</span>
+                    <span class="diff-arrow">→</span>
+                    <span class="diff-new">@huy</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Bản ghi 8: GitHub Webhook chuyển DYL-100 sang DONE -->
+              <tr class="audit-row" data-type="status" data-actor="webhook" data-task="DYL-100">
+                <td class="col-time">
+                  <span class="timestamp-cell">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    11/10/2026 10:15:40
+                  </span>
+                </td>
+                <td class="col-actor">
+                  <span class="webhook-actor-badge">
+                    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="18" cy="18" r="3"></circle>
+                      <circle cx="6" cy="6" r="3"></circle>
+                      <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                      <line x1="6" x2="6" y1="9" y2="21"></line>
+                    </svg>
+                    GitHub Webhook
+                  </span>
+                </td>
+                <td class="col-type">
+                  <span class="change-type-badge status">
+                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 3 21 3 21 8"></polyline>
+                      <line x1="4" y1="20" x2="21" y2="3"></line>
+                      <polyline points="21 16 21 21 16 21"></polyline>
+                      <line x1="15" y1="15" x2="21" y2="21"></line>
+                      <line x1="4" y1="4" x2="9" y2="9"></line>
+                    </svg>
+                    Đổi trạng thái
+                  </span>
+                </td>
+                <td class="col-task">
+                  <div class="task-cell">
+                    <a class="task-code-link" href="../developer-board/layout.html">DYL-100</a>
+                    <span class="task-snippet-title">Khởi tạo khung dự án Spring Boot Modular Monolith</span>
+                  </div>
+                </td>
+                <td class="col-diff">
+                  <div class="diff-container">
+                    <span class="diff-old">IN_REVIEW</span>
+                    <span class="diff-arrow">→</span>
+                    <span class="diff-new">DONE</span>
+                    <span class="diff-note">(PR #9 merged)</span>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+          <!-- 5. PHÂN TRANG (PAGINATION) -->
+          <footer class="audit-pagination-bar">
+            <span class="pagination-info" id="paginationInfo">Hiển thị 1 - 8 trong tổng số 42 bản ghi</span>
+
+            <div class="pagination-controls">
+              <button class="page-btn" type="button" disabled title="Trang trước">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+
+              <button class="page-btn active" type="button">1</button>
+              <button class="page-btn" type="button">2</button>
+              <button class="page-btn" type="button">3</button>
+              <span class="page-ellipsis">...</span>
+              <button class="page-btn" type="button">6</button>
+
+              <button class="page-btn" type="button" title="Trang sau">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       SCRIPTS: LỌC AUDIT LOG & PHÂN TRANG TƯƠNG TÁC
+       ========================================================================== -->
+  <script>
+    const typeSelect = document.getElementById('filterTypeSelect');
+    const actorSelect = document.getElementById('filterActorSelect');
+    const taskInput = document.getElementById('taskSearchInput');
+    const rows = document.querySelectorAll('.audit-row');
+    const paginationInfo = document.getElementById('paginationInfo');
+
+    function applyFilters() {
+      const selectedType = typeSelect.value;
+      const selectedActor = actorSelect.value;
+      const taskQuery = taskInput.value.toLowerCase().trim();
+
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const rowType = row.getAttribute('data-type');
+        const rowActor = row.getAttribute('data-actor');
+        const rowTask = row.getAttribute('data-task').toLowerCase();
+        const rowText = row.textContent.toLowerCase();
+
+        const matchType = (selectedType === 'all' || rowType === selectedType);
+        const matchActor = (selectedActor === 'all' || rowActor === selectedActor);
+        const matchTask = (!taskQuery || rowTask.includes(taskQuery) || rowText.includes(taskQuery));
+
+        if (matchType && matchActor && matchTask) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      paginationInfo.textContent = `Hiển thị 1 - ${visibleCount} trong tổng số ${visibleCount} bản ghi`;
+    }
+
+    typeSelect.addEventListener('change', applyFilters);
+    actorSelect.addEventListener('change', applyFilters);
+    taskInput.addEventListener('input', applyFilters);
+
+    function resetFilters() {
+      typeSelect.value = 'all';
+      actorSelect.value = 'all';
+      taskInput.value = '';
+      applyFilters();
+    }
+
+    // Điều hướng phân trang mẫu
+    document.querySelectorAll('.page-btn:not(:disabled)').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (!isNaN(parseInt(btn.textContent))) {
+          document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

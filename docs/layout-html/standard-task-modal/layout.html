@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Modal Tạo/Sửa Công Việc (Standard Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS (STANDARD MODE - LIGHT)
+       Định nghĩa từ docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root {
+      /* Typography */
+      --font-family-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số của 4px) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Standard Mode Colors */
+      --color-bg: #FAFAF7;
+      --color-surface: #FFFFFF;
+      --color-surface-subtle: #F4F3EF;
+      --color-border: #E7E5E0;
+      --color-border-strong: #D1CFCA;
+
+      --color-text: #1C1B18;
+      --color-text-muted: #6B6A63;
+
+      --color-primary: #0F766E;
+      --color-primary-hover: #115E59;
+      --color-primary-subtle: #E6F4F1;
+      --color-primary-text: #FFFFFF;
+
+      /* Standard Priorities */
+      --priority-low: #3B82F6;
+      --priority-medium: #F59E0B;
+      --priority-high: #DC2626;
+
+      /* System Status Colors */
+      --color-success: #16A34A;
+      --color-success-bg: #F0FDF4;
+      --color-danger: #DC2626;
+      --color-danger-bg: #FEF2F2;
+      --color-warning: #D97706;
+      --color-warning-bg: #FFFBEB;
+      --color-info: #2563EB;
+      --color-info-bg: #EFF6FF;
+
+      /* Overlay Backdrop (Phẳng, không glassmorphism) */
+      --color-backdrop: rgba(28, 27, 24, 0.45);
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       APP SHELL BACKGROUND (Nền danh sách mờ phía dưới)
+       Đồng nhất hoàn toàn với layout standard-list
+       ========================================================================== */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+      user-select: none;
+      filter: none;
+    }
+
+    /* 1. Sidebar trái 240px */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      height: 100vh;
+      background-color: var(--color-bg);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar-top {
+      padding: var(--space-4) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-2);
+      height: 36px;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+    }
+
+    .brand-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+    }
+
+    .nav-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-section-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-2) var(--space-2) var(--space-1);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      text-decoration: none;
+      border-radius: var(--radius);
+    }
+
+    .nav-item.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      background-color: var(--color-bg);
+    }
+
+    .mode-switch-container {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 3px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .mode-switch-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: 6px 8px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      font-family: var(--font-family-sans);
+      text-decoration: none;
+    }
+
+    .mode-switch-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* 2. Top bar & Danh sách nền */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 52px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      width: 320px;
+      height: 34px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 0 var(--space-3);
+      color: var(--color-text-muted);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .user-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      font-family: var(--font-family-mono);
+    }
+
+    /* Danh sách nền */
+    .bg-list-stage {
+      flex: 1;
+      padding: var(--space-6) var(--space-8);
+      display: flex;
+      justify-content: center;
+    }
+
+    .bg-list-container {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      opacity: 0.5;
+    }
+
+    .dummy-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      height: 48px;
+    }
+
+    /* ==========================================================================
+       MODAL BACKDROP (Nền tối mờ, phẳng, không glassmorphism)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--color-backdrop);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: var(--space-4);
+      overflow-y: auto;
+    }
+
+    /* ==========================================================================
+       MODAL TẠO/SỬA CÔNG VIỆC (RỘNG 560px)
+       ========================================================================== */
+    .task-modal {
+      width: 100%;
+      max-width: 560px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalFadeIn 0.15s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Modal Header */
+    .modal-header {
+      padding: var(--space-3) var(--space-5);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--color-surface);
+    }
+
+    .modal-header-tag {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .modal-close-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .modal-close-btn:hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text);
+    }
+
+    /* Modal Body (Khu vực nhập liệu) */
+    .modal-body {
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      max-height: calc(85vh - 120px);
+      overflow-y: auto;
+    }
+
+    /* 1. Ô TIÊU ĐỀ (TRỌNG TÂM - TO, KHÔNG VIỀN, NHẬP TỰ DO) */
+    .modal-title-field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-bottom: var(--border-width) solid var(--color-border);
+      padding-bottom: var(--space-2);
+    }
+
+    .title-free-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      line-height: 1.35;
+      padding: 2px 0;
+    }
+
+    .title-free-input::placeholder {
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-medium);
+    }
+
+    /* 2. GHI CHÚ (PLAIN TEXT) */
+    .modal-notes-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .notes-textarea {
+      width: 100%;
+      min-height: 64px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .notes-textarea:focus {
+      border-color: var(--color-primary);
+      background-color: var(--color-surface);
+    }
+
+    .notes-textarea::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    /* 3. CÁC TRƯỜNG PHỤ XẾP GỌN (COMPACT GRID & ROWS) */
+    .properties-compact-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .property-grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    .field-compact {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .field-compact-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .field-input-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 32px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 0 var(--space-2);
+    }
+
+    .field-input-box:focus-within {
+      border-color: var(--color-primary);
+    }
+
+    .field-input-box input,
+    .field-input-box select {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      width: 100%;
+    }
+
+    /* Mức độ Ưu tiên (3 nút chọn có chấm màu) */
+    .priority-selector-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .priority-btn-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-2);
+    }
+
+    .priority-select-btn {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .priority-select-btn:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text);
+    }
+
+    .priority-select-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+      border-color: var(--color-primary);
+    }
+
+    .priority-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    .priority-dot.low { background-color: var(--priority-low); }
+    .priority-dot.medium { background-color: var(--priority-medium); }
+    .priority-dot.high { background-color: var(--priority-high); }
+
+    /* 4. CHECKLIST CON (THÊM / XÓA DÒNG, Ô TICK, NÚT AI) */
+    .checklist-modal-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      border-top: var(--border-width) solid var(--color-border);
+      padding-top: var(--space-3);
+    }
+
+    .checklist-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .checklist-title-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* Nút "Chia nhỏ bằng AI" */
+    .btn-ai-decompose {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      font-family: var(--font-family-sans);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-ai-decompose:hover {
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+    }
+
+    /* Trạng thái tắt nếu AI chưa kích hoạt */
+    .btn-ai-decompose.disabled {
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-subtle);
+      border-color: var(--color-border);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .checklist-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .checklist-item-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 4px var(--space-2);
+    }
+
+    .checklist-checkbox {
+      width: 16px;
+      height: 16px;
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      color: transparent;
+      background-color: var(--color-surface);
+      transition: all 0.15s ease;
+    }
+
+    .checklist-checkbox.checked {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #FFFFFF;
+    }
+
+    .checklist-input-text {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+    }
+
+    .checklist-item-row.done .checklist-input-text {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+
+    .checklist-delete-btn {
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+    }
+
+    .checklist-delete-btn:hover {
+      color: var(--color-danger);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .btn-add-checklist-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      width: fit-content;
+    }
+
+    .btn-add-checklist-item:hover {
+      color: var(--color-primary-hover);
+    }
+
+    /* 5. MODAL FOOTER */
+    .modal-footer {
+      padding: var(--space-3) var(--space-5);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+      background-color: var(--color-surface);
+    }
+
+    .btn-secondary {
+      height: 34px;
+      padding: 0 var(--space-4);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-surface-subtle);
+      border-color: var(--color-border-strong);
+    }
+
+    .btn-primary-save {
+      height: 34px;
+      padding: 0 var(--space-4);
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-primary-save:hover {
+      background-color: var(--color-primary-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================================
+       NỀN DANH SÁCH MỜ PHÍA DƯỚI (BACKGROUND UNDERLAY)
+       ====================================================================== -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="brand-name">Dylask</span>
+        </div>
+
+                <div class="nav-section">
+          <a class="nav-item" href="../my-day/layout.html" title="Kế hoạch hôm nay">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="m9 16 2 2 4-4"></path>
+            </svg>
+            <span>Hôm nay</span>
+          </a>
+          <a class="nav-item active" href="../standard-list/layout.html" title="7 ngày tới">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+            </svg>
+            <span>7 ngày tới</span>
+          </a>
+          <a class="nav-item" href="../calendar/layout.html" title="Xem lịch">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+              <line x1="16" x2="16" y1="2" y2="6"></line>
+              <line x1="8" x2="8" y1="2" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+            </svg>
+            <span>Lịch</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title" style="font-size: 11px; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; padding: 8px 8px 4px;">Hệ thống</div>
+          <a class="nav-item" href="../settings/layout.html" title="Cài đặt hệ thống">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Cài đặt</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+                <div class="mode-switch-container">
+          <a class="mode-switch-btn active" href="../standard-list/layout.html" title="Chế độ người dùng phổ thông">
+            <span>Standard</span>
+          </a>
+          <a class="mode-switch-btn" href="../developer-board/layout.html" title="Chuyển sang Chế độ Lập trình viên">
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="search-box">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+          </svg>
+          <span style="font-size: 13px; color: var(--color-text-muted);">Tìm kiếm công việc...</span>
+        </div>
+                <a class="user-profile" href="../settings/layout.html" style="text-decoration: none; cursor: pointer;" title="Cài đặt tài khoản">
+          <span class="user-name">Duy Anh</span>
+          <div class="user-avatar" title="Tài khoản cá nhân">DA</div>
+        </a>
+      </header>
+
+      <div class="bg-list-stage">
+        <div class="bg-list-container">
+          <h2 style="font-size: 22px; font-weight: 700; color: var(--color-text);">Hôm nay</h2>
+          <div class="dummy-card"></div>
+          <div class="dummy-card"></div>
+          <div class="dummy-card"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL BACKDROP VÀ MODAL TẠO/SỬA CÔNG VIỆC (560px)
+       ====================================================================== -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="task-modal" role="dialog" aria-modal="true" aria-labelledby="modalTaskTitle">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <span class="modal-header-tag">Tạo công việc</span>
+        <button class="modal-close-btn" id="modalCloseBtn" type="button" title="Đóng modal">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+
+        <!-- 1. Tiêu đề (TRỌNG TÂM - TO, KHÔNG VIỀN, Ô NHẬP TỰ DO) -->
+        <div class="modal-title-field">
+          <input
+            class="title-free-input"
+            id="modalTaskTitle"
+            type="text"
+            placeholder="Tiêu đề công việc..."
+            value="Chuẩn bị slide thuyết trình Đồ án Tốt nghiệp"
+            autofocus>
+        </div>
+
+        <!-- 2. Ghi chú (Plain text) -->
+        <div class="modal-notes-field">
+          <textarea
+            class="notes-textarea"
+            placeholder="Thêm ghi chú chi tiết..."
+            rows="2">Tổng hợp 15 slide chính về kiến trúc Modular Monolith và kết quả benchmark hiệu năng hệ thống.</textarea>
+        </div>
+
+        <!-- 3. Các trường phụ xếp gọn bên dưới -->
+        <div class="properties-compact-container">
+
+          <!-- Hàng 1: Ngày đến hạn + Giờ và Nhắc trước -->
+          <div class="property-grid-row">
+            <!-- Ngày đến hạn & Giờ -->
+            <div class="field-compact">
+              <span class="field-compact-label">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                  <line x1="16" x2="16" y1="2" y2="6"></line>
+                  <line x1="8" x2="8" y1="2" y2="6"></line>
+                  <line x1="3" x2="21" y1="10" y2="10"></line>
+                </svg>
+                <span>Hạn chót & Giờ</span>
+              </span>
+              <div class="field-input-box">
+                <input type="text" value="15/10/2026" style="width: 60%;">
+                <span style="color: var(--color-border-strong);">|</span>
+                <input type="text" value="18:00" style="width: 35%;">
+              </div>
+            </div>
+
+            <!-- Nhắc trước (15 phút / 1 giờ / 1 ngày) -->
+            <div class="field-compact">
+              <span class="field-compact-label">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                </svg>
+                <span>Nhắc trước</span>
+              </span>
+              <div class="field-input-box">
+                <select>
+                  <option value="15m">15 phút trước</option>
+                  <option value="1h" selected>1 giờ trước</option>
+                  <option value="1d">1 ngày trước</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hàng 2: Lặp lại & Danh mục -->
+          <div class="property-grid-row">
+            <!-- Lặp lại định kỳ -->
+            <div class="field-compact">
+              <span class="field-compact-label">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m17 2 4 4-4 4"></path>
+                  <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+                  <path d="m7 22-4-4 4-4"></path>
+                  <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+                </svg>
+                <span>Lặp lại</span>
+              </span>
+              <div class="field-input-box">
+                <select>
+                  <option value="none">Không lặp lại</option>
+                  <option value="daily">Mỗi ngày</option>
+                  <option value="workday">Ngày làm việc</option>
+                  <option value="weekly" selected>Mỗi tuần</option>
+                  <option value="monthly">Mỗi tháng</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Danh mục đời sống -->
+            <div class="field-compact">
+              <span class="field-compact-label">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                  <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+                <span>Danh mục</span>
+              </span>
+              <div class="field-input-box">
+                <select>
+                  <option value="hoc-tap" selected>Học tập</option>
+                  <option value="cong-viec">Công việc</option>
+                  <option value="ca-nhan">Cá nhân</option>
+                  <option value="mua-sam">Mua sắm</option>
+                  <option value="gia-dinh">Gia đình</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hàng 3: Mức độ ưu tiên (3 nút chọn có chấm màu) -->
+          <div class="priority-selector-row">
+            <span class="field-compact-label">
+              <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span>Mức độ ưu tiên</span>
+            </span>
+
+            <div class="priority-btn-group">
+              <button class="priority-select-btn" type="button" onclick="selectPriority(this)">
+                <span class="priority-dot low"></span>
+                <span>Thấp</span>
+              </button>
+              <button class="priority-select-btn active" type="button" onclick="selectPriority(this)">
+                <span class="priority-dot medium"></span>
+                <span>Trung bình</span>
+              </button>
+              <button class="priority-select-btn" type="button" onclick="selectPriority(this)">
+                <span class="priority-dot high"></span>
+                <span>Cao</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 4. Checklist con (Thêm/xóa dòng, ô tick, nút AI) -->
+        <div class="checklist-modal-section">
+          <div class="checklist-modal-header">
+            <span class="checklist-title-label">Danh sách kiểm tra (Checklist)</span>
+
+            <!-- Nút "Chia nhỏ bằng AI" -->
+            <button class="btn-ai-decompose" id="btnAiDecompose" type="button" title="Tự động phân tích mục tiêu thành 3–5 bước hành động">
+              <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+              </svg>
+              <span>Chia nhỏ bằng AI</span>
+            </button>
+          </div>
+
+          <!-- Danh sách các dòng checklist -->
+          <ul class="checklist-items-list" id="checklistContainer">
+            <!-- Dòng 1: Đã tick -->
+            <li class="checklist-item-row done">
+              <div class="checklist-checkbox checked" onclick="toggleChecklistItem(this)">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <input class="checklist-input-text" type="text" value="Phác thảo dàn bài 15 slide thuyết trình">
+              <button class="checklist-delete-btn" type="button" title="Xóa mục" onclick="deleteChecklistItem(this)">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </li>
+
+            <!-- Dòng 2: Chưa tick -->
+            <li class="checklist-item-row">
+              <div class="checklist-checkbox" onclick="toggleChecklistItem(this)">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <input class="checklist-input-text" type="text" value="Vẽ sơ đồ kiến trúc Modular Monolith và bảng so sánh DB">
+              <button class="checklist-delete-btn" type="button" title="Xóa mục" onclick="deleteChecklistItem(this)">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </li>
+
+            <!-- Dòng 3: Chưa tick -->
+            <li class="checklist-item-row">
+              <div class="checklist-checkbox" onclick="toggleChecklistItem(this)">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <input class="checklist-input-text" type="text" value="Tập dượt thuyết trình khớp thời lượng 15 phút">
+              <button class="checklist-delete-btn" type="button" title="Xóa mục" onclick="deleteChecklistItem(this)">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </li>
+          </ul>
+
+          <button class="btn-add-checklist-item" id="btnAddChecklistItem" type="button">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Thêm mục kiểm tra</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- 5. Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btnCancelModal" type="button">Hủy</button>
+        <button class="btn-primary-save" id="btnSaveModal" type="button">
+          <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Lưu công việc</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript tối giản xử lý chọn Ưu tiên, Checklist và Nút AI -->
+  <script>
+    // Chọn mức độ ưu tiên
+    function selectPriority(el) {
+      var group = el.parentElement;
+      var buttons = group.querySelectorAll('.priority-select-btn');
+      buttons.forEach(function(btn) { btn.classList.remove('active'); });
+      el.classList.add('active');
+    }
+
+    // Toggle tick checklist
+    function toggleChecklistItem(el) {
+      el.classList.toggle('checked');
+      var row = el.closest('.checklist-item-row');
+      if (row) {
+        row.classList.toggle('done');
+      }
+    }
+
+    // Xóa dòng checklist
+    function deleteChecklistItem(el) {
+      var row = el.closest('.checklist-item-row');
+      if (row) {
+        row.remove();
+      }
+    }
+
+    // Thêm dòng checklist mới
+    document.getElementById('btnAddChecklistItem').addEventListener('click', function() {
+      var container = document.getElementById('checklistContainer');
+      var li = document.createElement('li');
+      li.className = 'checklist-item-row';
+      li.innerHTML = `
+        <div class="checklist-checkbox" onclick="toggleChecklistItem(this)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <input class="checklist-input-text" type="text" placeholder="Nhập đầu việc con...">
+        <button class="checklist-delete-btn" type="button" title="Xóa mục" onclick="deleteChecklistItem(this)">
+          <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      `;
+      container.appendChild(li);
+      var input = li.querySelector('.checklist-input-text');
+      if (input) input.focus();
+    });
+
+    // Mô phỏng đóng / lưu modal
+    var backdrop = document.getElementById('modalBackdrop');
+    var closeBtn = document.getElementById('modalCloseBtn');
+    var cancelBtn = document.getElementById('btnCancelModal');
+    var saveBtn = document.getElementById('btnSaveModal');
+
+    function closeModal() {
+      backdrop.style.display = 'none';
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    saveBtn.addEventListener('click', function() {
+      alert('Đã lưu công việc thành công!');
+      closeModal();
+    });
+
+    // Thao tác nút Chia nhỏ bằng AI
+    var aiBtn = document.getElementById('btnAiDecompose');
+    aiBtn.addEventListener('click', function() {
+      if (aiBtn.classList.contains('disabled')) {
+        alert('Module AI hiện đang tắt. Vui lòng bật trong Cài đặt > AI.');
+      } else {
+        // Thêm nhanh gợi ý từ AI
+        var container = document.getElementById('checklistContainer');
+        var li = document.createElement('li');
+        li.className = 'checklist-item-row';
+        li.innerHTML = `
+          <div class="checklist-checkbox" onclick="toggleChecklistItem(this)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <input class="checklist-input-text" type="text" value="Gợi ý AI: Kiểm tra cỡ chữ và độ tương phản màu slide">
+          <button class="checklist-delete-btn" type="button" title="Xóa mục" onclick="deleteChecklistItem(this)">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        `;
+        container.appendChild(li);
+      }
+    });
+      // Đóng Modal trở về danh sách việc
+    function closeModal() {
+      window.location.href = '../standard-list/layout.html';
+    }
+    document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+    document.getElementById('btnCancelModal').addEventListener('click', closeModal);
+    document.getElementById('btnSaveModal').addEventListener('click', closeModal);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+
+</body>
+</html>

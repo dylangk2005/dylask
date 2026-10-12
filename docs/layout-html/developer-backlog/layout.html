@@ -1,0 +1,2789 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Backlog & Quản lý Sprint (Developer Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 13px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 22px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số 4px - Compact High Density) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Mode Colors (Dark Theme) */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3D1418;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3B1F11;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382C10;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      /* System Status */
+      --color-success: #238636;
+      --color-success-bg: #0F2D17;
+      --color-warning: #D29922;
+      --color-warning-bg: #332408;
+      --color-danger: #F85149;
+      --color-danger-bg: #3E1616;
+      --color-info: #58A6FF;
+      --color-info-bg: #12243D;
+
+      /* Table Density Metrics */
+      --table-row-height: 38px;
+      --table-header-height: 32px;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.45;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Utility */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Scrollbar phẳng, tối giản */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       APP SHELL LAYOUT
+       ========================================================================== */
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       1. SIDEBAR TRÁI (220px, đồng nhất với developer-board)
+       ========================================================================== */
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      z-index: 20;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Context Header (Workspace > Project > Sprint) */
+    .workspace-header {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .workspace-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+      font-weight: var(--font-weight-bold);
+      font-size: 11px;
+    }
+
+    .brand-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-toggle-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .sidebar-toggle-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .project-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+
+    .project-selector .icon {
+      color: var(--color-primary);
+    }
+
+    .sprint-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .sprint-active-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    /* Navigation Menu */
+    .nav-group {
+      padding: var(--space-3) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-group-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+      background-color: var(--color-surface-subtle);
+      border-left: 2px solid var(--color-primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .nav-link.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 5px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Sidebar Footer / Mode Switch */
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .git-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      padding: 2px 4px;
+    }
+
+    .git-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-success);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 6px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      text-decoration: none;
+    }
+
+    .mode-btn:hover {
+      color: var(--color-text);
+    }
+
+    .mode-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* ==========================================================================
+       MAIN VIEWPORT
+       ========================================================================== */
+    .main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       2. THANH TRÊN CÙNG (TOP BAR)
+       ========================================================================== */
+    .topbar {
+      height: 48px;
+      min-height: 48px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      user-select: none;
+      z-index: 10;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-sep {
+      color: var(--color-border-strong);
+      font-size: 11px;
+    }
+
+    .breadcrumb-item.current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .sprint-stats-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary-hover);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .command-palette-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 28px;
+      padding: 0 var(--space-3);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .command-palette-trigger:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text);
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1px 4px;
+      color: var(--color-text-muted);
+    }
+
+    /* Filters Bar */
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 28px;
+      padding: 0 8px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-chip:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .filter-chip.active {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+      border-color: var(--color-border-strong);
+    }
+
+    .new-task-btn {
+      height: 28px;
+      padding: 0 10px;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .new-task-btn:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .new-task-btn kbd {
+      background-color: var(--color-primary-hover);
+      color: var(--color-primary-text);
+      border-color: var(--color-primary-hover);
+      font-size: 9px;
+      padding: 0 3px;
+    }
+
+    /* ==========================================================================
+       SUB-TOOLBAR / TỔNG QUAN TỒN ĐỌNG (SUBHEADER)
+       ========================================================================== */
+    .backlog-toolbar {
+      height: 38px;
+      min-height: 38px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      font-size: var(--font-size-xs);
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .quick-search-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+      width: 220px;
+      height: 26px;
+    }
+
+    .quick-search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      width: 100%;
+    }
+
+    .quick-search-box input::placeholder {
+      color: var(--color-text-muted);
+      font-family: var(--font-sans);
+    }
+
+    .toolbar-metrics {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--color-text-muted);
+    }
+
+    .metric-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .metric-value {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+      font-family: var(--font-mono);
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .collapse-all-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 3px 8px;
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+    }
+
+    .collapse-all-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       CONTENT AREA (BẢNG BACKLOG & DRAWER CHI TIẾT)
+       ========================================================================== */
+    .backlog-content-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .backlog-scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    /* ==========================================================================
+       3. SPRINT GROUP (NHÓM SPRINT THU GỌN ĐƯỢC)
+       ========================================================================== */
+    .sprint-group {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+    }
+
+    .sprint-group:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    .sprint-group.active-sprint {
+      border-color: var(--color-border-strong);
+    }
+
+    /* Sprint Header */
+    .sprint-header {
+      padding: 8px var(--space-3);
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      cursor: pointer;
+      gap: var(--space-3);
+    }
+
+    .sprint-group.is-collapsed .sprint-header {
+      border-bottom: none;
+    }
+
+    .sprint-header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sprint-toggle-btn {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: transform 0.15s ease;
+    }
+
+    .sprint-toggle-btn:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .sprint-group.is-collapsed .sprint-toggle-btn {
+      transform: rotate(-90deg);
+    }
+
+    .sprint-title-badge {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-weight: var(--font-weight-semibold);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      font-family: var(--font-mono);
+    }
+
+    .status-pill.active {
+      background-color: var(--color-primary-subtle);
+      color: var(--color-primary);
+      border: var(--border-width) solid var(--color-primary);
+    }
+
+    .status-pill.planned {
+      background-color: var(--color-info-bg);
+      color: var(--color-info);
+      border: var(--border-width) solid var(--color-info);
+    }
+
+    .status-pill.backlog {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text-muted);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .sprint-meta-text {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      white-space: nowrap;
+    }
+
+    .sprint-header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .sprint-summary-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-task-count {
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .badge-sp-total {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      font-family: var(--font-mono);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.2px;
+    }
+
+    .sprint-action-btn {
+      height: 24px;
+      padding: 0 8px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      color: var(--color-text);
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .sprint-action-btn:hover {
+      background-color: var(--color-border);
+      border-color: var(--color-border-strong);
+    }
+
+    .sprint-add-task-btn {
+      height: 24px;
+      width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .sprint-add-task-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface-subtle);
+    }
+
+    /* ==========================================================================
+       4. HIGH-DENSITY TASK TABLE (BẢNG MẬT ĐỘ CAO)
+       ========================================================================== */
+    .sprint-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      background-color: var(--color-surface);
+    }
+
+    .sprint-group.is-collapsed .sprint-table-wrapper {
+      display: none;
+    }
+
+    .task-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-xs);
+      text-align: left;
+    }
+
+    /* Table Header */
+    .task-table th {
+      height: var(--table-header-height);
+      padding: 0 var(--space-2);
+      color: var(--color-text-muted);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border-bottom: var(--border-width) solid var(--color-border);
+      background-color: var(--color-bg);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    /* Column Widths & Alignments */
+    .col-drag { width: 32px; min-width: 32px; text-align: center; }
+    .col-id { width: 85px; min-width: 85px; }
+    .col-title { min-width: 280px; }
+    .col-labels { width: 105px; min-width: 105px; }
+    .col-priority { width: 65px; min-width: 65px; text-align: center; }
+    .col-sp { width: 60px; min-width: 60px; text-align: center; }
+    .col-hours { width: 110px; min-width: 110px; text-align: right; }
+    .col-assignee { width: 120px; min-width: 120px; }
+    .col-status { width: 105px; min-width: 105px; }
+
+    /* Table Body Rows */
+    .task-table td {
+      height: var(--table-row-height);
+      padding: 0 var(--space-2);
+      border-bottom: var(--border-width) solid var(--color-border);
+      vertical-align: middle;
+      color: var(--color-text);
+      white-space: nowrap;
+    }
+
+    .task-row {
+      transition: background-color 0.12s ease;
+      cursor: pointer;
+    }
+
+    .task-row:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    .task-row.is-selected {
+      background-color: var(--color-surface-subtle);
+      border-left: 2px solid var(--color-primary);
+    }
+
+    .task-row:last-child td {
+      border-bottom: none;
+    }
+
+    /* 1. Drag Handle */
+    .drag-handle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      cursor: grab;
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-sm);
+      opacity: 0.4;
+      transition: opacity 0.15s ease, color 0.15s ease;
+    }
+
+    .task-row:hover .drag-handle {
+      opacity: 1;
+      color: var(--color-text);
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    /* 2. DYL Code */
+    .task-id-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .task-id-code:hover {
+      text-decoration: underline;
+    }
+
+    /* 3. Title & Tech details */
+    .task-title-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-name {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-meta-branch {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .task-meta-pr {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-info);
+      background-color: var(--color-info-bg);
+      border: var(--border-width) solid var(--color-info);
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .task-meta-pr.merged {
+      color: var(--color-success);
+      background-color: var(--color-success-bg);
+      border-color: var(--color-success);
+    }
+
+    /* 4. Labels */
+    .label-tag {
+      font-size: 10px;
+      font-weight: var(--font-weight-medium);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      display: inline-block;
+      text-transform: capitalize;
+    }
+
+    .label-tag.backend {
+      color: var(--color-info);
+      background-color: var(--color-info-bg);
+      border: var(--border-width) solid var(--color-info);
+    }
+
+    .label-tag.frontend {
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary);
+    }
+
+    .label-tag.devops {
+      color: var(--color-warning);
+      background-color: var(--color-warning-bg);
+      border: var(--border-width) solid var(--color-warning);
+    }
+
+    .label-tag.bug {
+      color: var(--color-danger);
+      background-color: var(--color-danger-bg);
+      border: var(--border-width) solid var(--color-danger);
+    }
+
+    /* 5. Priority Badges (P1-P4) */
+    .priority-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-bold);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      min-width: 28px;
+    }
+
+    .priority-badge.p1 {
+      color: var(--priority-p1);
+      background-color: var(--priority-p1-bg);
+      border: var(--border-width) solid var(--priority-p1);
+    }
+
+    .priority-badge.p2 {
+      color: var(--priority-p2);
+      background-color: var(--priority-p2-bg);
+      border: var(--border-width) solid var(--priority-p2);
+    }
+
+    .priority-badge.p3 {
+      color: var(--priority-p3);
+      background-color: var(--priority-p3-bg);
+      border: var(--border-width) solid var(--priority-p3);
+    }
+
+    .priority-badge.p4 {
+      color: var(--priority-p4);
+      background-color: var(--priority-p4-bg);
+      border: var(--border-width) solid var(--priority-p4);
+    }
+
+    /* 6. Story Points */
+    .sp-cell {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      display: inline-block;
+    }
+
+    /* 7. Hours (Estimated / Actual) */
+    .hours-cell {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      text-align: right;
+    }
+
+    .hours-actual {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* 8. Assignee */
+    .assignee-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .avatar-circle {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border-strong);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-family: var(--font-mono);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      flex-shrink: 0;
+    }
+
+    .assignee-name {
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 9. Status Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      padding: 1px 7px;
+      border-radius: var(--radius-sm);
+    }
+
+    .status-badge.in-progress {
+      color: var(--color-info);
+      background-color: var(--color-info-bg);
+      border: var(--border-width) solid var(--color-info);
+    }
+
+    .status-badge.in-review {
+      color: var(--priority-p2);
+      background-color: var(--priority-p2-bg);
+      border: var(--border-width) solid var(--priority-p2);
+    }
+
+    .status-badge.done {
+      color: var(--color-success);
+      background-color: var(--color-success-bg);
+      border: var(--border-width) solid var(--color-success);
+    }
+
+    .status-badge.todo {
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .status-badge.backlog-status {
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* Inline Add Row Placeholder */
+    .quick-add-row {
+      height: 32px;
+      border-top: var(--border-width) solid var(--color-border);
+      padding: 0 var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      background-color: var(--color-surface);
+      transition: background-color 0.12s ease;
+    }
+
+    .quick-add-row:hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-primary);
+    }
+
+    /* ==========================================================================
+       5. TASK INSPECTION DRAWER (NGĂN CHI TIẾT TASK - 400PX)
+       ========================================================================== */
+    .task-drawer {
+      width: 400px;
+      min-width: 400px;
+      height: 100%;
+      background-color: var(--color-surface);
+      border-left: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 15;
+      transition: width 0.2s ease, min-width 0.2s ease;
+    }
+
+    .task-drawer.is-hidden {
+      display: none;
+    }
+
+    .drawer-header {
+      padding: 10px var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background-color: var(--color-surface);
+      z-index: 5;
+    }
+
+    .drawer-header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .drawer-id {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+
+    .drawer-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .drawer-btn-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .drawer-btn-icon:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .drawer-body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .drawer-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      line-height: 1.35;
+    }
+
+    /* Technical Properties Box */
+    .prop-table {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-2) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prop-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+    }
+
+    .prop-label {
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .prop-val {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Git Box */
+    .git-context-box {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .branch-snippet {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      gap: 8px;
+    }
+
+    .branch-name-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .copy-branch-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      padding: 2px 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .copy-branch-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    /* Markdown specs preview in drawer */
+    .spec-markdown-box {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      line-height: 1.5;
+    }
+
+    .spec-markdown-box h4 {
+      font-size: 12px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      margin-bottom: 6px;
+    }
+
+    .spec-markdown-box ul {
+      padding-left: 18px;
+      margin-bottom: 6px;
+    }
+
+    .spec-markdown-box li {
+      margin-bottom: 3px;
+      color: var(--color-text-muted);
+    }
+
+    .spec-markdown-box li strong {
+      color: var(--color-text);
+    }
+
+    /* Modal tạo task nhanh (Phím tắt C) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: color-mix(in srgb, var(--color-bg) 80%, transparent);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.is-open {
+      display: flex;
+    }
+
+    .quick-modal {
+      width: 540px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .modal-body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .modal-field label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .modal-input {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 6px var(--space-2);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      outline: none;
+    }
+
+    .modal-input:focus {
+      border-color: var(--color-primary);
+    }
+
+    .modal-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .modal-select {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 6px var(--space-2);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      outline: none;
+    }
+
+    .modal-footer {
+      padding: var(--space-3) var(--space-4);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+      background-color: var(--color-surface);
+    }
+
+    .modal-btn-cancel {
+      height: 28px;
+      padding: 0 10px;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: var(--font-size-xs);
+    }
+
+    .modal-btn-cancel:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .modal-btn-submit {
+      height: 28px;
+      padding: 0 12px;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+    }
+
+    .modal-btn-submit:hover {
+      background-color: var(--color-primary-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ======================================================================
+         1. SIDEBAR TRÁI (220px, đồng nhất Developer Mode)
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+
+        <!-- Context Header (Workspace > Project > Sprint) -->
+        <div class="workspace-header">
+          <div class="workspace-row">
+            <div class="brand-group">
+              <div class="brand-mark">D</div>
+              <span class="brand-title">Dylask</span>
+            </div>
+            <button class="sidebar-toggle-btn" type="button" title="Thu gọn Sidebar">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <line x1="9" x2="9" y1="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Project Dropdown Pill -->
+          <a class="project-selector" href="../developer-project-create/layout.html" style="text-decoration: none;" title="Chuyển kho / Tạo dự án mới">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>dylask-api</span>
+            <svg class="icon" style="margin-left: auto;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+
+          <!-- Sprint Badge Indicator -->
+          <div class="sprint-badge-row">
+            <span class="sprint-active-dot"></span>
+            <span>Sprint 3 (Đang chạy)</span>
+          </div>
+        </div>
+
+        <!-- Điều hướng Agile / Technical Views -->
+        <nav class="nav-group">
+          <span class="nav-group-label">Quản lý Sprint</span>
+
+          <!-- Màn hình hiện tại: Backlog -->
+          <a class="nav-link active" href="../developer-backlog/layout.html" title="Danh sách tồn đọng theo Sprint">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" x2="21" y1="6" y2="6"></line>
+              <line x1="8" x2="21" y1="12" y2="12"></line>
+              <line x1="8" x2="21" y1="18" y2="18"></line>
+              <line x1="3" x2="3.01" y1="6" y2="6"></line>
+              <line x1="3" x2="3.01" y1="12" y2="12"></line>
+              <line x1="3" x2="3.01" y1="18" y2="18"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">7</span>
+          </a>
+
+          <!-- Board (Link sang Developer Board) -->
+          <a class="nav-link" href="../developer-board/layout.html" title="Bảng Kanban tiến độ">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="2" rx="2"></rect>
+              <path d="M8 7v7"></path>
+              <path d="M12 7v4"></path>
+              <path d="M16 7v9"></path>
+            </svg>
+            <span>Board</span>
+            <span class="nav-badge">5</span>
+          </a>
+
+          <a class="nav-link" href="../developer-standup/layout.html" title="Báo cáo tiến độ tự động 24h">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+            <span>Standup</span>
+          </a>
+
+          <a class="nav-link" href="../developer-audit-log/layout.html" title="Nhật ký thay đổi hệ thống">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Audit Log</span>
+          </a>
+        </nav>
+
+      </div>
+
+      <!-- Cuối Sidebar: Công tắc Dual-Mode & Trạng thái Git -->
+      <div class="sidebar-footer">
+        <div class="git-status-bar">
+          <span class="git-status-dot"></span>
+          <span>git: main · synced</span>
+        </div>
+
+        <div class="mode-switch-group">
+          <a class="mode-btn" href="../standard-list/layout.html" title="Chuyển sang chế độ Standard">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-btn active" href="../developer-board/layout.html" style="text-decoration: none;" title="Chế độ Lập trình viên đang bật">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         VÙNG XỬ LÝ CHÍNH (MAIN VIEWPORT)
+         ====================================================================== -->
+    <div class="main-viewport">
+
+      <!-- 2. THANH TRÊN CÙNG (TOP BAR) -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <!-- Breadcrumb: Dylask / dylask-api / Backlog -->
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <span class="breadcrumb-item">Dylask</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item">dylask-api</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item current">Backlog</span>
+          </nav>
+          <span class="sprint-stats-tag">29 SP · 7 Tasks</span>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Nút Command Palette Ctrl+K -->
+          <a class="command-palette-trigger" href="../developer-command-palette/layout.html" style="text-decoration: none;" title="Mở bảng lệnh phím tắt (Ctrl+K)">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <span>Tìm kiếm & Lệnh</span>
+            <kbd>Ctrl</kbd>
+            <kbd>K</kbd>
+          </a>
+
+          <!-- Thanh lọc: Assignee, Nhãn, Ưu tiên -->
+          <div class="filter-group">
+            <button class="filter-chip" id="filterAssigneeBtn" type="button" title="Lọc theo người nhận việc">
+              <span>Assignee: Tất cả</span>
+              <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <button class="filter-chip" id="filterLabelBtn" type="button" title="Lọc theo nhãn chuyên môn">
+              <span>Nhãn: Tất cả</span>
+              <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <button class="filter-chip" id="filterPriorityBtn" type="button" title="Lọc theo mức ưu tiên P1-P4">
+              <span>Ưu tiên: Tất cả</span>
+              <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Nút Tạo task (Phím tắt C) -->
+          <button class="new-task-btn" id="openNewTaskBtn" type="button" title="Tạo công việc mới (Nhấn C)">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Tạo task</span>
+            <kbd>C</kbd>
+          </button>
+        </div>
+      </header>
+
+      <!-- Sub-toolbar: Tìm kiếm nhanh & Thông số tồn đọng -->
+      <div class="backlog-toolbar">
+        <div class="toolbar-left">
+          <div class="quick-search-box">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <input type="text" id="tableSearchInput" placeholder="Lọc theo mã DYL hoặc tiêu đề..." aria-label="Tìm kiếm nhiệm vụ">
+          </div>
+
+          <div class="toolbar-metrics">
+            <span class="metric-item">Tổng Story Points: <span class="metric-value">29 SP</span></span>
+            <span>·</span>
+            <span class="metric-item">Ước tính công số: <span class="metric-value">88h</span></span>
+            <span>·</span>
+            <span class="metric-item">Đã thực hiện: <span class="metric-value">25h</span></span>
+          </div>
+        </div>
+
+        <div class="toolbar-right">
+          <button class="collapse-all-btn" id="toggleAllSprintsBtn" type="button">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4 8 12 16 20 8"></polyline>
+            </svg>
+            <span>Thu gọn tất cả</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Khung chứa bảng tồn đọng và ngăn chi tiết -->
+      <div class="backlog-content-container">
+
+        <!-- Vùng cuộn danh sách các Sprint nhóm -->
+        <main class="backlog-scroll-area" id="backlogScrollArea">
+
+          <!-- ==================================================================
+               NHÓM 1: SPRINT 3 (ĐANG CHẠY) · 10 SP · 3 TASKS
+               ================================================================== -->
+          <section class="sprint-group active-sprint" id="sprintGroup3" data-sprint-id="sprint-3">
+            <div class="sprint-header" onclick="toggleSprintCollapse('sprintGroup3')">
+              <div class="sprint-header-left">
+                <button class="sprint-toggle-btn" type="button" aria-label="Thu gọn hoặc mở rộng Sprint 3">
+                  <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <div class="sprint-title-badge">
+                  <span>Sprint 3</span>
+                  <span class="status-pill active">Đang chạy</span>
+                </div>
+                <span class="sprint-meta-text">06/10 – 19/10/2026 · Mục tiêu: JWT Auth, Login UI & Fix lỗi 500</span>
+              </div>
+
+              <div class="sprint-header-right" onclick="event.stopPropagation()">
+                <div class="sprint-summary-badges">
+                  <span class="badge-task-count">3 task</span>
+                  <span class="badge-sp-total">10 SP</span>
+                </div>
+                <button class="sprint-action-btn" type="button">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Hoàn thành Sprint</span>
+                </button>
+                <button class="sprint-add-task-btn" type="button" title="Thêm task vào Sprint 3" onclick="openCreateModal('Sprint 3')">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Bảng nhiệm vụ mật độ cao - Sprint 3 -->
+            <div class="sprint-table-wrapper">
+              <table class="task-table" aria-label="Nhiệm vụ trong Sprint 3">
+                <thead>
+                  <tr>
+                    <th class="col-drag" aria-label="Kéo xếp"></th>
+                    <th class="col-id">Mã DYL</th>
+                    <th class="col-title">Tiêu đề</th>
+                    <th class="col-labels">Nhãn</th>
+                    <th class="col-priority">Ưu tiên</th>
+                    <th class="col-sp">SP</th>
+                    <th class="col-hours">Dự tính / Thực tế</th>
+                    <th class="col-assignee">Người làm</th>
+                    <th class="col-status">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodySprint3">
+
+                  <!-- DYL-102 | P1 | 5 SP | In Progress -->
+                  <tr class="task-row is-selected" draggable="true" onclick="selectTask('DYL-102', 'Triển khai xác thực JWT & phân quyền RBAC', 'Backend', 'P1', '5 SP', '16h / 12h', 'Dylan Nguyen', 'D', 'In Progress', 'feature/DYL-102-jwt-auth', 'Xây dựng filter JwtAuthenticationFilter, cơ chế sinh Refresh Token và cấu hình SecurityFilterChain.')">
+                    <td class="col-drag">
+                      <span class="drag-handle" title="Kéo để xếp lại thứ tự / chuyển Sprint">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="5" r="1"></circle>
+                          <circle cx="9" cy="12" r="1"></circle>
+                          <circle cx="9" cy="19" r="1"></circle>
+                          <circle cx="15" cy="5" r="1"></circle>
+                          <circle cx="15" cy="12" r="1"></circle>
+                          <circle cx="15" cy="19" r="1"></circle>
+                        </svg>
+                      </span>
+                    </td>
+                    <td class="col-id">
+                      <span class="task-id-code mono">DYL-102</span>
+                    </td>
+                    <td class="col-title">
+                      <div class="task-title-cell">
+                        <span class="task-name">Triển khai xác thực JWT & phân quyền RBAC</span>
+                        <span class="task-meta-branch">
+                          <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="6" x2="6" y1="3" y2="15"></line>
+                            <circle cx="18" cy="6" r="3"></circle>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <path d="M18 9a9 9 0 0 1-9 9"></path>
+                          </svg>
+                          feature/DYL-102-jwt-auth
+                        </span>
+                      </div>
+                    </td>
+                    <td class="col-labels">
+                      <span class="label-tag backend">Backend</span>
+                    </td>
+                    <td class="col-priority">
+                      <span class="priority-badge p1">P1</span>
+                    </td>
+                    <td class="col-sp">
+                      <span class="sp-cell">5 SP</span>
+                    </td>
+                    <td class="col-hours">
+                      <span class="hours-cell"><span class="hours-actual">12h</span> / 16h</span>
+                    </td>
+                    <td class="col-assignee">
+                      <div class="assignee-cell">
+                        <span class="avatar-circle">D</span>
+                        <span class="assignee-name">@dylan</span>
+                      </div>
+                    </td>
+                    <td class="col-status">
+                      <span class="status-badge in-progress">
+                        <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        In Progress
+                      </span>
+                    </td>
+                  </tr>
+
+                  <!-- DYL-103 | P2 | 3 SP | In Review -->
+                  <tr class="task-row" draggable="true" onclick="selectTask('DYL-103', 'Xây dựng giao diện Đăng nhập & Đăng ký', 'Frontend', 'P2', '3 SP', '10h / 12h', 'An Tran', 'A', 'In Review', 'feature/DYL-103-login-ui', 'Hoàn thiện form đăng nhập, validation lỗi và trang đăng ký. Pull Request #14 đang chờ duyệt.')">
+                    <td class="col-drag">
+                      <span class="drag-handle" title="Kéo để xếp lại thứ tự / chuyển Sprint">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="5" r="1"></circle>
+                          <circle cx="9" cy="12" r="1"></circle>
+                          <circle cx="9" cy="19" r="1"></circle>
+                          <circle cx="15" cy="5" r="1"></circle>
+                          <circle cx="15" cy="12" r="1"></circle>
+                          <circle cx="15" cy="19" r="1"></circle>
+                        </svg>
+                      </span>
+                    </td>
+                    <td class="col-id">
+                      <span class="task-id-code mono">DYL-103</span>
+                    </td>
+                    <td class="col-title">
+                      <div class="task-title-cell">
+                        <span class="task-name">Xây dựng giao diện Đăng nhập & Đăng ký</span>
+                        <span class="task-meta-pr">
+                          <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="18" r="3"></circle>
+                            <circle cx="6" cy="6" r="3"></circle>
+                            <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                            <line x1="6" x2="6" y1="9" y2="21"></line>
+                          </svg>
+                          PR #14
+                        </span>
+                      </div>
+                    </td>
+                    <td class="col-labels">
+                      <span class="label-tag frontend">Frontend</span>
+                    </td>
+                    <td class="col-priority">
+                      <span class="priority-badge p2">P2</span>
+                    </td>
+                    <td class="col-sp">
+                      <span class="sp-cell">3 SP</span>
+                    </td>
+                    <td class="col-hours">
+                      <span class="hours-cell"><span class="hours-actual">10h</span> / 12h</span>
+                    </td>
+                    <td class="col-assignee">
+                      <div class="assignee-cell">
+                        <span class="avatar-circle">A</span>
+                        <span class="assignee-name">@an</span>
+                      </div>
+                    </td>
+                    <td class="col-status">
+                      <span class="status-badge in-review">
+                        <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="4"></circle>
+                          <line x1="1.05" y1="12" x2="7" y2="12"></line>
+                          <line x1="17.01" y1="12" x2="22.96" y2="12"></line>
+                        </svg>
+                        In Review
+                      </span>
+                    </td>
+                  </tr>
+
+                  <!-- DYL-098 | P1 | 2 SP | Done -->
+                  <tr class="task-row" draggable="true" onclick="selectTask('DYL-098', 'Sửa lỗi 500 khi gửi payload rỗng khi tạo task', 'Bug', 'P1', '2 SP', '3h / 4h', 'Dylan Nguyen', 'D', 'Done', 'hotfix/DYL-098-null-payload', 'Bổ sung annotation @Valid và GlobalExceptionHandler để bắt lỗi MethodArgumentNotValidException.')">
+                    <td class="col-drag">
+                      <span class="drag-handle" title="Kéo để xếp lại thứ tự / chuyển Sprint">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="5" r="1"></circle>
+                          <circle cx="9" cy="12" r="1"></circle>
+                          <circle cx="9" cy="19" r="1"></circle>
+                          <circle cx="15" cy="5" r="1"></circle>
+                          <circle cx="15" cy="12" r="1"></circle>
+                          <circle cx="15" cy="19" r="1"></circle>
+                        </svg>
+                      </span>
+                    </td>
+                    <td class="col-id">
+                      <span class="task-id-code mono">DYL-098</span>
+                    </td>
+                    <td class="col-title">
+                      <div class="task-title-cell">
+                        <span class="task-name">Sửa lỗi 500 khi gửi payload rỗng khi tạo task</span>
+                        <span class="task-meta-pr merged">
+                          <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          Merged #11
+                        </span>
+                      </div>
+                    </td>
+                    <td class="col-labels">
+                      <span class="label-tag bug">Bug</span>
+                    </td>
+                    <td class="col-priority">
+                      <span class="priority-badge p1">P1</span>
+                    </td>
+                    <td class="col-sp">
+                      <span class="sp-cell">2 SP</span>
+                    </td>
+                    <td class="col-hours">
+                      <span class="hours-cell"><span class="hours-actual">3h</span> / 4h</span>
+                    </td>
+                    <td class="col-assignee">
+                      <div class="assignee-cell">
+                        <span class="avatar-circle">D</span>
+                        <span class="assignee-name">@dylan</span>
+                      </div>
+                    </td>
+                    <td class="col-status">
+                      <span class="status-badge done">
+                        <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Done
+                      </span>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+
+              <!-- Dòng thêm nhanh ở cuối bảng -->
+              <div class="quick-add-row" onclick="openCreateModal('Sprint 3')">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Thêm task vào Sprint 3...</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================================================================
+               NHÓM 2: SPRINT 4 (KẾ HOẠCH) · 13 SP · 2 TASKS
+               ================================================================== -->
+          <section class="sprint-group" id="sprintGroup4" data-sprint-id="sprint-4">
+            <div class="sprint-header" onclick="toggleSprintCollapse('sprintGroup4')">
+              <div class="sprint-header-left">
+                <button class="sprint-toggle-btn" type="button" aria-label="Thu gọn hoặc mở rộng Sprint 4">
+                  <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <div class="sprint-title-badge">
+                  <span>Sprint 4</span>
+                  <span class="status-pill planned">Kế hoạch</span>
+                </div>
+                <span class="sprint-meta-text">20/10 – 02/11/2026 · Mục tiêu: Tự động hóa GitHub Webhook & Command Palette</span>
+              </div>
+
+              <div class="sprint-header-right" onclick="event.stopPropagation()">
+                <div class="sprint-summary-badges">
+                  <span class="badge-task-count">2 task</span>
+                  <span class="badge-sp-total">13 SP</span>
+                </div>
+                <button class="sprint-action-btn" type="button">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                  <span>Bắt đầu Sprint</span>
+                </button>
+                <button class="sprint-add-task-btn" type="button" title="Thêm task vào Sprint 4" onclick="openCreateModal('Sprint 4')">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Bảng nhiệm vụ mật độ cao - Sprint 4 -->
+            <div class="sprint-table-wrapper">
+              <table class="task-table" aria-label="Nhiệm vụ trong Sprint 4">
+                <thead>
+                  <tr>
+                    <th class="col-drag" aria-label="Kéo xếp"></th>
+                    <th class="col-id">Mã DYL</th>
+                    <th class="col-title">Tiêu đề</th>
+                    <th class="col-labels">Nhãn</th>
+                    <th class="col-priority">Ưu tiên</th>
+                    <th class="col-sp">SP</th>
+                    <th class="col-hours">Dự tính / Thực tế</th>
+                    <th class="col-assignee">Người làm</th>
+                    <th class="col-status">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodySprint4">
+
+                  <!-- DYL-104 | P2 | 8 SP | To Do -->
+                  <tr class="task-row" draggable="true" onclick="selectTask('DYL-104', 'Webhook nhận & kích hoạt tự động hoá sự kiện GitHub', 'Backend', 'P2', '8 SP', '0h / 24h', 'Ngoc Pham', 'N', 'To Do', 'feature/DYL-104-webhook', 'Lắng nghe sự kiện Push, Pull Request và tự động cập nhật trạng thái card trên Sprint Kanban theo branch slug.')">
+                    <td class="col-drag">
+                      <span class="drag-handle" title="Kéo để xếp lại thứ tự / chuyển Sprint">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="5" r="1"></circle>
+                          <circle cx="9" cy="12" r="1"></circle>
+                          <circle cx="9" cy="19" r="1"></circle>
+                          <circle cx="15" cy="5" r="1"></circle>
+                          <circle cx="15" cy="12" r="1"></circle>
+                          <circle cx="15" cy="19" r="1"></circle>
+                        </svg>
+                      </span>
+                    </td>
+                    <td class="col-id">
+                      <span class="task-id-code mono">DYL-104</span>
+                    </td>
+                    <td class="col-title">
+                      <div class="task-title-cell">
+                        <span class="task-name">Webhook nhận & kích hoạt tự động hoá sự kiện GitHub</span>
+                        <span class="task-meta-branch">
+                          <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="6" x2="6" y1="3" y2="15"></line>
+                            <circle cx="18" cy="6" r="3"></circle>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <path d="M18 9a9 9 0 0 1-9 9"></path>
+                          </svg>
+                          feature/DYL-104-webhook
+                        </span>
+                      </div>
+                    </td>
+                    <td class="col-labels">
+                      <span class="label-tag backend">Backend</span>
+                    </td>
+                    <td class="col-priority">
+                      <span class="priority-badge p2">P2</span>
+                    </td>
+                    <td class="col-sp">
+                      <span class="sp-cell">8 SP</span>
+                    </td>
+                    <td class="col-hours">
+                      <span class="hours-cell"><span class="hours-actual">0h</span> / 24h</span>
+                    </td>
+                    <td class="col-assignee">
+                      <div class="assignee-cell">
+                        <span class="avatar-circle">N</span>
+                        <span class="assignee-name">@ngoc</span>
+                      </div>
+                    </td>
+                    <td class="col-status">
+                      <span class="status-badge todo">
+                        <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        To Do
+                      </span>
+                    </td>
+                  </tr>
+
+                  <!-- DYL-106 | P2 | 5 SP | To Do -->
+                  <tr class="task-row" draggable="true" onclick="selectTask('DYL-106', 'Tích hợp Command Palette tìm kiếm phím tắt (Ctrl+K)', 'Frontend', 'P2', '5 SP', '0h / 16h', 'An Tran', 'A', 'To Do', 'feature/DYL-106-command-palette', 'Hộp thoại mở nhanh bằng Ctrl+K, tìm kiếm task theo ID, thao tác đổi trạng thái và gán người làm việc tức thì.')">
+                    <td class="col-drag">
+                      <span class="drag-handle" title="Kéo để xếp lại thứ tự / chuyển Sprint">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="5" r="1"></circle>
+                          <circle cx="9" cy="12" r="1"></circle>
+                          <circle cx="9" cy="19" r="1"></circle>
+                          <circle cx="15" cy="5" r="1"></circle>
+                          <circle cx="15" cy="12" r="1"></circle>
+                          <circle cx="15" cy="19" r="1"></circle>
+                        </svg>
+                      </span>
+                    </td>
+                    <td class="col-id">
+                      <span class="task-id-code mono">DYL-106</span>
+                    </td>
+                    <td class="col-title">
+                      <div class="task-title-cell">
+                        <span class="task-name">Tích hợp Command Palette tìm kiếm phím tắt (Ctrl+K)</span>
+                        <span class="task-meta-branch">
+                          <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="6" x2="6" y1="3" y2="15"></line>
+                            <circle cx="18" cy="6" r="3"></circle>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <path d="M18 9a9 9 0 0 1-9 9"></path>
+                          </svg>
+                          feature/DYL-106-cmd-palette
+                        </span>
+                      </div>
+                    </td>
+                    <td class="col-labels">
+                      <span class="label-tag frontend">Frontend</span>
+                    </td>
+                    <td class="col-priority">
+                      <span class="priority-badge p2">P2</span>
+                    </td>
+                    <td class="col-sp">
+                      <span class="sp-cell">5 SP</span>
+                    </td>
+                    <td class="col-hours">
+                      <span class="hours-cell"><span class="hours-actual">0h</span> / 16h</span>
+                    </td>
+                    <td class="col-assignee">
+                      <div class="assignee-cell">
+                        <span class="avatar-circle">A</span>
+                        <span class="assignee-name">@an</span>
+                      </div>
+                    </td>
+                    <td class="col-status">
+                      <span class="status-badge todo">
+                        <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        To Do
+                      </span>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+
+              <!-- Dòng thêm nhanh ở cuối bảng -->
+              <div class="quick-add-row" onclick="openCreateModal('Sprint 4')">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Thêm task vào Sprint 4...</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================================================================
+               NHÓM 3: BACKLOG (CHƯA XẾP) · 6 SP · 2 TASKS
+               ================================================================== -->
+          <section class="sprint-group" id="sprintGroupBacklog" data-sprint-id="backlog">
+            <div class="sprint-header" onclick="toggleSprintCollapse('sprintGroupBacklog')">
+              <div class="sprint-header-left">
+                <button class="sprint-toggle-btn" type="button" aria-label="Thu gọn hoặc mở rộng nhóm Backlog">
+                  <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <div class="sprint-title-badge">
+                  <span>Backlog</span>
+                  <span class="status-pill backlog">Chưa xếp</span>
+                </div>
+                <span class="sprint-meta-text">Hàng đợi công việc dự phòng & cải tiến kỹ thuật dài hạn</span>
+              </div>
+
+              <div class="sprint-header-right" onclick="event.stopPropagation()">
+                <div class="sprint-summary-badges">
+                  <span class="badge-task-count">2 task</span>
+                  <span class="badge-sp-total">6 SP</span>
+                </div>
+                <button class="sprint-action-btn" type="button" onclick="openCreateSprintModal()">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Tạo Sprint mới</span>
+                </button>
+                <button class="sprint-add-task-btn" type="button" title="Thêm task vào Backlog" onclick="openCreateModal('Backlog')">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Bảng nhiệm vụ mật độ cao - Backlog -->
+            <div class="sprint-table-wrapper">
+              <table class="task-table" aria-label="Nhiệm vụ trong Backlog">
+                <thead>
+                  <tr>
+                    <th class="col-drag" aria-label="Kéo xếp"></th>
+                    <th class="col-id">Mã DYL</th>
+                    <th class="col-title">Tiêu đề</th>
+                    <th class="col-labels">Nhãn</th>
+                    <th class="col-priority">Ưu tiên</th>
+                    <th class="col-sp">SP</th>
+                    <th class="col-hours">Dự tính / Thực tế</th>
+                    <th class="col-assignee">Người làm</th>
+                    <th class="col-status">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyBacklog">
+
+                  <!-- DYL-105 | P3 | 3 SP | Backlog -->
+                  <tr class="task-row" draggable="true" onclick="selectTask('DYL-105', 'Viết Unit Test & Integration Test cho AuthService', 'Backend', 'P3', '3 SP', '0h / 8h', 'Huy Le', 'H', 'Backlog', 'test/DYL-105-auth-mock', 'Độ bao phủ code tối thiểu 80%, mock Database và JWT verification flow bằng Mockito.')">
+                    <td class="col-drag">
+                      <span class="drag-handle" title="Kéo để xếp lại thứ tự / chuyển Sprint">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="5" r="1"></circle>
+                          <circle cx="9" cy="12" r="1"></circle>
+                          <circle cx="9" cy="19" r="1"></circle>
+                          <circle cx="15" cy="5" r="1"></circle>
+                          <circle cx="15" cy="12" r="1"></circle>
+                          <circle cx="15" cy="19" r="1"></circle>
+                        </svg>
+                      </span>
+                    </td>
+                    <td class="col-id">
+                      <span class="task-id-code mono">DYL-105</span>
+                    </td>
+                    <td class="col-title">
+                      <div class="task-title-cell">
+                        <span class="task-name">Viết Unit Test & Integration Test cho AuthService</span>
+                        <span class="task-meta-branch">
+                          <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="6" x2="6" y1="3" y2="15"></line>
+                            <circle cx="18" cy="6" r="3"></circle>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <path d="M18 9a9 9 0 0 1-9 9"></path>
+                          </svg>
+                          test/DYL-105-auth-mock
+                        </span>
+                      </div>
+                    </td>
+                    <td class="col-labels">
+                      <span class="label-tag backend">Backend</span>
+                    </td>
+                    <td class="col-priority">
+                      <span class="priority-badge p3">P3</span>
+                    </td>
+                    <td class="col-sp">
+                      <span class="sp-cell">3 SP</span>
+                    </td>
+                    <td class="col-hours">
+                      <span class="hours-cell"><span class="hours-actual">0h</span> / 8h</span>
+                    </td>
+                    <td class="col-assignee">
+                      <div class="assignee-cell">
+                        <span class="avatar-circle">H</span>
+                        <span class="assignee-name">@huy</span>
+                      </div>
+                    </td>
+                    <td class="col-status">
+                      <span class="status-badge backlog-status">
+                        <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        Backlog
+                      </span>
+                    </td>
+                  </tr>
+
+                  <!-- DYL-107 | P4 | 3 SP | Backlog -->
+                  <tr class="task-row" draggable="true" onclick="selectTask('DYL-107', 'Cấu hình Docker Compose môi trường Staging & Production', 'DevOps', 'P4', '3 SP', '0h / 8h', 'Ngoc Pham', 'N', 'Backlog', 'devops/DYL-107-docker-compose', 'Tối ưu image multi-stage build cho Spring Boot và Nginx frontend, đồng bộ biến môi trường MySQL 8.4.')">
+                    <td class="col-drag">
+                      <span class="drag-handle" title="Kéo để xếp lại thứ tự / chuyển Sprint">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="9" cy="5" r="1"></circle>
+                          <circle cx="9" cy="12" r="1"></circle>
+                          <circle cx="9" cy="19" r="1"></circle>
+                          <circle cx="15" cy="5" r="1"></circle>
+                          <circle cx="15" cy="12" r="1"></circle>
+                          <circle cx="15" cy="19" r="1"></circle>
+                        </svg>
+                      </span>
+                    </td>
+                    <td class="col-id">
+                      <span class="task-id-code mono">DYL-107</span>
+                    </td>
+                    <td class="col-title">
+                      <div class="task-title-cell">
+                        <span class="task-name">Cấu hình Docker Compose môi trường Staging & Production</span>
+                        <span class="task-meta-branch">
+                          <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="6" x2="6" y1="3" y2="15"></line>
+                            <circle cx="18" cy="6" r="3"></circle>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <path d="M18 9a9 9 0 0 1-9 9"></path>
+                          </svg>
+                          devops/DYL-107-compose
+                        </span>
+                      </div>
+                    </td>
+                    <td class="col-labels">
+                      <span class="label-tag devops">DevOps</span>
+                    </td>
+                    <td class="col-priority">
+                      <span class="priority-badge p4">P4</span>
+                    </td>
+                    <td class="col-sp">
+                      <span class="sp-cell">3 SP</span>
+                    </td>
+                    <td class="col-hours">
+                      <span class="hours-cell"><span class="hours-actual">0h</span> / 8h</span>
+                    </td>
+                    <td class="col-assignee">
+                      <div class="assignee-cell">
+                        <span class="avatar-circle">N</span>
+                        <span class="assignee-name">@ngoc</span>
+                      </div>
+                    </td>
+                    <td class="col-status">
+                      <span class="status-badge backlog-status">
+                        <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        Backlog
+                      </span>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+
+              <!-- Dòng thêm nhanh ở cuối bảng -->
+              <div class="quick-add-row" onclick="openCreateModal('Backlog')">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Thêm task vào Backlog...</span>
+              </div>
+            </div>
+          </section>
+
+        </main>
+
+        <!-- ====================================================================
+             5. DRAWER CHI TIẾT TASK (400px - Inspect Panel)
+             ==================================================================== -->
+        <aside class="task-drawer" id="taskDetailDrawer" aria-label="Ngăn xem chi tiết nhiệm vụ kỹ thuật">
+          
+          <!-- Drawer Header -->
+          <div class="drawer-header">
+            <div class="drawer-header-left">
+              <span class="drawer-id mono" id="drawerTaskId">DYL-102</span>
+              <span class="status-badge in-progress" id="drawerStatusBadge">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span id="drawerStatusText">In Progress</span>
+              </span>
+            </div>
+
+            <div class="drawer-actions">
+              <button class="drawer-btn-icon" type="button" title="Mở chi tiết đầy đủ">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" x2="21" y1="14" y2="3"></line>
+                </svg>
+              </button>
+              <button class="drawer-btn-icon" id="closeDrawerBtn" type="button" title="Đóng ngăn xem chi tiết" onclick="closeDrawer()">
+                <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Drawer Body -->
+          <div class="drawer-body">
+            
+            <h2 class="drawer-title" id="drawerTaskTitle">Triển khai xác thực JWT & phân quyền RBAC</h2>
+
+            <!-- Bảng thuộc tính kỹ thuật -->
+            <div class="prop-table">
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 14 10"></polyline>
+                  </svg>
+                  Độ ưu tiên
+                </span>
+                <span class="prop-val">
+                  <span class="priority-badge p1" id="drawerPriorityBadge">P1</span>
+                  <span>Critical</span>
+                </span>
+              </div>
+
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                  </svg>
+                  Nhãn kỹ thuật
+                </span>
+                <span class="prop-val">
+                  <span class="label-tag backend" id="drawerLabelTag">Backend</span>
+                </span>
+              </div>
+
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                    <path d="M2 12h20"></path>
+                  </svg>
+                  Story Points
+                </span>
+                <span class="prop-val mono" id="drawerSpVal">5 SP</span>
+              </div>
+
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  Dự tính / Thực tế
+                </span>
+                <span class="prop-val mono" id="drawerHoursVal">12h thực tế / 16h dự tính</span>
+              </div>
+
+              <div class="prop-row">
+                <span class="prop-label">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  Người thực hiện
+                </span>
+                <span class="prop-val">
+                  <span class="avatar-circle" id="drawerAssigneeInitial">D</span>
+                  <span id="drawerAssigneeName">Dylan Nguyen (@dylan)</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Tích hợp Git & Branch chuẩn -->
+            <div class="git-context-box">
+              <div class="section-label">
+                <span>Git Branch chuẩn hóa</span>
+                <span class="mono" style="font-size: 10px; color: var(--color-primary);">1-Click Copy</span>
+              </div>
+              <div class="branch-snippet">
+                <code class="branch-name-code" id="drawerBranchName">feature/DYL-102-jwt-auth</code>
+                <button class="copy-branch-btn" type="button" title="Sao chép tên branch" onclick="copyBranch()">
+                  <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                  </svg>
+                  <span id="copyBtnText">Copy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Đặc tả công việc / Acceptance Criteria -->
+            <div class="spec-markdown-box">
+              <h4>Mô tả kỹ thuật & Acceptance Criteria</h4>
+              <p id="drawerDescription" style="margin-bottom: 8px; color: var(--color-text-muted);">
+                Xây dựng filter JwtAuthenticationFilter, cơ chế sinh Refresh Token và cấu hình SecurityFilterChain.
+              </p>
+              <ul>
+                <li><strong>AC-1:</strong> Đăng nhập trả về access_token (15m) & refresh_token (7d).</li>
+                <li><strong>AC-2:</strong> Phân quyền RBAC qua UserRole Enum (ROLE_USER, ROLE_ADMIN).</li>
+                <li><strong>AC-3:</strong> Trả về ApiResponse tiêu chuẩn kèm mã lỗi HTTP 401 khi token hết hạn.</li>
+              </ul>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL TẠO TASK NHANH (KÍCH HOẠT QUA NÚT HOẶC PHÍM TẮT 'C')
+       ========================================================================== -->
+  <div class="modal-overlay" id="quickTaskModal" onclick="closeCreateModal(event)">
+    <div class="quick-modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <span>Tạo công việc kỹ thuật mới</span>
+        <button class="drawer-btn-icon" type="button" onclick="closeCreateModal()">
+          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-field">
+          <label for="taskTitleInput">Tiêu đề nhiệm vụ *</label>
+          <input class="modal-input" id="taskTitleInput" type="text" placeholder="Ví dụ: Tích hợp Redis Cache cho UserSession..." autofocus>
+        </div>
+
+        <div class="modal-grid-2">
+          <div class="modal-field">
+            <label for="taskSprintSelect">Nhóm Sprint</label>
+            <select class="modal-select" id="taskSprintSelect">
+              <option value="sprint-3">Sprint 3 (Đang chạy)</option>
+              <option value="sprint-4">Sprint 4 (Kế hoạch)</option>
+              <option value="backlog" selected>Backlog (Chưa xếp)</option>
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label for="taskLabelSelect">Nhãn kỹ thuật</label>
+            <select class="modal-select" id="taskLabelSelect">
+              <option value="Backend">Backend</option>
+              <option value="Frontend">Frontend</option>
+              <option value="DevOps">DevOps</option>
+              <option value="Bug">Bug</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-grid-2">
+          <div class="modal-field">
+            <label for="taskPrioritySelect">Mức ưu tiên</label>
+            <select class="modal-select" id="taskPrioritySelect">
+              <option value="P1">P1 - Critical (Khẩn cấp)</option>
+              <option value="P2" selected>P2 - High (Cao)</option>
+              <option value="P3">P3 - Medium (Bình thường)</option>
+              <option value="P4">P4 - Low (Thấp / Phụ)</option>
+            </select>
+          </div>
+
+          <div class="modal-field">
+            <label for="taskSpInput">Story Points (SP)</label>
+            <input class="modal-input mono" id="taskSpInput" type="number" value="3" min="1" max="21">
+          </div>
+        </div>
+
+        <div class="modal-grid-2">
+          <div class="modal-field">
+            <label for="taskHoursInput">Giờ dự tính (h)</label>
+            <input class="modal-input mono" id="taskHoursInput" type="number" value="8" min="1">
+          </div>
+
+          <div class="modal-field">
+            <label for="taskAssigneeSelect">Người phụ trách</label>
+            <select class="modal-select" id="taskAssigneeSelect">
+              <option value="Dylan Nguyen (@dylan)">Dylan Nguyen (@dylan)</option>
+              <option value="An Tran (@an)">An Tran (@an)</option>
+              <option value="Ngoc Pham (@ngoc)">Ngoc Pham (@ngoc)</option>
+              <option value="Huy Le (@huy)">Huy Le (@huy)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn-cancel" type="button" onclick="closeCreateModal()">Hủy (Esc)</button>
+        <button class="modal-btn-submit" type="button" onclick="submitCreateTask()">Tạo task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       SCRIPTS: ĐIỀU HƯỚNG, COLLAPSE, PHÍM TẮT & TƯƠNG TÁC THUẦN
+       ========================================================================== -->
+  <script>
+    // 1. Thu gọn / mở rộng nhóm Sprint
+    function toggleSprintCollapse(groupId) {
+      const group = document.getElementById(groupId);
+      if (group) {
+        group.classList.toggle('is-collapsed');
+      }
+    }
+
+    // Nút thu gọn / mở rộng toàn bộ
+    const toggleAllBtn = document.getElementById('toggleAllSprintsBtn');
+    let allCollapsed = false;
+    toggleAllBtn.addEventListener('click', () => {
+      allCollapsed = !allCollapsed;
+      const groups = document.querySelectorAll('.sprint-group');
+      groups.forEach(g => {
+        if (allCollapsed) {
+          g.classList.add('is-collapsed');
+        } else {
+          g.classList.remove('is-collapsed');
+        }
+      });
+      toggleAllBtn.querySelector('span').textContent = allCollapsed ? 'Mở rộng tất cả' : 'Thu gọn tất cả';
+    });
+
+    // 2. Chọn task & hiển thị ngăn drawer chi tiết
+    function selectTask(id, title, label, priority, sp, hours, assignee, initial, status, branch, desc) {
+      // Highlight hàng
+      document.querySelectorAll('.task-row').forEach(row => row.classList.remove('is-selected'));
+      event.currentTarget.classList.add('is-selected');
+
+      // Mở drawer
+      const drawer = document.getElementById('taskDetailDrawer');
+      drawer.classList.remove('is-hidden');
+
+      // Điền thông tin vào drawer
+      document.getElementById('drawerTaskId').textContent = id;
+      document.getElementById('drawerTaskTitle').textContent = title;
+      document.getElementById('drawerSpVal').textContent = sp;
+      document.getElementById('drawerHoursVal').textContent = hours;
+      document.getElementById('drawerAssigneeInitial').textContent = initial;
+      document.getElementById('drawerAssigneeName').textContent = assignee;
+      document.getElementById('drawerBranchName').textContent = branch;
+      document.getElementById('drawerDescription').textContent = desc;
+
+      // Status badge
+      const statusBadge = document.getElementById('drawerStatusBadge');
+      const statusText = document.getElementById('drawerStatusText');
+      statusText.textContent = status;
+      statusBadge.className = 'status-badge ' + (
+        status === 'In Progress' ? 'in-progress' :
+        status === 'In Review' ? 'in-review' :
+        status === 'Done' ? 'done' :
+        status === 'To Do' ? 'todo' : 'backlog-status'
+      );
+
+      // Priority badge
+      const prioBadge = document.getElementById('drawerPriorityBadge');
+      prioBadge.textContent = priority;
+      prioBadge.className = 'priority-badge ' + priority.toLowerCase();
+
+      // Label tag
+      const labelTag = document.getElementById('drawerLabelTag');
+      labelTag.textContent = label;
+      labelTag.className = 'label-tag ' + label.toLowerCase();
+    }
+
+    // Đóng drawer
+    function closeDrawer() {
+      document.getElementById('taskDetailDrawer').classList.add('is-hidden');
+      document.querySelectorAll('.task-row').forEach(row => row.classList.remove('is-selected'));
+    }
+
+    // Sao chép branch
+    function copyBranch() {
+      const branchText = document.getElementById('drawerBranchName').textContent;
+      navigator.clipboard.writeText(branchText).then(() => {
+        const copyBtnText = document.getElementById('copyBtnText');
+        copyBtnText.textContent = 'Đã chép!';
+        setTimeout(() => {
+          copyBtnText.textContent = 'Copy';
+        }, 1500);
+      });
+    }
+
+    // 3. Phím tắt toàn cục: 'C' để tạo task, 'Escape' để đóng modal / drawer
+    document.addEventListener('keydown', (e) => {
+      // Bỏ qua nếu đang nhập liệu trong input/textarea
+      const activeTag = document.activeElement.tagName;
+      if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') {
+        if (e.key === 'Escape') {
+          closeCreateModal();
+        }
+        return;
+      }
+
+      if (e.key === 'c' || e.key === 'C') {
+        e.preventDefault();
+        openCreateModal();
+      }
+
+      if (e.key === 'Escape') {
+        closeCreateModal();
+        closeDrawer();
+      }
+    });
+
+    // 4. Modal tạo task nhanh
+    const modal = document.getElementById('quickTaskModal');
+    const openModalBtn = document.getElementById('openNewTaskBtn');
+
+    openModalBtn.addEventListener('click', () => openCreateModal());
+
+    function openCreateModal(defaultSprint) {
+      if (defaultSprint) {
+        const select = document.getElementById('taskSprintSelect');
+        if (defaultSprint.includes('3')) select.value = 'sprint-3';
+        else if (defaultSprint.includes('4')) select.value = 'sprint-4';
+        else select.value = 'backlog';
+      }
+      modal.classList.add('is-open');
+      document.getElementById('taskTitleInput').focus();
+    }
+
+    function closeCreateModal(e) {
+      if (!e || e.target === modal) {
+        modal.classList.remove('is-open');
+      }
+    }
+
+    function submitCreateTask() {
+      const title = document.getElementById('taskTitleInput').value.trim();
+      if (!title) {
+        alert('Vui lòng nhập tiêu đề nhiệm vụ.');
+        return;
+      }
+      alert('Đã thêm task: "' + title + '" vào hàng đợi thành công!');
+      modal.classList.remove('is-open');
+      document.getElementById('taskTitleInput').value = '';
+    }
+
+    function openCreateSprintModal() {
+      alert('Mở hộp thoại thiết lập Sprint 5 mới...');
+    }
+
+    // 5. Lọc nhanh bảng bằng ô tìm kiếm
+    const searchInput = document.getElementById('tableSearchInput');
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('.task-row');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(query)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+
+    // 6. Mô phỏng kéo thả (Drag and drop visual feedback)
+    const draggableRows = document.querySelectorAll('.task-row');
+    draggableRows.forEach(row => {
+      row.addEventListener('dragstart', (e) => {
+        row.style.opacity = '0.5';
+        e.dataTransfer.setData('text/plain', row.querySelector('.task-id-code').textContent);
+      });
+      row.addEventListener('dragend', () => {
+        row.style.opacity = '1';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Panel Trợ lý Kỹ thuật AI (Developer Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 13px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 22px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số 4px - Compact High Density) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Mode Colors (Dark Theme) */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3D1418;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3B1F11;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382C10;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      /* System Status */
+      --color-success: #238636;
+      --color-success-bg: #0F2D17;
+      --color-warning: #D29922;
+      --color-warning-bg: #332408;
+      --color-danger: #F85149;
+      --color-danger-bg: #3E1616;
+      --color-info: #58A6FF;
+      --color-info-bg: #12243D;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.45;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Utility */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Scrollbar phẳng, kỹ thuật */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       APP SHELL (NỀN SPRINT BOARD PHÍA DƯỚI)
+       Đồng nhất hoàn toàn với layout developer-board
+       ========================================================================== */
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+      user-select: none;
+    }
+
+    /* 1. SIDEBAR TRÁI (220px) */
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 5;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .workspace-header {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .workspace-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+      font-weight: var(--font-weight-bold);
+      font-size: 11px;
+    }
+
+    .brand-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-toggle-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+    }
+
+    .project-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+    }
+
+    .project-selector .icon {
+      color: var(--color-primary);
+    }
+
+    .sprint-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .sprint-active-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    .nav-group {
+      padding: var(--space-3) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-group-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+      background-color: var(--color-surface-subtle);
+      border-left: 2px solid var(--color-primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .nav-link.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 5px;
+      border-radius: var(--radius-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .git-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      padding: 2px 4px;
+    }
+
+    .git-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-success);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 6px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+    }
+
+    .mode-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* 2. MAIN VIEWPORT & TOP BAR */
+    .main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 48px;
+      min-height: 48px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      z-index: 10;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-sep {
+      color: var(--color-border-strong);
+      font-size: 11px;
+    }
+
+    .breadcrumb-item.current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .sprint-stats-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary-hover);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .command-palette-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 28px;
+      padding: 0 var(--space-3);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1px 4px;
+      color: var(--color-text-muted);
+    }
+
+    /* Nút kích hoạt AI trên Topbar */
+    .topbar-ai-btn {
+      height: 28px;
+      padding: 0 10px;
+      background-color: var(--color-primary-subtle);
+      color: var(--color-primary);
+      border: var(--border-width) solid var(--color-primary);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    /* 3. KANBAN 5 CỘT PHỦ MỜ PHÍA DƯỚI */
+    .kanban-viewport {
+      flex: 1;
+      overflow: hidden;
+      padding: var(--space-3);
+      display: flex;
+      gap: var(--space-3);
+      opacity: 0.45; /* Che mờ nhẹ khi panel AI đang mở */
+      pointer-events: none;
+    }
+
+    .kanban-column {
+      width: 250px;
+      min-width: 250px;
+      height: 100%;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .column-header {
+      padding: 8px var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .column-cards-container {
+      padding: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .task-card-mock {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+    }
+
+    /* ==========================================================================
+       PANEL AI TRƯỢT TỪ PHẢI (480PX)
+       Tuân thủ DESIGN.md: Phẳng, không shadow nặng, không blur
+       ========================================================================== */
+    .ai-panel-aside {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 480px;
+      min-width: 480px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-left: var(--border-width) solid var(--color-border-strong);
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+      animation: panelSlideInRight 0.15s ease-out;
+    }
+
+    @keyframes panelSlideInRight {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    /* 1. Header Panel AI */
+    .ai-panel-header {
+      padding: 10px var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--color-surface);
+    }
+
+    .ai-header-title-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .ai-header-icon {
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .ai-panel-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .ai-panel-header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .ai-close-btn {
+      width: 26px;
+      height: 26px;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-close-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    /* 2. Banner thông báo "AI đang tắt" kèm link Cài đặt > AI */
+    .ai-disabled-banner {
+      margin: var(--space-3) var(--space-4) 0;
+      padding: 8px var(--space-3);
+      background-color: var(--color-warning-bg);
+      border: var(--border-width) solid var(--color-warning);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+    }
+
+    .banner-warning-icon {
+      color: var(--color-warning);
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .banner-content-text {
+      color: var(--color-text);
+      line-height: 1.45;
+      flex: 1;
+    }
+
+    .banner-link {
+      color: var(--color-primary);
+      text-decoration: underline;
+      font-weight: var(--font-weight-semibold);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .banner-link:hover {
+      color: var(--color-primary-hover);
+    }
+
+    /* 3. Ba Tab điều hướng: "Test Cases" | "Release Notes" | "Phân tích log" */
+    .ai-tabs-nav {
+      display: flex;
+      padding: var(--space-3) var(--space-4) 0;
+      border-bottom: var(--border-width) solid var(--color-border);
+      gap: var(--space-2);
+      background-color: var(--color-surface);
+    }
+
+    .ai-tab-btn {
+      padding: 6px 12px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.12s ease;
+    }
+
+    .ai-tab-btn:hover {
+      color: var(--color-text);
+    }
+
+    .ai-tab-btn.is-active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* 4. Nội dung từng Tab */
+    .ai-tab-content-viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .tab-pane.is-active {
+      display: flex;
+    }
+
+    /* Khối nhập liệu chung */
+    .input-section-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .section-field-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .textarea-mono {
+      width: 100%;
+      min-height: 110px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--color-text);
+      resize: vertical;
+      outline: none;
+    }
+
+    .textarea-mono:focus {
+      border-color: var(--color-primary);
+    }
+
+    .textarea-sans {
+      width: 100%;
+      min-height: 80px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      line-height: 1.45;
+      color: var(--color-text);
+      resize: vertical;
+      outline: none;
+    }
+
+    .textarea-sans:focus {
+      border-color: var(--color-primary);
+    }
+
+    /* Nút hành động chính trong tab */
+    .action-btn-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+
+    .btn-ai-submit {
+      height: 28px;
+      padding: 0 12px;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-ai-submit:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .btn-secondary {
+      height: 28px;
+      padding: 0 10px;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-secondary:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    /* Khối kết quả phân tích */
+    .result-container-box {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .result-box-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Checklist Debug Steps & Test Cases */
+    .ai-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .ai-checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      padding: 6px var(--space-2);
+      border-radius: var(--radius-sm);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.12s ease;
+    }
+
+    .ai-checklist-item:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    .ai-checkbox {
+      width: 15px;
+      height: 15px;
+      margin-top: 2px;
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: 3px;
+      background-color: var(--color-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: transparent;
+      transition: all 0.12s ease;
+    }
+
+    .ai-checklist-item.is-checked .ai-checkbox {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-primary-text);
+    }
+
+    .ai-item-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ai-item-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .ai-item-desc {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      line-height: 1.45;
+    }
+
+    .ai-checklist-item.is-checked .ai-item-title {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+
+    /* Khối kết quả Markdown Changelog */
+    .markdown-preview-block {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-3);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--color-text);
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    /* Select box Sprint */
+    .sprint-select-input {
+      height: 28px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 0 8px;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      outline: none;
+    }
+
+    /* Toast */
+    .ai-toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-primary);
+      border-radius: var(--radius);
+      padding: 8px var(--space-3);
+      color: var(--color-text);
+      font-size: var(--font-size-xs);
+      display: none;
+      align-items: center;
+      gap: 6px;
+      z-index: 100;
+    }
+
+    .ai-toast.is-open {
+      display: flex;
+      animation: toastIn 0.15s ease-out;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================================
+       NỀN: SPRINT BOARD (DEVELOPER BOARD ĐƯỢC PHỦ MỜ NHẸ PHÍA DƯỚI)
+       ====================================================================== -->
+  <div class="app-shell">
+
+    <!-- 1. SIDEBAR TRÁI (220px) -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="workspace-header">
+          <div class="workspace-row">
+            <div class="brand-group">
+              <div class="brand-mark">D</div>
+              <span class="brand-title">Dylask</span>
+            </div>
+            <button class="sidebar-toggle-btn" type="button" tabindex="-1">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <line x1="9" x2="9" y1="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div class="project-selector">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>dylask-api</span>
+            <svg class="icon" style="margin-left: auto;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="sprint-badge-row">
+            <span class="sprint-active-dot"></span>
+            <span>Sprint 3 (Đang chạy)</span>
+          </div>
+        </div>
+
+        <nav class="nav-group">
+          <span class="nav-group-label">Quản lý Sprint</span>
+          <a class="nav-link" href="../developer-backlog/layout.html">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" x2="21" y1="6" y2="6"></line>
+              <line x1="8" x2="21" y1="12" y2="12"></line>
+              <line x1="8" x2="21" y1="18" y2="18"></line>
+              <line x1="3" x2="3.01" y1="6" y2="6"></line>
+              <line x1="3" x2="3.01" y1="12" y2="12"></line>
+              <line x1="3" x2="3.01" y1="18" y2="18"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">7</span>
+          </a>
+          <a class="nav-link active" href="../developer-board/layout.html">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="2" rx="2"></rect>
+              <path d="M8 7v7"></path>
+              <path d="M12 7v4"></path>
+              <path d="M16 7v9"></path>
+            </svg>
+            <span>Board</span>
+            <span class="nav-badge">5</span>
+          </a>
+          <a class="nav-link" href="../developer-standup/layout.html">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+            <span>Standup</span>
+          </a>
+          <a class="nav-link" href="../developer-audit-log/layout.html">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Audit Log</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="git-status-bar">
+          <span class="git-status-dot"></span>
+          <span>git: main · synced</span>
+        </div>
+        <div class="mode-switch-group">
+          <a class="mode-btn" href="../standard-list/layout.html">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-btn active" href="../developer-board/layout.html" style="text-decoration: none;" title="Chế độ Lập trình viên đang bật">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. MAIN VIEWPORT & TOP BAR -->
+    <div class="main-viewport">
+      <header class="topbar">
+        <div class="topbar-left">
+          <nav class="breadcrumb">
+            <span class="breadcrumb-item">Dylask</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item">dylask-api</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item current">Sprint Board</span>
+          </nav>
+          <span class="sprint-stats-tag">18 SP · 5 Tasks</span>
+        </div>
+
+        <div class="topbar-right">
+          <a class="command-palette-trigger" href="../developer-command-palette/layout.html">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <span>Tìm kiếm & Lệnh</span>
+            <kbd>Ctrl</kbd>
+            <kbd>K</kbd>
+          </a>
+
+          <!-- Nút kích hoạt AI Assistant đang mở -->
+          <button class="topbar-ai-btn" type="button" onclick="toggleAiPanel()">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            <span>Trợ lý AI</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 3. KANBAN 5 CỘT PHỦ MỜ NHẸ -->
+      <main class="kanban-viewport">
+        <section class="kanban-column">
+          <div class="column-header"><span>Backlog</span><span class="mono">3 SP</span></div>
+          <div class="column-cards-container">
+            <div class="task-card-mock"><span class="mono" style="color: var(--color-primary);">DYL-105</span> Viết unit test cho AuthService</div>
+          </div>
+        </section>
+
+        <section class="kanban-column">
+          <div class="column-header"><span>To Do</span><span class="mono">8 SP</span></div>
+          <div class="column-cards-container">
+            <div class="task-card-mock"><span class="mono" style="color: var(--color-primary);">DYL-104</span> Webhook nhận sự kiện GitHub</div>
+          </div>
+        </section>
+
+        <section class="kanban-column">
+          <div class="column-header"><span>In Progress</span><span class="mono">5 SP</span></div>
+          <div class="column-cards-container">
+            <div class="task-card-mock" style="border-color: var(--color-primary);"><span class="mono" style="color: var(--color-primary);">DYL-102</span> Triển khai xác thực JWT</div>
+          </div>
+        </section>
+
+        <section class="kanban-column">
+          <div class="column-header"><span>In Review</span><span class="mono">3 SP</span></div>
+          <div class="column-cards-container">
+            <div class="task-card-mock"><span class="mono" style="color: var(--color-primary);">DYL-103</span> Trang đăng nhập & Đăng ký</div>
+          </div>
+        </section>
+
+        <section class="kanban-column">
+          <div class="column-header"><span>Done</span><span class="mono">2 SP</span></div>
+          <div class="column-cards-container">
+            <div class="task-card-mock"><span class="mono" style="color: var(--color-primary);">DYL-098</span> Sửa lỗi 500 khi tạo task trống</div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       PANEL AI TRƯỢT TỪ PHẢI (480PX)
+       Mở trên Sprint Board, Developer Mode
+       ====================================================================== -->
+  <aside class="ai-panel-aside" id="aiPanelAside" aria-label="Panel Trợ lý AI Kỹ thuật">
+
+    <!-- 1. HEADER PANEL AI -->
+    <div class="ai-panel-header">
+      <div class="ai-header-title-group">
+        <span class="ai-header-icon">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+          </svg>
+        </span>
+        <span class="ai-panel-title">Trợ lý Kỹ thuật AI</span>
+      </div>
+
+      <div class="ai-panel-header-actions">
+        <button class="ai-close-btn" type="button" title="Đóng panel AI" onclick="toggleAiPanel()">
+          <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. BANNER CẢNH BÁO "AI ĐANG TẮT" KÈM LINK TỚI CÀI ĐẶT > AI THEO SPEC -->
+    <div class="ai-disabled-banner">
+      <span class="banner-warning-icon">
+        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </span>
+      <div class="banner-content-text">
+        <span>Trạng thái: <strong>AI đang tắt</strong> trong dự án này. Để kích hoạt tính năng tự động và cấu hình khóa API riêng (BYOK), vui lòng chuyển tới </span>
+        <a class="banner-link" href="../settings/layout.html">
+          <span>Cài đặt &gt; AI</span>
+          <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" x2="21" y1="14" y2="3"></line>
+          </svg>
+        </a>.
+      </div>
+    </div>
+
+    <!-- 3. BA TAB: "TEST CASES" | "RELEASE NOTES" | "PHÂN TÍCH LOG" -->
+    <nav class="ai-tabs-nav" aria-label="Các tab hỗ trợ AI">
+      <button class="ai-tab-btn" id="tabBtnTestCases" type="button" onclick="switchAiTab('test-cases')">
+        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 11 12 14 22 4"></polyline>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        <span>Test Cases</span>
+      </button>
+
+      <button class="ai-tab-btn" id="tabBtnReleaseNotes" type="button" onclick="switchAiTab('release-notes')">
+        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        <span>Release Notes</span>
+      </button>
+
+      <!-- MẶC ĐỊNH MỞ TAB NÀY THEO YÊU CẦU -->
+      <button class="ai-tab-btn is-active" id="tabBtnLogAnalysis" type="button" onclick="switchAiTab('log-analysis')">
+        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        <span>Phân tích log</span>
+      </button>
+    </nav>
+
+    <!-- 4. NỘI DUNG TỪNG TAB -->
+    <div class="ai-tab-content-viewport">
+
+      <!-- ==================================================================
+           TAB 3 (MẶC ĐỊNH MỞ): PHÂN TÍCH LOG - ĐÃ CÓ DỮ LIỆU MẪU
+           ================================================================== -->
+      <div class="tab-pane is-active" id="paneLogAnalysis">
+        <div class="input-section-group">
+          <label class="section-field-label" for="stackTraceInput">
+            <span>Dán Stack Trace / Log lỗi (Monospace)</span>
+            <span class="mono" style="font-size: 10px; color: var(--color-primary);">io.jsonwebtoken</span>
+          </label>
+          <textarea class="textarea-mono" id="stackTraceInput" spellcheck="false">io.jsonwebtoken.ExpiredJwtException: JWT expired at 2026-10-12T07:15:20Z. Current time: 2026-10-12T07:30:15Z, a difference of 895000 milliseconds. Allowed clock skew: 0 milliseconds.
+    at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:388)
+    at io.jsonwebtoken.impl.DefaultJwtParser.parseClaimsJws(DefaultJwtParser.java:541)
+    at com.dylask.modules.auth.security.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:45)
+    at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+    at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:231)</textarea>
+        </div>
+
+        <div class="action-btn-row">
+          <button class="btn-ai-submit" type="button" onclick="analyzeLog()">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Phân tích lại</span>
+          </button>
+          <button class="btn-secondary" type="button" onclick="clearLogInput()">
+            <span>Xóa log</span>
+          </button>
+        </div>
+
+        <!-- Kết quả: Checklist Debug Steps -->
+        <div class="result-container-box">
+          <div class="result-box-title">
+            <span>Checklist Gỡ lỗi (Debug Steps)</span>
+            <span class="mono" style="font-size: 10px; color: var(--color-primary);" id="debugStepProgress">1/3 Hoàn thành</span>
+          </div>
+
+          <ul class="ai-checklist" id="debugChecklist">
+            <!-- Bước 1: Đã tick -->
+            <li class="ai-checklist-item is-checked" onclick="toggleChecklistItem(this)">
+              <div class="ai-checkbox">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-item-body">
+                <span class="ai-item-title">1. Kiểm tra vòng đời Access Token</span>
+                <span class="ai-item-desc">Access token đã hết hạn 15 phút. Xác nhận client có tự động kích hoạt flow refresh token trước khi gửi request tới API bảo mật hay không.</span>
+              </div>
+            </li>
+
+            <!-- Bước 2: Chưa tick -->
+            <li class="ai-checklist-item" onclick="toggleChecklistItem(this)">
+              <div class="ai-checkbox">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-item-body">
+                <span class="ai-item-title">2. Bắt ngoại lệ ExpiredJwtException trong Filter</span>
+                <span class="ai-item-desc">Bọc khối try/catch trong JwtAuthenticationFilter để trả về HTTP 401 Unauthorized và mã lỗi ApiResponse("TOKEN_EXPIRED") thay vì để văng lỗi 500.</span>
+              </div>
+            </li>
+
+            <!-- Bước 3: Chưa tick -->
+            <li class="ai-checklist-item" onclick="toggleChecklistItem(this)">
+              <div class="ai-checkbox">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-item-body">
+                <span class="ai-item-title">3. Cấu hình Clock Skew phòng lệch giờ</span>
+                <span class="ai-item-desc">Bổ sung .setAllowedClockSkewSeconds(60) vào JwtParserBuilder để chấp nhận độ trễ đồng hồ 60 giây giữa các server và gateway.</span>
+              </div>
+            </li>
+          </ul>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
+            <button class="btn-secondary" type="button" onclick="copyDebugSteps()">
+              <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+              </svg>
+              <span>Sao chép Checklist gỡ lỗi</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================
+           TAB 1: TEST CASES (Ô DÁN MÔ TẢ, NÚT SINH, AC VÀ EDGE CASES CÓ TICK)
+           ================================================================== -->
+      <div class="tab-pane" id="paneTestCases">
+        <div class="input-section-group">
+          <label class="section-field-label" for="taskDescInput">
+            <span>Mô tả yêu cầu nghiệp vụ / User Story</span>
+            <span class="mono" style="font-size: 10px; color: var(--color-primary);">DYL-102</span>
+          </label>
+          <textarea class="textarea-sans" id="taskDescInput" placeholder="Dán mô tả tính năng cần sinh test cases...">Người dùng gửi request POST /api/v1/auth/login kèm email và password. Nếu thông tin chính xác, trả về HTTP 200 kèm JWT Access Token (15 phút) và Refresh Token (7 ngày). Nếu sai quá 5 lần liên tiếp, khóa tài khoản tạm thời 15 phút.</textarea>
+        </div>
+
+        <div class="action-btn-row">
+          <button class="btn-ai-submit" type="button" onclick="generateTestCases()">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            <span>Sinh Test Cases</span>
+          </button>
+          <button class="btn-secondary" type="button" onclick="addToTask('DYL-102')">
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Thêm vào task DYL-102</span>
+          </button>
+        </div>
+
+        <!-- Kết quả AC & Edge Cases -->
+        <div class="result-container-box">
+          <div class="result-box-title">
+            <span>Acceptance Criteria (Given - When - Then)</span>
+            <span class="mono" style="font-size: 10px; color: var(--color-text-muted);">3 tiêu chí</span>
+          </div>
+
+          <ul class="ai-checklist" id="acListGenerated">
+            <li class="ai-checklist-item" onclick="toggleChecklistItem(this)">
+              <div class="ai-checkbox">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-item-body">
+                <span class="ai-item-title">AC-1: Đăng nhập thành công trả về token kép</span>
+                <span class="ai-item-desc">Given tài khoản tồn tại và mật khẩu hợp lệ, When POST /login, Then nhận HTTP 200 kèm access_token (15m) &amp; refresh_token (7d).</span>
+              </div>
+            </li>
+
+            <li class="ai-checklist-item" onclick="toggleChecklistItem(this)">
+              <div class="ai-checkbox">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-item-body">
+                <span class="ai-item-title">AC-2: Sai mật khẩu trả về mã lỗi 401</span>
+                <span class="ai-item-desc">Given mật khẩu không khớp, When POST /login, Then nhận HTTP 401 kèm ApiResponse lỗi chung để bảo mật.</span>
+              </div>
+            </li>
+
+            <li class="ai-checklist-item" onclick="toggleChecklistItem(this)">
+              <div class="ai-checkbox">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-item-body">
+                <span class="ai-item-title">AC-3: Khóa tài khoản sau 5 lần thất bại</span>
+                <span class="ai-item-desc">Given tài khoản bị nhập sai 5 lần, When thử lần thứ 6, Then nhận HTTP 423 Locked và thông báo thời gian khóa 15 phút.</span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="result-box-title" style="margin-top: 8px;">
+            <span>Edge Cases (Trường hợp kiểm thử biên)</span>
+            <span class="mono" style="font-size: 10px; color: var(--color-warning);">2 trường hợp</span>
+          </div>
+
+          <ul class="ai-checklist" id="edgeCaseListGenerated">
+            <li class="ai-checklist-item" onclick="toggleChecklistItem(this)">
+              <div class="ai-checkbox">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-item-body">
+                <span class="ai-item-title">Edge-1: Payload rỗng hoặc sai cú pháp email</span>
+                <span class="ai-item-desc">Given request body rỗng hoặc email không có ký tự @, When POST /login, Then MethodArgumentNotValidException trả về 400 Bad Request.</span>
+              </div>
+            </li>
+
+            <li class="ai-checklist-item" onclick="toggleChecklistItem(this)">
+              <div class="ai-checkbox">
+                <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="ai-item-body">
+                <span class="ai-item-title">Edge-2: Đăng nhập đồng thời vào ngưỡng lần 5</span>
+                <span class="ai-item-desc">Given gửi nhiều request song song từ nhiều tab, Then bộ đếm Redis/DB phải đảm bảo tính atomic chống race condition.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ==================================================================
+           TAB 2: RELEASE NOTES (CHỌN SPRINT, KẾT QUẢ MARKDOWN, NÚT SAO CHÉP)
+           ================================================================== -->
+      <div class="tab-pane" id="paneReleaseNotes">
+        <div class="input-section-group">
+          <label class="section-field-label" for="sprintSelect">
+            <span>Chọn Sprint để tổng hợp Changelog</span>
+          </label>
+          <div style="display: flex; gap: var(--space-2); align-items: center;">
+            <select class="sprint-select-input" id="sprintSelect" style="flex: 1;">
+              <option value="sprint-3" selected>Sprint 3 (Đang chạy · 4 task Done)</option>
+              <option value="sprint-2">Sprint 2 (Hoàn tất · 6 task Done)</option>
+              <option value="sprint-1">Sprint 1 (Hoàn tất · 5 task Done)</option>
+            </select>
+            <button class="btn-ai-submit" type="button" onclick="generateReleaseNotes()">
+              <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+              <span>Tổng hợp</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="action-btn-row">
+          <span style="font-size: 11px; color: var(--color-text-muted);">Định dạng Markdown tiêu chuẩn</span>
+          <button class="btn-secondary" type="button" onclick="copyReleaseNotesMarkdown()">
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+            </svg>
+            <span id="copyReleaseNotesBtnLabel">Sao chép Markdown</span>
+          </button>
+        </div>
+
+        <!-- Khối kết quả Markdown Changelog -->
+        <div class="result-container-box">
+          <div class="result-box-title">
+            <span>Bản tin phát hành (Changelog Preview)</span>
+            <span class="mono" style="font-size: 10px; color: var(--color-primary);">v1.2.0</span>
+          </div>
+
+          <pre class="markdown-preview-block" id="releaseNotesMarkdown"># Bản tin phát hành: dylask-api (Sprint 3 - v1.2.0)
+*Ngày phát hành: 12/10/2026 · Nhóm Kỹ thuật Dylask*
+
+### 🚀 Tính năng mới (New Features)
+- **DYL-101**: Hệ thống Design Tokens & CSS Variables chuẩn Dual-Mode (@an)
+- **DYL-100**: Khởi tạo kiến trúc Modular Monolith Spring Boot & Flyway Migration (@huy)
+
+### 🐛 Sửa lỗi & Ổn định (Bug Fixes)
+- **DYL-098**: Xử lý ngoại lệ HTTP 500 khi gửi payload rỗng khi tạo task (@dylan)
+
+### ⚙️ Hạ tầng & DevOps (Infrastructure)
+- **DYL-099**: Cấu hình Docker Compose môi trường MySQL 8.4 (@huy)</pre>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Toast phản hồi -->
+  <div class="ai-toast" id="aiToast">
+    <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="aiToastMsg">Đã thực hiện thành công</span>
+  </div>
+
+  <!-- ==========================================================================
+       SCRIPTS: CHUYỂN TAB, CHECKLIST TƯƠNG TÁC & BẬT/TẮT PANEL
+       ========================================================================== -->
+  <script>
+    // 1. Chuyển đổi giữa 3 Tab: 'test-cases', 'release-notes', 'log-analysis'
+    function switchAiTab(tabName) {
+      document.querySelectorAll('.ai-tab-btn').forEach(btn => btn.classList.remove('is-active'));
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('is-active'));
+
+      if (tabName === 'test-cases') {
+        document.getElementById('tabBtnTestCases').classList.add('is-active');
+        document.getElementById('paneTestCases').classList.add('is-active');
+      } else if (tabName === 'release-notes') {
+        document.getElementById('tabBtnReleaseNotes').classList.add('is-active');
+        document.getElementById('paneReleaseNotes').classList.add('is-active');
+      } else if (tabName === 'log-analysis') {
+        document.getElementById('tabBtnLogAnalysis').classList.add('is-active');
+        document.getElementById('paneLogAnalysis').classList.add('is-active');
+      }
+    }
+
+    // 2. Toggle ẩn/hiện Panel AI
+    function toggleAiPanel() {
+      const panel = document.getElementById('aiPanelAside');
+      if (panel.style.display === 'none') {
+        panel.style.display = 'flex';
+      } else {
+        panel.style.display = 'none';
+        showAiToast('Đã đóng Panel AI (Nhấn nút Trợ lý AI trên thanh trên để mở lại)');
+      }
+    }
+
+    // 3. Tick checklist tương tác
+    function toggleChecklistItem(item) {
+      item.classList.toggle('is-checked');
+      updateChecklistStats();
+    }
+
+    function updateChecklistStats() {
+      const total = document.querySelectorAll('#debugChecklist .ai-checklist-item').length;
+      const checked = document.querySelectorAll('#debugChecklist .ai-checklist-item.is-checked').length;
+      document.getElementById('debugStepProgress').textContent = `${checked}/${total} Hoàn thành`;
+    }
+
+    // 4. Các nút thao tác mẫu
+    function analyzeLog() {
+      showAiToast('Đã phân tích lại Stack Trace và cập nhật gợi ý gỡ lỗi.');
+    }
+
+    function clearLogInput() {
+      document.getElementById('stackTraceInput').value = '';
+    }
+
+    function copyDebugSteps() {
+      const steps = [
+        '- 1. Kiểm tra vòng đời Access Token (expiresIn: 15m)',
+        '- 2. Bắt ngoại lệ ExpiredJwtException trong Filter (HTTP 401)',
+        '- 3. Cấu hình Clock Skew 60s phòng lệch giờ giữa server'
+      ].join('\n');
+      navigator.clipboard.writeText(steps).then(() => {
+        showAiToast('Đã sao chép 3 bước gỡ lỗi vào Clipboard!');
+      });
+    }
+
+    function generateTestCases() {
+      showAiToast('Đã sinh lại 3 Acceptance Criteria và 2 Edge Cases.');
+    }
+
+    function addToTask(taskId) {
+      showAiToast('Đã bổ sung Acceptance Criteria vào task ' + taskId + ' thành công!');
+    }
+
+    function generateReleaseNotes() {
+      showAiToast('Đã cập nhật bản tin phát hành cho Sprint 3.');
+    }
+
+    function copyReleaseNotesMarkdown() {
+      const md = document.getElementById('releaseNotesMarkdown').textContent;
+      navigator.clipboard.writeText(md).then(() => {
+        showAiToast('Đã sao chép Release Notes Markdown vào Clipboard!');
+        const label = document.getElementById('copyReleaseNotesBtnLabel');
+        label.textContent = 'Đã sao chép!';
+        setTimeout(() => { label.textContent = 'Sao chép Markdown'; }, 2000);
+      });
+    }
+
+    function showAiToast(msg) {
+      const toast = document.getElementById('aiToast');
+      document.getElementById('aiToastMsg').textContent = msg;
+      toast.classList.add('is-open');
+      setTimeout(() => {
+        toast.classList.remove('is-open');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

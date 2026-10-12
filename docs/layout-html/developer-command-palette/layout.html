@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Command Palette (Ctrl+K) (Developer Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md - Tuyệt đối không hard-code màu
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 13px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 22px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số 4px - Compact High Density) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Mode Colors (Dark Theme) */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3D1418;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3B1F11;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382C10;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      /* System Status */
+      --color-success: #238636;
+      --color-success-bg: #0F2D17;
+      --color-warning: #D29922;
+      --color-warning-bg: #332408;
+      --color-danger: #F85149;
+      --color-danger-bg: #3E1616;
+      --color-info: #58A6FF;
+      --color-info-bg: #12243D;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.45;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Utility */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Scrollbar phẳng, tối giản */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       APP SHELL (NỀN SPRINT BOARD MỜ PHÍA DƯỚI)
+       Đồng nhất hoàn toàn với layout developer-board
+       ========================================================================== */
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+      user-select: none;
+      pointer-events: none; /* Tránh click nhầm xuống nền khi modal đang mở */
+    }
+
+    /* 1. SIDEBAR TRÁI (220px) */
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 5;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .workspace-header {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .workspace-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+      font-weight: var(--font-weight-bold);
+      font-size: 11px;
+    }
+
+    .brand-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-toggle-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+    }
+
+    .project-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+    }
+
+    .project-selector .icon {
+      color: var(--color-primary);
+    }
+
+    .sprint-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .sprint-active-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    .nav-group {
+      padding: var(--space-3) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-group-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+      background-color: var(--color-surface-subtle);
+      border-left: 2px solid var(--color-primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .nav-link.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 5px;
+      border-radius: var(--radius-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .git-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      padding: 2px 4px;
+    }
+
+    .git-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-success);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 6px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+    }
+
+    .mode-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* 2. MAIN VIEWPORT & TOP BAR */
+    .main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 48px;
+      min-height: 48px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-sep {
+      color: var(--color-border-strong);
+      font-size: 11px;
+    }
+
+    .breadcrumb-item.current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .sprint-stats-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary-hover);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .command-palette-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 28px;
+      padding: 0 var(--space-3);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-primary);
+      border-radius: var(--radius);
+      color: var(--color-primary);
+      font-size: var(--font-size-xs);
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1px 4px;
+      color: var(--color-text-muted);
+    }
+
+    .filter-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 28px;
+      padding: 0 8px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+
+    .new-task-btn {
+      height: 28px;
+      padding: 0 10px;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 3. NỀN KANBAN 5 CỘT */
+    .kanban-viewport {
+      flex: 1;
+      overflow: hidden;
+      padding: var(--space-3);
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .kanban-column {
+      width: 260px;
+      min-width: 260px;
+      height: 100%;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0.65;
+    }
+
+    .column-header {
+      padding: 8px var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .column-cards-container {
+      padding: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .task-card-mock {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-2) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .card-title-mock {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    /* ==========================================================================
+       LỚP PHỦ MỜ (OVERLAY BACKDROP)
+       Tuân thủ DESIGN.md: Phẳng, không blur glassmorphism, che mờ nền Sprint Board
+       ========================================================================== */
+    .palette-overlay-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: color-mix(in srgb, var(--color-bg) 78%, transparent);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 72px; /* Căn trên giữa, cách đỉnh 72px */
+    }
+
+    /* ==========================================================================
+       HỘP COMMAND PALETTE (RỘNG 600px, CĂN TRÊN GIỮA)
+       ========================================================================== */
+    .command-palette-box {
+      width: 600px;
+      max-width: calc(100vw - 32px);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: var(--radius);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: paletteSlideDown 0.12s ease-out;
+    }
+
+    @keyframes paletteSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 1. KHU VỰC NHẬP LỆNH LỚN */
+    .palette-search-header {
+      padding: 0 var(--space-4);
+      height: 48px;
+      min-height: 48px;
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      background-color: var(--color-surface);
+    }
+
+    .palette-search-icon {
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .palette-input {
+      flex: 1;
+      height: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      line-height: 48px;
+    }
+
+    .palette-input::placeholder {
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-regular);
+    }
+
+    .palette-search-clear-btn {
+      width: 22px;
+      height: 22px;
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+    }
+
+    .palette-search-clear-btn:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .palette-esc-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 2px 5px;
+      border-radius: var(--radius-sm);
+      user-select: none;
+    }
+
+    /* 2. DANH SÁCH KẾT QUẢ TÌM KIẾM THEO NHÓM */
+    .palette-results-list {
+      max-height: 430px;
+      overflow-y: auto;
+      padding: var(--space-2) 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .palette-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .palette-group-header {
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 8px var(--space-4) 4px;
+      user-select: none;
+    }
+
+    /* Dòng kết quả */
+    .palette-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px var(--space-4);
+      gap: var(--space-3);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: background-color 0.1s ease, border-left-color 0.1s ease;
+      user-select: none;
+    }
+
+    .palette-item:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    /* Mục đang chọn: Tô nền rõ nét theo spec */
+    .palette-item.is-selected {
+      background-color: var(--color-surface-subtle);
+      border-left-color: var(--color-primary);
+    }
+
+    .palette-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .palette-item-icon {
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .palette-item.is-selected .palette-item-icon {
+      color: var(--color-primary);
+    }
+
+    .palette-item-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .palette-item-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .palette-item-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Điểm sáng từ khóa 'jwt' trùng khớp */
+    .highlight-match {
+      color: var(--color-primary);
+      font-weight: var(--font-weight-bold);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .palette-item-badges {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .mini-badge {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      border: var(--border-width) solid transparent;
+    }
+
+    .mini-badge.p1 {
+      color: var(--priority-p1);
+      background-color: var(--priority-p1-bg);
+      border-color: var(--priority-p1);
+    }
+
+    .mini-badge.p3 {
+      color: var(--priority-p3);
+      background-color: var(--priority-p3-bg);
+      border-color: var(--priority-p3);
+    }
+
+    .mini-badge.sp {
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border-color: var(--color-border);
+    }
+
+    .mini-badge.status-in-progress {
+      color: var(--color-info);
+      background-color: var(--color-info-bg);
+      border-color: var(--color-info);
+    }
+
+    .mini-badge.status-backlog {
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border-color: var(--color-border);
+    }
+
+    .palette-item-desc {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Phím tắt dạng thẻ nhỏ bên phải mỗi dòng */
+    .palette-item-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .shortcut-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1px 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      line-height: 14px;
+    }
+
+    .palette-item.is-selected .shortcut-tag {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface);
+    }
+
+    /* 3. CHÂN HỘP (GỢI Ý ĐIỀU HƯỚNG BÀN PHÍM) */
+    .palette-footer {
+      height: 36px;
+      min-height: 36px;
+      padding: 0 var(--space-4);
+      border-top: var(--border-width) solid var(--color-border);
+      background-color: var(--color-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .palette-footer-hints {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    .hint-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .hint-group kbd {
+      font-size: 9px;
+      padding: 1px 4px;
+      background-color: var(--color-surface);
+      border-color: var(--color-border);
+      color: var(--color-text);
+    }
+
+    .palette-footer-stats {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+    }
+
+    /* Thông báo Toast mô phỏng thao tác */
+    .action-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-primary);
+      border-radius: var(--radius);
+      padding: 8px var(--space-4);
+      color: var(--color-text);
+      font-size: var(--font-size-xs);
+      display: none;
+      align-items: center;
+      gap: var(--space-2);
+      z-index: 200;
+    }
+
+    .action-toast.is-visible {
+      display: flex;
+      animation: toastFadeIn 0.15s ease-out;
+    }
+
+    @keyframes toastFadeIn {
+      from { opacity: 0; transform: translate(-50%, 8px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================================
+       NỀN: SPRINT BOARD (DEVELOPER BOARD ĐƯỢC PHỦ MỜ PHÍA DƯỚI)
+       ====================================================================== -->
+  <div class="app-shell" aria-hidden="true">
+
+    <!-- 1. SIDEBAR TRÁI (220px) -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="workspace-header">
+          <div class="workspace-row">
+            <div class="brand-group">
+              <div class="brand-mark">D</div>
+              <span class="brand-title">Dylask</span>
+            </div>
+            <button class="sidebar-toggle-btn" type="button" tabindex="-1">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <line x1="9" x2="9" y1="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div class="project-selector">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>dylask-api</span>
+            <svg class="icon" style="margin-left: auto;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="sprint-badge-row">
+            <span class="sprint-active-dot"></span>
+            <span>Sprint 3 (Đang chạy)</span>
+          </div>
+        </div>
+
+        <nav class="nav-group">
+          <span class="nav-group-label">Quản lý Sprint</span>
+          <a class="nav-link" href="../developer-backlog/layout.html">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" x2="21" y1="6" y2="6"></line>
+              <line x1="8" x2="21" y1="12" y2="12"></line>
+              <line x1="8" x2="21" y1="18" y2="18"></line>
+              <line x1="3" x2="3.01" y1="6" y2="6"></line>
+              <line x1="3" x2="3.01" y1="12" y2="12"></line>
+              <line x1="3" x2="3.01" y1="18" y2="18"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">7</span>
+          </a>
+          <a class="nav-link active" href="../developer-board/layout.html">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="2" rx="2"></rect>
+              <path d="M8 7v7"></path>
+              <path d="M12 7v4"></path>
+              <path d="M16 7v9"></path>
+            </svg>
+            <span>Board</span>
+            <span class="nav-badge">5</span>
+          </a>
+          <a class="nav-link" href="../developer-standup/layout.html">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+            <span>Standup</span>
+          </a>
+          <a class="nav-link" href="../developer-audit-log/layout.html">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Audit Log</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="git-status-bar">
+          <span class="git-status-dot"></span>
+          <span>git: main · synced</span>
+        </div>
+                <div class="mode-switch-group">
+          <a class="mode-btn" href="../standard-list/layout.html" style="text-decoration: none;" title="Chuyển sang chế độ Standard">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-btn active" href="../developer-board/layout.html" style="text-decoration: none;" title="Chế độ Lập trình viên đang bật">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 2. MAIN VIEWPORT & TOPBAR NỀN -->
+    <div class="main-viewport">
+      <header class="topbar">
+        <div class="topbar-left">
+          <nav class="breadcrumb">
+            <span class="breadcrumb-item">Dylask</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item">dylask-api</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item current">Sprint 3</span>
+          </nav>
+          <span class="sprint-stats-tag">18 SP · 5 Tasks</span>
+        </div>
+
+        <div class="topbar-right">
+          <div class="command-palette-trigger">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <span>Tìm kiếm & Lệnh</span>
+            <kbd>Ctrl</kbd>
+            <kbd>K</kbd>
+          </div>
+
+          <div class="filter-chip">
+            <span>Assignee: Tất cả</span>
+            <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <button class="new-task-btn" type="button" tabindex="-1">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Tạo Task</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 3. KANBAN 5 CỘT PHỦ MỜ -->
+      <main class="kanban-viewport">
+        <!-- Cột Backlog -->
+        <section class="kanban-column">
+          <div class="column-header">
+            <span>Backlog</span>
+            <span class="mono">3 SP</span>
+          </div>
+          <div class="column-cards-container">
+            <div class="task-card-mock">
+              <div class="card-top">
+                <span class="mono" style="color: var(--color-primary);">DYL-105</span>
+                <span style="color: var(--priority-p3);">P3</span>
+              </div>
+              <div class="card-title-mock">Viết unit test cho AuthService</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cột To Do -->
+        <section class="kanban-column">
+          <div class="column-header">
+            <span>To Do</span>
+            <span class="mono">8 SP</span>
+          </div>
+          <div class="column-cards-container">
+            <div class="task-card-mock">
+              <div class="card-top">
+                <span class="mono" style="color: var(--color-primary);">DYL-104</span>
+                <span style="color: var(--priority-p2);">P2</span>
+              </div>
+              <div class="card-title-mock">Webhook nhận sự kiện GitHub</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cột In Progress -->
+        <section class="kanban-column">
+          <div class="column-header">
+            <span>In Progress</span>
+            <span class="mono">5 SP</span>
+          </div>
+          <div class="column-cards-container">
+            <div class="task-card-mock" style="border-color: var(--color-primary);">
+              <div class="card-top">
+                <span class="mono" style="color: var(--color-primary);">DYL-102</span>
+                <span style="color: var(--priority-p1);">P1</span>
+              </div>
+              <div class="card-title-mock">Triển khai xác thực JWT</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cột In Review -->
+        <section class="kanban-column">
+          <div class="column-header">
+            <span>In Review</span>
+            <span class="mono">3 SP</span>
+          </div>
+          <div class="column-cards-container">
+            <div class="task-card-mock">
+              <div class="card-top">
+                <span class="mono" style="color: var(--color-primary);">DYL-103</span>
+                <span style="color: var(--priority-p2);">P2</span>
+              </div>
+              <div class="card-title-mock">Trang đăng nhập & Đăng ký</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cột Done -->
+        <section class="kanban-column">
+          <div class="column-header">
+            <span>Done</span>
+            <span class="mono">2 SP</span>
+          </div>
+          <div class="column-cards-container">
+            <div class="task-card-mock">
+              <div class="card-top">
+                <span class="mono" style="color: var(--color-primary);">DYL-098</span>
+                <span style="color: var(--priority-p1);">P1</span>
+              </div>
+              <div class="card-title-mock">Lỗi 500 khi tạo task trống</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       LỚP PHỦ COMMAND PALETTE (CTRL + K)
+       ====================================================================== -->
+  <div class="palette-overlay-backdrop" id="paletteBackdrop" onclick="handleBackdropClick(event)">
+
+    <!-- HỘP COMMAND PALETTE RỘNG 600px CĂN TRÊN GIỮA -->
+    <div class="command-palette-box" id="commandPaletteBox" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-label="Command Palette">
+
+      <!-- 1. Ô NHẬP LỚN CÓ SẴN TỪ KHÓA "jwt" -->
+      <div class="palette-search-header">
+        <div class="palette-search-icon">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+          </svg>
+        </div>
+
+        <input
+          class="palette-input"
+          id="paletteSearchInput"
+          type="text"
+          value="jwt"
+          placeholder="Nhập tên task, trang hoặc lệnh hành động..."
+          autocomplete="off"
+          spellcheck="false"
+          autofocus
+        >
+
+        <button class="palette-search-clear-btn" id="clearSearchBtn" type="button" title="Xóa từ khóa" onclick="clearSearch()">
+          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <span class="palette-esc-badge">ESC</span>
+      </div>
+
+      <!-- 2. DANH SÁCH KẾT QUẢ THEO 3 NHÓM: TASK, TRANG, HÀNH ĐỘNG -->
+      <div class="palette-results-list" id="paletteResultsList" role="listbox">
+
+        <!-- NHÓM 1: TASK -->
+        <div class="palette-group" data-group="task">
+          <div class="palette-group-header">Task</div>
+
+          <!-- Mục 1: DYL-102 (Đang chọn - is-selected) -->
+          <div
+            class="palette-item is-selected"
+            data-index="0"
+            role="option"
+            aria-selected="true"
+            onclick="window.location.href = \'../developer-focus/layout.html\'"
+          >
+            <div class="palette-item-left">
+              <span class="palette-item-icon">
+                <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+              </span>
+              <div class="palette-item-content">
+                <span class="palette-item-code">DYL-102</span>
+                <span class="palette-item-title">Triển khai xác thực <span class="highlight-match">JWT</span> &amp; phân quyền RBAC</span>
+                <div class="palette-item-badges">
+                  <span class="mini-badge p1">P1</span>
+                  <span class="mini-badge sp">5 SP</span>
+                  <span class="mini-badge status-in-progress">In Progress</span>
+                </div>
+              </div>
+            </div>
+            <div class="palette-item-right">
+              <span class="shortcut-tag"><kbd>↵</kbd></span>
+            </div>
+          </div>
+
+          <!-- Mục 2: DYL-105 -->
+          <div
+            class="palette-item"
+            data-index="1"
+            role="option"
+            aria-selected="false"
+            onclick="triggerAction('Mở chi tiết task DYL-105 (Viết unit test cho AuthService)')"
+          >
+            <div class="palette-item-left">
+              <span class="palette-item-icon">
+                <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+              </span>
+              <div class="palette-item-content">
+                <span class="palette-item-code">DYL-105</span>
+                <span class="palette-item-title">Viết unit test cho AuthService (Mock <span class="highlight-match">JWT</span> verify)</span>
+                <div class="palette-item-badges">
+                  <span class="mini-badge p3">P3</span>
+                  <span class="mini-badge sp">3 SP</span>
+                  <span class="mini-badge status-backlog">Backlog</span>
+                </div>
+              </div>
+            </div>
+            <div class="palette-item-right">
+              <span class="shortcut-tag"><kbd>↵</kbd></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- NHÓM 2: TRANG -->
+        <div class="palette-group" data-group="pages">
+          <div class="palette-group-header">Trang</div>
+
+          <!-- Mục 3: Đi đến trang Đăng nhập & Xác thực -->
+          <div
+            class="palette-item"
+            data-index="2"
+            role="option"
+            aria-selected="false"
+            onclick="window.location.href = \'../auth/layout.html\'"
+          >
+            <div class="palette-item-left">
+              <span class="palette-item-icon">
+                <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                  <polyline points="10 17 15 12 10 7"></polyline>
+                  <line x1="15" y1="12" x2="3" y2="12"></line>
+                </svg>
+              </span>
+              <div class="palette-item-content">
+                <span class="palette-item-title">Chuyển đến màn hình Xác thực (<span class="highlight-match">JWT</span> Auth)</span>
+                <span class="palette-item-desc mono">docs/layout-html/auth/</span>
+              </div>
+            </div>
+            <div class="palette-item-right">
+              <span class="shortcut-tag"><kbd>G</kbd> <kbd>A</kbd></span>
+            </div>
+          </div>
+
+          <!-- Mục 4: Đi đến tài liệu đặc tả Auth -->
+          <div
+            class="palette-item"
+            data-index="3"
+            role="option"
+            aria-selected="false"
+            onclick="window.location.href = \'../developer-backlog/layout.html\'"
+          >
+            <div class="palette-item-left">
+              <span class="palette-item-icon">
+                <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </span>
+              <div class="palette-item-content">
+                <span class="palette-item-title">Xem đặc tả: FEAT-AUTH-01 (<span class="highlight-match">JWT</span> Authentication)</span>
+                <span class="palette-item-desc mono">docs/specs/01.draft/</span>
+              </div>
+            </div>
+            <div class="palette-item-right">
+              <span class="shortcut-tag"><kbd>G</kbd> <kbd>S</kbd></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- NHÓM 3: HÀNH ĐỘNG (GÁN NGƯỜI, ĐỔI TRẠNG THÁI, COPY BRANCH) -->
+        <div class="palette-group" data-group="actions">
+          <div class="palette-group-header">Hành động</div>
+
+          <!-- Mục 5: Gán người thực hiện task DYL-102 -->
+          <div
+            class="palette-item"
+            data-index="4"
+            role="option"
+            aria-selected="false"
+            onclick="triggerAction('Đã mở hộp thoại gán người phụ trách cho task DYL-102')"
+          >
+            <div class="palette-item-left">
+              <span class="palette-item-icon">
+                <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="8.5" cy="7" r="4"></circle>
+                  <line x1="20" y1="8" x2="20" y2="14"></line>
+                  <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+              </span>
+              <div class="palette-item-content">
+                <span class="palette-item-title">Gán người thực hiện cho task <span class="highlight-match">JWT</span> (<span class="mono" style="color: var(--color-primary);">DYL-102</span>)</span>
+                <span class="palette-item-desc">Chọn thành viên trong nhóm</span>
+              </div>
+            </div>
+            <div class="palette-item-right">
+              <span class="shortcut-tag"><kbd>A</kbd></span>
+            </div>
+          </div>
+
+          <!-- Mục 6: Đổi trạng thái task DYL-102 -->
+          <div
+            class="palette-item"
+            data-index="5"
+            role="option"
+            aria-selected="false"
+            onclick="triggerAction('Đã chuyển trạng thái task DYL-102 sang IN REVIEW')"
+          >
+            <div class="palette-item-left">
+              <span class="palette-item-icon">
+                <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 3 21 3 21 8"></polyline>
+                  <line x1="4" y1="20" x2="21" y2="3"></line>
+                  <polyline points="21 16 21 21 16 21"></polyline>
+                  <line x1="15" y1="15" x2="21" y2="21"></line>
+                  <line x1="4" y1="4" x2="9" y2="9"></line>
+                </svg>
+              </span>
+              <div class="palette-item-content">
+                <span class="palette-item-title">Đổi trạng thái <span class="mono" style="color: var(--color-primary);">DYL-102</span> <span class="highlight-match">JWT</span> → In Review</span>
+                <span class="palette-item-desc">Cập nhật cột Kanban</span>
+              </div>
+            </div>
+            <div class="palette-item-right">
+              <span class="shortcut-tag"><kbd>S</kbd></span>
+            </div>
+          </div>
+
+          <!-- Mục 7: Copy tên Git branch chuẩn -->
+          <div
+            class="palette-item"
+            data-index="6"
+            role="option"
+            aria-selected="false"
+            onclick="copyBranchSnippet('feature/DYL-102-jwt-auth')"
+          >
+            <div class="palette-item-left">
+              <span class="palette-item-icon">
+                <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="6" y1="3" x2="6" y2="15"></line>
+                  <circle cx="18" cy="6" r="3"></circle>
+                  <circle cx="6" cy="18" r="3"></circle>
+                  <path d="M18 9a9 9 0 0 1-9 9"></path>
+                </svg>
+              </span>
+              <div class="palette-item-content">
+                <span class="palette-item-title">Copy tên branch: <span class="mono" style="color: var(--color-primary);">feature/DYL-102-<span class="highlight-match">jwt</span>-auth</span></span>
+                <span class="palette-item-desc">Sao chép vào clipboard</span>
+              </div>
+            </div>
+            <div class="palette-item-right">
+              <span class="shortcut-tag"><kbd>B</kbd></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3. CHÂN HỘP: GỢI Ý ĐIỀU HƯỚNG BÀN PHÍM (↑↓, ENTER, ESC) -->
+      <footer class="palette-footer">
+        <div class="palette-footer-hints">
+          <div class="hint-group">
+            <kbd>↑</kbd>
+            <kbd>↓</kbd>
+            <span>để chọn</span>
+          </div>
+          <span>·</span>
+          <div class="hint-group">
+            <kbd>↵ Enter</kbd>
+            <span>để mở</span>
+          </div>
+          <span>·</span>
+          <div class="hint-group">
+            <kbd>Esc</kbd>
+            <span>để đóng</span>
+          </div>
+        </div>
+
+        <div class="palette-footer-stats">
+          <span id="resultCount">7 kết quả</span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- Thông báo Toast khi thực hiện hành động -->
+  <div class="action-toast" id="actionToast">
+    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-success);">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastMessage">Đã thực hiện hành động</span>
+  </div>
+
+  <!-- ==========================================================================
+       SCRIPTS: ĐIỀU HƯỚNG BÀN PHÍM, LỌC TỰ ĐỘNG & BẬT/TẮT PALETTE
+       ========================================================================== -->
+  <script>
+    let selectedIndex = 0;
+    const input = document.getElementById('paletteSearchInput');
+    const backdrop = document.getElementById('paletteBackdrop');
+    const toast = document.getElementById('actionToast');
+    const toastMessage = document.getElementById('toastMessage');
+
+    // Lấy danh sách các dòng kết quả hiện thị
+    function getVisibleItems() {
+      return Array.from(document.querySelectorAll('.palette-item')).filter(
+        item => item.style.display !== 'none'
+      );
+    }
+
+    // Cập nhật trạng thái mục đang chọn
+    function updateSelection() {
+      const visibleItems = getVisibleItems();
+      if (visibleItems.length === 0) return;
+
+      if (selectedIndex < 0) selectedIndex = 0;
+      if (selectedIndex >= visibleItems.length) selectedIndex = visibleItems.length - 1;
+
+      document.querySelectorAll('.palette-item').forEach(item => {
+        item.classList.remove('is-selected');
+        item.setAttribute('aria-selected', 'false');
+      });
+
+      const current = visibleItems[selectedIndex];
+      if (current) {
+        current.classList.add('is-selected');
+        current.setAttribute('aria-selected', 'true');
+        current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+
+      document.getElementById('resultCount').textContent = visibleItems.length + ' kết quả';
+    }
+
+    // Xử lý phím mũi tên Lên/Xuống, Enter, Esc, Ctrl+K
+    document.addEventListener('keydown', (e) => {
+      // 1. Phím Ctrl+K / Cmd+K để mở lại palette nếu đang ẩn
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        openPalette();
+        return;
+      }
+
+      // Nếu palette đang đóng thì không xử lý điều hướng
+      if (backdrop.style.display === 'none') return;
+
+      const visibleItems = getVisibleItems();
+
+      // 2. Phím Mũi tên xuống (Down Arrow)
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex + 1) % visibleItems.length;
+        updateSelection();
+      }
+      // 3. Phím Mũi tên lên (Up Arrow)
+      else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex - 1 + visibleItems.length) % visibleItems.length;
+        updateSelection();
+      }
+      // 4. Phím Enter để kích hoạt mục đang chọn
+      else if (e.key === 'Enter') {
+        e.preventDefault();
+        const current = visibleItems[selectedIndex];
+        if (current) {
+          current.click();
+        }
+      }
+      // 5. Phím Escape để đóng hộp palette
+      else if (e.key === 'Escape') {
+        e.preventDefault();
+        closePalette();
+      }
+    });
+
+    // Lọc nội dung linh hoạt khi người dùng gõ phím vào ô nhập
+    input.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const allItems = document.querySelectorAll('.palette-item');
+
+      allItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(query)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      // Ẩn nhóm nếu không còn mục con nào hiển thị
+      document.querySelectorAll('.palette-group').forEach(group => {
+        const hasVisible = Array.from(group.querySelectorAll('.palette-item')).some(
+          it => it.style.display !== 'none'
+        );
+        group.style.display = hasVisible ? 'flex' : 'none';
+      });
+
+      selectedIndex = 0;
+      updateSelection();
+    });
+
+    // Nút xóa ô tìm kiếm
+    function clearSearch() {
+      input.value = '';
+      input.focus();
+      const event = new Event('input', { bubbles: true });
+      input.dispatchEvent(event);
+    }
+
+    // Đóng Palette khi click ra ngoài backdrop
+    function handleBackdropClick(e) {
+      if (e.target === backdrop) {
+        closePalette();
+      }
+    }
+
+    function closePalette() {
+      window.location.href = '../developer-board/layout.html';
+    }
+
+    function openPalette() {
+      backdrop.style.display = 'flex';
+      input.focus();
+      input.select();
+    }
+
+    // Sao chép branch và hiện toast
+    function copyBranchSnippet(branchName) {
+      navigator.clipboard.writeText(branchName).then(() => {
+        showToast('Đã copy tên branch: ' + branchName);
+      }).catch(() => {
+        showToast('Đã copy tên branch: ' + branchName);
+      });
+    }
+
+    // Kích hoạt hành động mẫu
+    function triggerAction(actionName) {
+      showToast(actionName);
+    }
+
+    function showToast(msg) {
+      toastMessage.textContent = msg;
+      toast.classList.add('is-visible');
+      setTimeout(() => {
+        toast.classList.remove('is-visible');
+      }, 2500);
+    }
+
+    // Khởi tạo chọn mục đầu tiên
+    updateSelection();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Tạo dự án Developer Mode</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 13px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 22px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số 4px - Compact High Density) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Mode Colors (Dark Theme) */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3D1418;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3B1F11;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382C10;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      /* System Status */
+      --color-success: #238636;
+      --color-success-bg: #0F2D17;
+      --color-warning: #D29922;
+      --color-warning-bg: #332408;
+      --color-danger: #F85149;
+      --color-danger-bg: #3E1616;
+      --color-info: #58A6FF;
+      --color-info-bg: #12243D;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.45;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Utility */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Scrollbar phẳng, kỹ thuật */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       APP SHELL LAYOUT
+       ========================================================================== */
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       1. SIDEBAR TRÁI (220px, đồng nhất Developer Mode)
+       ========================================================================== */
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      z-index: 20;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .workspace-header {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .workspace-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+      font-weight: var(--font-weight-bold);
+      font-size: 11px;
+    }
+
+    .brand-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-toggle-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .project-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+
+    .project-selector .icon {
+      color: var(--color-primary);
+    }
+
+    .sprint-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .sprint-active-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    /* Navigation Menu */
+    .nav-group {
+      padding: var(--space-3) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-group-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+      background-color: var(--color-surface-subtle);
+      border-left: 2px solid var(--color-primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .nav-link.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 5px;
+      border-radius: var(--radius-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .git-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      padding: 2px 4px;
+    }
+
+    .git-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-success);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 6px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      text-decoration: none;
+    }
+
+    .mode-btn:hover {
+      color: var(--color-text);
+    }
+
+    .mode-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* ==========================================================================
+       MAIN VIEWPORT & TOPBAR
+       ========================================================================== */
+    .main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 48px;
+      min-height: 48px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      user-select: none;
+      z-index: 10;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-sm);
+    }
+
+    .breadcrumb-item {
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-sep {
+      color: var(--color-border-strong);
+      font-size: 11px;
+    }
+
+    .breadcrumb-item.current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .command-palette-trigger {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 28px;
+      padding: 0 var(--space-3);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1px 4px;
+      color: var(--color-text-muted);
+    }
+
+    /* ==========================================================================
+       VÙNG CUỘN FORM TẠO DỰ ÁN (RỘNG 560PX, MỘT CỘT)
+       ========================================================================== */
+    .create-project-scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-6) var(--space-4) var(--space-10);
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Form 1 cột rộng đúng 560px theo đặc tả */
+    .project-form-container {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    /* Header Form */
+    .form-header-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-bottom: var(--space-2);
+      border-bottom: var(--border-width) solid var(--color-border);
+    }
+
+    .form-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.2px;
+    }
+
+    .form-description {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      line-height: 1.45;
+    }
+
+    /* Field groups */
+    .form-field-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .label-required {
+      color: var(--priority-p1);
+    }
+
+    .form-input {
+      height: 34px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 0 var(--space-3);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input.mono {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+    }
+
+    .form-input:focus {
+      border-color: var(--color-primary);
+    }
+
+    .field-hint-text {
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    /* Toggle Switch: Bật AI cho dự án */
+    .toggle-card-box {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-card-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toggle-desc {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    /* Switch Component */
+    .toggle-switch-ui {
+      width: 36px;
+      height: 20px;
+      background-color: var(--color-border-strong);
+      border-radius: var(--radius-full);
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color 0.15s ease;
+    }
+
+    .toggle-switch-ui.is-active {
+      background-color: var(--color-primary);
+    }
+
+    .toggle-switch-knob {
+      width: 16px;
+      height: 16px;
+      background-color: var(--color-text);
+      border-radius: var(--radius-full);
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.15s ease;
+    }
+
+    .toggle-switch-ui.is-active .toggle-switch-knob {
+      transform: translateX(16px);
+      background-color: var(--color-primary-text);
+    }
+
+    /* ==========================================================================
+       PHẦN "WEBHOOK GITHUB"
+       URL webhook, Secret ẩn/hiện, bảng quy tắc, trạng thái & nút test
+       ========================================================================== */
+    .webhook-section-frame {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .webhook-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: var(--border-width) solid var(--color-border);
+      padding-bottom: var(--space-2);
+    }
+
+    .webhook-title-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .webhook-cost-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* URL & Secret Inputs */
+    .copyable-field-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .copyable-field-label {
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .copyable-input-row {
+      display: flex;
+      align-items: center;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .copyable-input-row:focus-within {
+      border-color: var(--color-primary);
+    }
+
+    .copyable-text {
+      flex: 1;
+      height: 32px;
+      padding: 0 var(--space-3);
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+    }
+
+    .copyable-btn {
+      height: 32px;
+      padding: 0 10px;
+      background-color: var(--color-surface-subtle);
+      border: none;
+      border-left: var(--border-width) solid var(--color-border);
+      color: var(--color-text-muted);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      transition: color 0.12s ease, background-color 0.12s ease;
+    }
+
+    .copyable-btn:hover {
+      color: var(--color-text);
+      background-color: var(--color-border);
+    }
+
+    /* Bảng quy tắc tự động chuyển trạng thái */
+    .rules-card-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rules-label {
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .rules-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      font-size: var(--font-size-xs);
+    }
+
+    .rules-table th {
+      background-color: var(--color-bg);
+      color: var(--color-text-muted);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      padding: 6px var(--space-3);
+      text-align: left;
+      border-bottom: var(--border-width) solid var(--color-border);
+    }
+
+    .rules-table td {
+      padding: 7px var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-text);
+    }
+
+    .rules-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .rule-event-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-badge-target {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      padding: 1px 7px;
+      border-radius: var(--radius-sm);
+    }
+
+    .status-badge-target.in-progress {
+      color: var(--color-info);
+      background-color: var(--color-info-bg);
+      border: var(--border-width) solid var(--color-info);
+    }
+
+    .status-badge-target.in-review {
+      color: var(--priority-p2);
+      background-color: var(--priority-p2-bg);
+      border: var(--border-width) solid var(--priority-p2);
+    }
+
+    .status-badge-target.done {
+      color: var(--color-success);
+      background-color: var(--color-success-bg);
+      border: var(--border-width) solid var(--color-success);
+    }
+
+    /* Phần cuối Webhook: Trạng thái kết nối & Nút "Gửi sự kiện thử" */
+    .webhook-footer-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      background-color: var(--color-surface);
+    }
+
+    .connection-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .connection-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-text-muted);
+    }
+
+    .connection-status-pill.is-connected {
+      color: var(--color-success);
+    }
+
+    .connection-status-pill.is-connected .connection-status-dot {
+      background-color: var(--color-success);
+    }
+
+    .btn-test-webhook {
+      height: 28px;
+      padding: 0 10px;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-test-webhook:hover {
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface-subtle);
+    }
+
+    /* Form Actions ở cuối cùng */
+    .form-submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+      padding-top: var(--space-3);
+    }
+
+    .btn-cancel {
+      height: 32px;
+      padding: 0 var(--space-3);
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-cancel:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .btn-submit-project {
+      height: 32px;
+      padding: 0 var(--space-4);
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-submit-project:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    /* Toast */
+    .project-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-primary);
+      border-radius: var(--radius);
+      padding: 8px var(--space-4);
+      color: var(--color-text);
+      font-size: var(--font-size-xs);
+      display: none;
+      align-items: center;
+      gap: var(--space-2);
+      z-index: 100;
+    }
+
+    .project-toast.is-visible {
+      display: flex;
+      animation: toastAnim 0.15s ease-out;
+    }
+
+    @keyframes toastAnim {
+      from { opacity: 0; transform: translate(-50%, 8px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ======================================================================
+         1. SIDEBAR TRÁI (220px, đồng nhất Developer Mode)
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="workspace-header">
+          <div class="workspace-row">
+            <div class="brand-group">
+              <div class="brand-mark">D</div>
+              <span class="brand-title">Dylask</span>
+            </div>
+            <button class="sidebar-toggle-btn" type="button" title="Thu gọn Sidebar">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <line x1="9" x2="9" y1="3" y2="21"></line>
+              </svg>
+            </button>
+          </div>
+
+          <a class="project-selector" href="../developer-project-create/layout.html" style="text-decoration: none;" title="Chuyển kho / Tạo dự án mới">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>dylask-api</span>
+            <svg class="icon" style="margin-left: auto;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </a>
+
+          <div class="sprint-badge-row">
+            <span class="sprint-active-dot"></span>
+            <span>Sprint 3 (Đang chạy)</span>
+          </div>
+        </div>
+
+        <nav class="nav-group">
+          <span class="nav-group-label">Quản lý Sprint</span>
+          <a class="nav-link" href="../developer-backlog/layout.html" title="Danh sách tồn đọng">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" x2="21" y1="6" y2="6"></line>
+              <line x1="8" x2="21" y1="12" y2="12"></line>
+              <line x1="8" x2="21" y1="18" y2="18"></line>
+              <line x1="3" x2="3.01" y1="6" y2="6"></line>
+              <line x1="3" x2="3.01" y1="12" y2="12"></line>
+              <line x1="3" x2="3.01" y1="18" y2="18"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">7</span>
+          </a>
+
+          <a class="nav-link" href="../developer-board/layout.html" title="Bảng Kanban tiến độ">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="2" rx="2"></rect>
+              <path d="M8 7v7"></path>
+              <path d="M12 7v4"></path>
+              <path d="M16 7v9"></path>
+            </svg>
+            <span>Board</span>
+            <span class="nav-badge">5</span>
+          </a>
+
+          <a class="nav-link" href="../developer-standup/layout.html" title="Báo cáo tiến độ tự động 24h">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+            <span>Standup</span>
+          </a>
+
+          <a class="nav-link" href="../developer-audit-log/layout.html" title="Nhật ký thay đổi hệ thống">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Audit Log</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="git-status-bar">
+          <span class="git-status-dot"></span>
+          <span>git: main · synced</span>
+        </div>
+        <div class="mode-switch-group">
+          <a class="mode-btn" href="../standard-list/layout.html">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-btn active" href="../developer-board/layout.html" style="text-decoration: none;" title="Chế độ Lập trình viên đang bật">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         VÙNG XỬ LÝ CHÍNH
+         ====================================================================== -->
+    <div class="main-viewport">
+
+      <!-- 2. THANH TRÊN CÙNG (TOP BAR) -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <span class="breadcrumb-item">Dylask</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item">dylask-api</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item current">Tạo dự án</span>
+          </nav>
+        </div>
+
+        <div class="topbar-right">
+          <a class="command-palette-trigger" href="../developer-command-palette/layout.html" title="Mở bảng lệnh phím tắt">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <span>Tìm kiếm & Lệnh</span>
+            <kbd>Ctrl</kbd>
+            <kbd>K</kbd>
+          </a>
+        </div>
+      </header>
+
+      <!-- 3. VÙNG CUỘN FORM MỘT CỘT RỘNG ĐÚNG 560PX -->
+      <main class="create-project-scroll-area">
+        <form class="project-form-container" onsubmit="handleProjectSubmit(event)">
+
+          <!-- Tiêu đề & Giới thiệu Form -->
+          <div class="form-header-group">
+            <h1 class="form-title">Tạo dự án Developer Mode</h1>
+            <p class="form-description">
+              Khởi tạo không gian dự án kỹ thuật, liên kết kho Git và cấu hình luồng Webhook tự động hoá cập nhật thẻ Kanban với chi phí 0đ.
+            </p>
+          </div>
+
+          <!-- TRƯỜNG 1: TÊN DỰ ÁN -->
+          <div class="form-field-block">
+            <label class="form-field-label" for="projectNameInput">
+              <span>Tên dự án</span>
+              <span class="label-required">*</span>
+            </label>
+            <input
+              class="form-input"
+              id="projectNameInput"
+              type="text"
+              value="dylask-backend-service"
+              placeholder="Ví dụ: auth-service, payment-api..."
+              required
+            >
+            <span class="field-hint-text">Định danh hiển thị trên thanh chọn dự án và các báo cáo Daily Standup.</span>
+          </div>
+
+          <!-- TRƯỜNG 2: URL REPOSITORY -->
+          <div class="form-field-block">
+            <label class="form-field-label" for="repoUrlInput">
+              <span>URL Repository (GitHub / GitLab)</span>
+              <span class="label-required">*</span>
+            </label>
+            <input
+              class="form-input mono"
+              id="repoUrlInput"
+              type="url"
+              value="https://github.com/dylask-org/dylask-backend.git"
+              placeholder="https://github.com/organization/repo.git"
+              required
+            >
+            <span class="field-hint-text">Dùng để tạo liên kết trực tiếp tới Commit, Pull Request và Git Branch trong thẻ task.</span>
+          </div>
+
+          <!-- TRƯỜNG 3: BẬT AI CHO DỰ ÁN (CÔNG TẮC) -->
+          <div class="toggle-card-box" onclick="toggleAiSwitch()">
+            <div class="toggle-card-left">
+              <span class="toggle-title">
+                <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                </svg>
+                <span>Bật trợ lý AI cho dự án</span>
+              </span>
+              <span class="toggle-desc">
+                Cho phép sinh Test Cases/AC, tóm tắt Release Notes và phân tích Stack Trace lỗi qua bảng AI Panel.
+              </span>
+            </div>
+            <div class="toggle-switch-ui is-active" id="aiToggleSwitch" role="switch" aria-checked="true">
+              <div class="toggle-switch-knob"></div>
+            </div>
+          </div>
+
+          <!-- PHẦN: WEBHOOK GITHUB -->
+          <section class="webhook-section-frame" aria-label="Cấu hình Webhook GitHub">
+            <div class="webhook-section-header">
+              <div class="webhook-title-group">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                  <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                </svg>
+                <span>Webhook GitHub</span>
+              </div>
+              <span class="webhook-cost-badge">Quy tắc tự động · Chi phí 0đ</span>
+            </div>
+
+            <!-- URL Webhook (mono, nút copy) -->
+            <div class="copyable-field-box">
+              <span class="copyable-field-label">Payload URL Webhook</span>
+              <div class="copyable-input-row">
+                <input
+                  class="copyable-text mono"
+                  id="webhookUrlField"
+                  type="text"
+                  value="https://api.dylask.dev/v1/webhooks/github/sec_proj_8f9c2a1e"
+                  readonly
+                >
+                <button class="copyable-btn" type="button" onclick="copyWebhookField('webhookUrlField', 'Payload URL')">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Secret (ẩn, nút hiện) -->
+            <div class="copyable-field-box">
+              <span class="copyable-field-label">Secret Key (Mã bí mật)</span>
+              <div class="copyable-input-row">
+                <input
+                  class="copyable-text mono"
+                  id="webhookSecretField"
+                  type="password"
+                  value="whsec_99a8b7c6d5e4f3a2b1c0d9e8"
+                  readonly
+                >
+                <button class="copyable-btn" id="toggleSecretVisibilityBtn" type="button" onclick="toggleSecretVisibility()">
+                  <svg class="icon" id="secretEyeIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span id="secretBtnLabel">Hiện</span>
+                </button>
+                <button class="copyable-btn" type="button" onclick="copyWebhookField('webhookSecretField', 'Secret Key')">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Bảng quy tắc tự động chuyển trạng thái -->
+            <div class="rules-card-box">
+              <span class="rules-label">Quy tắc tự động hoá trạng thái Kanban</span>
+              <table class="rules-table" aria-label="Bảng quy tắc tự động hoá">
+                <thead>
+                  <tr>
+                    <th>Sự kiện Git từ GitHub</th>
+                    <th>Trạng thái Kanban đích</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <span class="rule-event-code">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="6" x2="6" y1="3" y2="15"></line>
+                          <circle cx="18" cy="6" r="3"></circle>
+                          <circle cx="6" cy="18" r="3"></circle>
+                          <path d="M18 9a9 9 0 0 1-9 9"></path>
+                        </svg>
+                        <span>Push commit / Branch mới (feature/DYL-{id})</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="status-badge-target in-progress">In Progress</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <span class="rule-event-code">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="18" cy="18" r="3"></circle>
+                          <circle cx="6" cy="6" r="3"></circle>
+                          <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                          <line x1="6" x2="6" y1="9" y2="21"></line>
+                        </svg>
+                        <span>Mở Pull Request</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="status-badge-target in-review">In Review</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <span class="rule-event-code">
+                        <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Merge Pull Request có &quot;closes #id&quot;</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="status-badge-target done">Done</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Cuối Webhook: Trạng thái kết nối & Nút "Gửi sự kiện thử" -->
+            <div class="webhook-footer-status-row">
+              <div class="connection-status-pill" id="connectionStatusPill">
+                <span class="connection-status-dot" id="connectionStatusDot"></span>
+                <span id="connectionStatusText">Chưa nhận sự kiện nào</span>
+              </div>
+
+              <button class="btn-test-webhook" id="testWebhookBtn" type="button" onclick="testPingWebhook()">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span id="testBtnLabel">Gửi sự kiện thử</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- NÚT LƯU FORM Ở CUỐI -->
+          <div class="form-submit-row">
+            <a class="btn-cancel" href="../developer-board/layout.html">Hủy</a>
+            <button class="btn-submit-project" type="submit">
+              <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Lưu &amp; Tạo dự án</span>
+            </button>
+          </div>
+
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast phản hồi -->
+  <div class="project-toast" id="projectToast">
+    <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastMessage">Thao tác thành công</span>
+  </div>
+
+  <!-- ==========================================================================
+       SCRIPTS: COPY, ẨN/HIỆN SECRET, TOGGLE AI & GỬI SỰ KIỆN THỬ
+       ========================================================================== -->
+  <script>
+    // 1. Sao chép trường dữ liệu (URL hoặc Secret)
+    function copyWebhookField(fieldId, label) {
+      const field = document.getElementById(fieldId);
+      const val = field.value;
+      navigator.clipboard.writeText(val).then(() => {
+        showToast('Đã sao chép ' + label + ' vào Clipboard!');
+      }).catch(() => {
+        showToast('Đã sao chép ' + label + ' vào Clipboard!');
+      });
+    }
+
+    // 2. Ẩn / Hiện Secret Key
+    let isSecretVisible = false;
+    function toggleSecretVisibility() {
+      const secretField = document.getElementById('webhookSecretField');
+      const btnLabel = document.getElementById('secretBtnLabel');
+      const eyeIcon = document.getElementById('secretEyeIcon');
+
+      isSecretVisible = !isSecretVisible;
+      if (isSecretVisible) {
+        secretField.type = 'text';
+        btnLabel.textContent = 'Ẩn';
+        eyeIcon.innerHTML = '<path d="m2 2 20 20"></path><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>';
+      } else {
+        secretField.type = 'password';
+        btnLabel.textContent = 'Hiện';
+        eyeIcon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle>';
+      }
+    }
+
+    // 3. Công tắc bật/tắt AI cho dự án
+    let isAiEnabled = true;
+    function toggleAiSwitch() {
+      isAiEnabled = !isAiEnabled;
+      const toggle = document.getElementById('aiToggleSwitch');
+      if (isAiEnabled) {
+        toggle.classList.add('is-active');
+        toggle.setAttribute('aria-checked', 'true');
+        showToast('Đã kích hoạt trợ lý AI cho dự án.');
+      } else {
+        toggle.classList.remove('is-active');
+        toggle.setAttribute('aria-checked', 'false');
+        showToast('Đã tắt trợ lý AI cho dự án này.');
+      }
+    }
+
+    // 4. Nút "Gửi sự kiện thử" (Ping Webhook)
+    function testPingWebhook() {
+      const btnLabel = document.getElementById('testBtnLabel');
+      const statusPill = document.getElementById('connectionStatusPill');
+      const statusDot = document.getElementById('connectionStatusDot');
+      const statusText = document.getElementById('connectionStatusText');
+
+      btnLabel.textContent = 'Đang gửi...';
+
+      setTimeout(() => {
+        btnLabel.textContent = 'Gửi lại';
+        statusPill.classList.add('is-connected');
+        statusDot.style.backgroundColor = 'var(--color-success)';
+        statusText.textContent = 'Đã kết nối thành công (HTTP 200 OK · Ping nhận lúc ' + new Date().toLocaleTimeString('vi-VN') + ')';
+        showToast('Webhook Ping thành công! Kết nối GitHub đã sẵn sàng.');
+      }, 600);
+    }
+
+    // 5. Submit Form
+    function handleProjectSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('projectNameInput').value;
+      showToast('Đã tạo dự án "' + name + '" thành công! Đang chuyển hướng...');
+      setTimeout(() => {
+        window.location.href = '../developer-board/layout.html';
+      }, 1500);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('projectToast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.add('is-visible');
+      setTimeout(() => {
+        toast.classList.remove('is-visible');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>

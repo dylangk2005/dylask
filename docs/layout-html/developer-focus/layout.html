@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Focus Coding (DYL-102)</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata/Timer) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số 4px) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Mode Colors (Dark Theme) */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3D1418;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3B1F11;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382C10;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      /* System Status */
+      --color-success: #238636;
+      --color-success-bg: #0F2D17;
+      --color-warning: #D29922;
+      --color-warning-bg: #332408;
+      --color-danger: #F85149;
+      --color-danger-bg: #3E1616;
+      --color-info: #58A6FF;
+      --color-info-bg: #12243D;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* Utility */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Scrollbar phẳng, kỹ thuật */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       GÓC TRÊN PHẢI: NÚT THOÁT (ESC)
+       Tối giản, tinh tế, không chiếm sự chú ý
+       ========================================================================== */
+    .top-exit-bar {
+      position: fixed;
+      top: var(--space-4);
+      right: var(--space-5);
+      z-index: 50;
+    }
+
+    .exit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .exit-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .exit-btn kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 1px 4px;
+      color: var(--color-text-muted);
+    }
+
+    /* ==========================================================================
+       KHUNG CHÍNH FOCUS CODING (TỐI ĐA 640PX, THẬT NHIỀU KHOẢNG TRẮNG)
+       Không sidebar, không thanh điều hướng, không viền thừa
+       ========================================================================== */
+    .focus-container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 72px var(--space-4) 80px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+
+    /* 1. KHỐI THÔNG TIN NHIỆM VỤ */
+    .task-meta-header {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .task-badges-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .task-id-tag {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      letter-spacing: 0.3px;
+    }
+
+    .priority-badge-p1 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: var(--font-weight-bold);
+      color: var(--priority-p1);
+      background-color: var(--priority-p1-bg);
+      border: var(--border-width) solid var(--priority-p1);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .sp-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .status-tag {
+      font-size: 10px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-info);
+      background-color: var(--color-info-bg);
+      border: var(--border-width) solid var(--color-info);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Tiêu đề task lớn, nổi bật */
+    .task-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      line-height: 1.3;
+      letter-spacing: -0.3px;
+    }
+
+    /* Nhánh Git & Nút copy tinh giản */
+    .branch-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-top: 2px;
+    }
+
+    .branch-snippet {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 3px 8px;
+    }
+
+    .branch-snippet .icon {
+      color: var(--color-primary);
+    }
+
+    .branch-code {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 3px 8px;
+      color: var(--color-text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface-subtle);
+    }
+
+    /* ==========================================================================
+       2. ĐỒNG HỒ TÍNH GIỜ LỚN (MONO) VỚI NÚT BẮT ĐẦU / DỪNG
+       ========================================================================== */
+    .timer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-6) 0;
+      gap: var(--space-3);
+    }
+
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: 52px;
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 2px;
+      color: var(--color-text);
+      line-height: 1;
+      user-select: none;
+    }
+
+    .timer-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .timer-meta .dot {
+      color: var(--color-border-strong);
+    }
+
+    .timer-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+    }
+
+    .timer-btn-primary {
+      height: 34px;
+      padding: 0 var(--space-4);
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .timer-btn-primary:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .timer-btn-primary.is-running {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text);
+      border: var(--border-width) solid var(--color-border-strong);
+    }
+
+    .timer-btn-primary.is-running:hover {
+      background-color: var(--color-border);
+    }
+
+    .timer-btn-secondary {
+      height: 34px;
+      padding: 0 var(--space-3);
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .timer-btn-secondary:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+      background-color: var(--color-surface-subtle);
+    }
+
+    /* ==========================================================================
+       3. CHECKLIST ACCEPTANCE CRITERIA (AC)
+       ========================================================================== */
+    .ac-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .ac-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .ac-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .ac-progress-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    .ac-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .ac-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: 8px var(--space-2);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background-color 0.12s ease;
+      user-select: none;
+    }
+
+    .ac-item:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    .ac-checkbox {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: 3px;
+      background-color: var(--color-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: transparent;
+      transition: all 0.12s ease;
+    }
+
+    .ac-item.is-completed .ac-checkbox {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-primary-text);
+    }
+
+    .ac-text {
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      line-height: 1.45;
+      flex: 1;
+    }
+
+    .ac-item.is-completed .ac-text {
+      color: var(--color-text-muted);
+      text-decoration: line-through;
+    }
+
+    .ac-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      margin-right: 4px;
+    }
+
+    .ac-item.is-completed .ac-tag {
+      color: var(--color-text-muted);
+    }
+
+    .ac-code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ==========================================================================
+       4. MÔ TẢ MARKDOWN THU GỌN ĐƯỢC (COLLAPSIBLE SPEC DETAILS)
+       ========================================================================== */
+    .description-details {
+      display: flex;
+      flex-direction: column;
+      border-top: var(--border-width) solid var(--color-border);
+      padding-top: var(--space-4);
+    }
+
+    .description-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 0;
+      list-style: none;
+    }
+
+    .description-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .description-summary:hover {
+      color: var(--color-text);
+    }
+
+    .summary-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .summary-chevron {
+      transition: transform 0.15s ease;
+    }
+
+    details[open] .summary-chevron {
+      transform: rotate(90deg);
+    }
+
+    .markdown-content {
+      padding: var(--space-3) 0 var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+
+    .markdown-content p {
+      color: var(--color-text-muted);
+    }
+
+    .markdown-code-block {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      font-family: var(--font-mono);
+      font-size: var(--font-size-xs);
+      line-height: 1.5;
+      overflow-x: auto;
+      color: var(--color-text);
+    }
+
+    .code-comment {
+      color: var(--color-text-muted);
+    }
+
+    .code-keyword {
+      color: var(--priority-p1);
+    }
+
+    .code-type {
+      color: var(--color-info);
+    }
+
+    .code-string {
+      color: var(--color-primary);
+    }
+
+    /* Toast thông báo sao chép */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: var(--radius);
+      padding: 6px var(--space-4);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      display: none;
+      align-items: center;
+      gap: 6px;
+      z-index: 100;
+    }
+
+    .toast-msg.is-active {
+      display: flex;
+      animation: toastIn 0.15s ease-out;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translate(-50%, 8px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================================================
+       GÓC TRÊN PHẢI: NÚT THOÁT (ESC)
+       ====================================================================== -->
+  <div class="top-exit-bar">
+    <a href="../developer-board/layout.html" class="exit-btn" id="exitFocusBtn" title="Thoát chế độ tập trung và quay lại Sprint Board (Nhấn Esc)">
+      <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      <span>Thoát</span>
+      <kbd>Esc</kbd>
+    </a>
+  </div>
+
+  <!-- ======================================================================
+       KHU VỰC TRỌNG TÂM (TỐI ĐA 640px, CỰC KỲ TỐI GIẢN, NHIỀU KHOẢNG TRẮNG)
+       ====================================================================== -->
+  <main class="focus-container">
+
+    <!-- 1. THÔNG TIN TASK, BADGES & TÊN BRANCH KỸ THUẬT -->
+    <header class="task-meta-header">
+      <div class="task-badges-row">
+        <span class="task-id-tag">DYL-102</span>
+        <span class="priority-badge-p1">P1</span>
+        <span class="sp-tag">5 SP</span>
+        <span class="status-tag">In Progress</span>
+      </div>
+
+      <h1 class="task-title">Triển khai xác thực JWT &amp; phân quyền RBAC</h1>
+
+      <div class="branch-row">
+        <div class="branch-snippet">
+          <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="6" x2="6" y1="3" y2="15"></line>
+            <circle cx="18" cy="6" r="3"></circle>
+            <circle cx="6" cy="18" r="3"></circle>
+            <path d="M18 9a9 9 0 0 1-9 9"></path>
+          </svg>
+          <code class="branch-code" id="branchCode">feature/DYL-102-jwt-auth</code>
+        </div>
+        <button class="copy-btn" id="copyBranchBtn" type="button" title="Sao chép tên branch" onclick="copyBranch()">
+          <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+          </svg>
+          <span id="copyBtnLabel">Copy</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. ĐỒNG HỒ TÍNH GIỜ LỚN (MONO) VỚI NÚT BẮT ĐẦU / DỪNG -->
+    <section class="timer-section" aria-label="Đồng hồ đếm giờ làm việc">
+      <div class="timer-display mono" id="timerDisplay">01:42:18</div>
+
+      <div class="timer-meta">
+        <span>Phiên hiện tại: 01h 42m</span>
+        <span class="dot">·</span>
+        <span>Tổng thực tế: 12h / 16h dự tính</span>
+      </div>
+
+      <div class="timer-actions">
+        <!-- Nút chính: Bắt đầu / Tạm dừng -->
+        <button class="timer-btn-primary" id="toggleTimerBtn" type="button" onclick="toggleTimer()">
+          <svg class="icon" id="toggleTimerIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="4" height="16" x="6" y="4"></rect>
+            <rect width="4" height="16" x="14" y="4"></rect>
+          </svg>
+          <span id="toggleTimerLabel">Tạm dừng</span>
+        </button>
+
+        <!-- Nút phụ: Đặt lại phiên (Reset Session) -->
+        <button class="timer-btn-secondary" type="button" title="Đặt lại đồng hồ phiên làm việc này" onclick="resetTimer()">
+          <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
+          <span>Reset</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. CHECKLIST ACCEPTANCE CRITERIA (AC) -->
+    <section class="ac-section" aria-label="Tiêu chí nghiệm thu">
+      <div class="ac-header">
+        <span class="ac-title">Tiêu chí nghiệm thu (AC)</span>
+        <span class="ac-progress-text" id="acProgressText">1/3 hoàn thành</span>
+      </div>
+
+      <ul class="ac-list" id="acList">
+        <!-- AC-1 (Đã hoàn thành) -->
+        <li class="ac-item is-completed" onclick="toggleAcItem(this)">
+          <div class="ac-checkbox">
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <div class="ac-text">
+            <span class="ac-tag">AC-1:</span>
+            Đăng nhập thành công trả về <code class="ac-code">access_token</code> (15m) &amp; <code class="ac-code">refresh_token</code> (7d)
+          </div>
+        </li>
+
+        <!-- AC-2 (Chưa hoàn thành) -->
+        <li class="ac-item" onclick="toggleAcItem(this)">
+          <div class="ac-checkbox">
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <div class="ac-text">
+            <span class="ac-tag">AC-2:</span>
+            Phân quyền RBAC qua UserRole Enum (<code class="ac-code">ROLE_USER</code>, <code class="ac-code">ROLE_ADMIN</code>)
+          </div>
+        </li>
+
+        <!-- AC-3 (Chưa hoàn thành) -->
+        <li class="ac-item" onclick="toggleAcItem(this)">
+          <div class="ac-checkbox">
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <div class="ac-text">
+            <span class="ac-tag">AC-3:</span>
+            Trả về <code class="ac-code">ApiResponse&lt;T&gt;</code> tiêu chuẩn kèm mã HTTP 401 khi token hết hạn
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 4. MÔ TẢ MARKDOWN THU GỌN ĐƯỢC -->
+    <section class="description-details">
+      <details>
+        <summary class="description-summary">
+          <div class="summary-left">
+            <svg class="icon summary-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span>Mô tả kỹ thuật &amp; Code Contract (Markdown)</span>
+          </div>
+          <span class="mono" style="font-size: 10px; color: var(--color-text-muted);">docs/specs</span>
+        </summary>
+
+        <div class="markdown-content">
+          <p>
+            Xây dựng lớp lọc <code class="ac-code">JwtAuthenticationFilter</code> kế thừa từ <code class="ac-code">OncePerRequestFilter</code>.
+            Trích xuất chuỗi JWT từ header <code class="ac-code">Authorization: Bearer &lt;token&gt;</code>,
+            xác thực chữ ký HMAC-SHA256 với secret key trong biến môi trường và nạp quyền vào <code class="ac-code">SecurityContextHolder</code>.
+          </p>
+
+          <pre class="markdown-code-block"><code><span class="code-comment">// Cấu trúc phản hồi Đăng nhập thành công</span>
+{
+  <span class="code-keyword">"status"</span>: <span class="code-string">"success"</span>,
+  <span class="code-keyword">"data"</span>: {
+    <span class="code-keyword">"tokenType"</span>: <span class="code-string">"Bearer"</span>,
+    <span class="code-keyword">"accessToken"</span>: <span class="code-string">"eyJhbGciOiJIUzI1NiIsInR..."</span>,
+    <span class="code-keyword">"refreshToken"</span>: <span class="code-string">"d8f2a1b9-3c4e-4f7a-8b..."</span>,
+    <span class="code-keyword">"expiresIn"</span>: 900
+  }
+}</code></pre>
+        </div>
+      </details>
+    </section>
+
+  </main>
+
+  <!-- Toast phản hồi sao chép -->
+  <div class="toast-msg" id="toastMsg">
+    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-success);">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastText">Đã sao chép</span>
+  </div>
+
+  <!-- ==========================================================================
+       SCRIPTS: ĐỒNG HỒ TÍNH GIỜ THỰC TẾ, PHÍM TẮT ESC, COPY & CHECKLIST
+       ========================================================================== -->
+  <script>
+    // 1. Phím tắt Esc để thoát chế độ Focus
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        window.location.href = '../developer-board/layout.html';
+      }
+    });
+
+    // 2. Sao chép tên Git branch
+    function copyBranch() {
+      const code = document.getElementById('branchCode').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast('Đã copy tên branch: ' + code);
+        const label = document.getElementById('copyBtnLabel');
+        label.textContent = 'Đã chép!';
+        setTimeout(() => {
+          label.textContent = 'Copy';
+        }, 1500);
+      });
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toastMsg');
+      const toastText = document.getElementById('toastText');
+      toastText.textContent = text;
+      toast.classList.add('is-active');
+      setTimeout(() => {
+        toast.classList.remove('is-active');
+      }, 2000);
+    }
+
+    // 3. Đồng hồ tính giờ lớn (Tích lũy thực tế)
+    let seconds = 1 * 3600 + 42 * 60 + 18; // Khởi tạo 01:42:18
+    let timerInterval = null;
+    let isRunning = true;
+
+    const timerDisplay = document.getElementById('timerDisplay');
+    const toggleBtn = document.getElementById('toggleTimerBtn');
+    const toggleLabel = document.getElementById('toggleTimerLabel');
+    const toggleIcon = document.getElementById('toggleTimerIcon');
+
+    function formatTime(totalSec) {
+      const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+      const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+      const s = String(totalSec % 60).padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        seconds++;
+        timerDisplay.textContent = formatTime(seconds);
+      }, 1000);
+      isRunning = true;
+      toggleLabel.textContent = 'Tạm dừng';
+      toggleBtn.classList.remove('is-running');
+      toggleIcon.innerHTML = '<rect width="4" height="16" x="6" y="4"></rect><rect width="4" height="16" x="14" y="4"></rect>';
+    }
+
+    function stopTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      isRunning = false;
+      toggleLabel.textContent = 'Bắt đầu';
+      toggleBtn.classList.add('is-running');
+      toggleIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+    }
+
+    function toggleTimer() {
+      if (isRunning) {
+        stopTimer();
+        showToast('Đã tạm dừng đồng hồ tính giờ.');
+      } else {
+        startTimer();
+        showToast('Đang đếm giờ làm việc...');
+      }
+    }
+
+    function resetTimer() {
+      stopTimer();
+      seconds = 0;
+      timerDisplay.textContent = formatTime(seconds);
+      showToast('Đã đặt lại đồng hồ về 00:00:00.');
+    }
+
+    // Khởi chạy đồng hồ đếm ngay khi mở màn hình
+    startTimer();
+
+    // 4. Checklist AC tương tác
+    function toggleAcItem(item) {
+      item.classList.toggle('is-completed');
+      updateAcProgress();
+    }
+
+    function updateAcProgress() {
+      const total = document.querySelectorAll('.ac-item').length;
+      const completed = document.querySelectorAll('.ac-item.is-completed').length;
+      document.getElementById('acProgressText').textContent = `${completed}/${total} hoàn thành`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Đăng nhập & Đăng ký</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS
+       Định nghĩa từ docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root {
+      /* Typography */
+      --font-family-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing (Bội số của 4px) */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Standard / Base Colors */
+      --color-bg: #FAFAF7;
+      --color-surface: #FFFFFF;
+      --color-surface-subtle: #F4F3EF;
+      --color-border: #E7E5E0;
+      --color-border-strong: #D1CFCA;
+
+      --color-text: #1C1B18;
+      --color-text-muted: #6B6A63;
+
+      --color-primary: #0F766E;
+      --color-primary-hover: #115E59;
+      --color-primary-subtle: #E6F4F1;
+      --color-primary-text: #FFFFFF;
+
+      /* System Status Colors */
+      --color-success: #16A34A;
+      --color-success-bg: #F0FDF4;
+      --color-danger: #DC2626;
+      --color-danger-bg: #FEF2F2;
+      --color-warning: #D97706;
+      --color-warning-bg: #FFFBEB;
+      --color-info: #2563EB;
+      --color-info-bg: #EFF6FF;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       BỐ CỤC CHIA 2 CỘT (SPLIT LAYOUT)
+       ========================================================================== */
+    .auth-container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       CỘT TRÁI: FORM ĐĂNG NHẬP / ĐĂNG KÝ (~420px, căn giữa dọc)
+       ========================================================================== */
+    .auth-left-pane {
+      width: 50%;
+      min-width: 420px;
+      max-width: 480px;
+      height: 100vh;
+      background-color: var(--color-bg);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--space-8) var(--space-10);
+      overflow-y: auto;
+    }
+
+    .auth-form-card {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    /* Brand Logo (Đồng bộ với layout đã có) */
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      user-select: none;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+    }
+
+    .brand-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+    }
+
+    /* Header Form */
+    .auth-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .auth-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+    }
+
+    .auth-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+
+    /* Tabs Chuyển Đổi (Đăng nhập / Đăng ký) */
+    .auth-tabs {
+      display: flex;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      height: 32px;
+      border: none;
+      background: transparent;
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .auth-tab-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* Thông Báo Lỗi Toàn Cục (Alert Banner) */
+    .alert-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      border-radius: var(--radius);
+      background-color: var(--color-danger-bg);
+      border: var(--border-width) solid var(--color-danger);
+      color: var(--color-danger);
+      font-size: var(--font-size-xs);
+      line-height: 1.4;
+    }
+
+    .alert-banner.hidden {
+      display: none;
+    }
+
+    /* Form Fields */
+    .form-group-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .field-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 36px;
+      padding: 0 var(--space-3);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--color-primary);
+    }
+
+    .form-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    /* Trạng thái lỗi trên input */
+    .form-field.has-error .form-input {
+      border-color: var(--color-danger);
+      background-color: #FFFDFD;
+    }
+
+    .field-error-text {
+      font-size: var(--font-size-xs);
+      color: var(--color-danger);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+
+    /* Nút hiện/ẩn mật khẩu */
+    .toggle-password-btn {
+      position: absolute;
+      right: 8px;
+      height: 24px;
+      width: 24px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+    }
+
+    .toggle-password-btn:hover {
+      color: var(--color-text);
+    }
+
+    /* Nút Chính (Submit Button) */
+    .btn-primary {
+      width: 100%;
+      height: 38px;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--color-primary-hover);
+    }
+
+    /* Trạng thái Loading của nút */
+    .btn-primary:disabled,
+    .btn-primary.is-loading {
+      background-color: var(--color-primary);
+      opacity: 0.8;
+      cursor: not-allowed;
+    }
+
+    /* Spinner xoay phẳng không gradient */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* Dòng chuyển tab ở cuối form */
+    .auth-switch-text {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      text-align: center;
+    }
+
+    .auth-switch-link {
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      text-decoration: none;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    .auth-switch-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ==========================================================================
+       CỘT PHẢI: NỀN TRƠN MÀU BỀ MẶT (~50%), KHÔNG MINH HỌA RƯỜM RÀ
+       Chỉ 1 câu ngắn giới thiệu 2 chế độ Standard / Developer
+       ========================================================================== */
+    .auth-right-pane {
+      flex: 1;
+      height: 100vh;
+      background-color: var(--color-surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-10) var(--space-12);
+      user-select: none;
+    }
+
+    .intro-statement-card {
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .intro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      width: fit-content;
+    }
+
+    .intro-statement {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      line-height: 1.6;
+      letter-spacing: -0.2px;
+    }
+
+    .intro-meta {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    /* Bộ điều khiển xem trạng thái mẫu (Demo Switcher nhỏ phía dưới) */
+    .demo-toolbar {
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    .demo-chip {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: pointer;
+      color: var(--color-text);
+      font-family: var(--font-family-sans);
+    }
+
+    .demo-chip:hover {
+      border-color: var(--color-border-strong);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-container">
+
+    <!-- ======================================================================
+         CỘT TRÁI: FORM (~420px, căn giữa dọc)
+         ====================================================================== -->
+    <main class="auth-left-pane">
+      <div class="auth-form-card">
+
+        <!-- Logo Dylask (Đồng nhất với layout chuẩn) -->
+        <div class="auth-brand">
+          <div class="brand-mark">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="brand-title">Dylask</span>
+        </div>
+
+        <!-- Tiêu đề form -->
+        <div class="auth-header">
+          <h1 class="auth-title" id="formTitle">Đăng nhập</h1>
+          <p class="auth-subtitle" id="formSubtitle">Nhập thông tin xác thực để truy cập hệ thống.</p>
+        </div>
+
+        <!-- Tab chuyển đổi Đăng nhập / Đăng ký -->
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab-btn active" id="tabLoginBtn" type="button" role="tab" aria-selected="true">Đăng nhập</button>
+          <button class="auth-tab-btn" id="tabRegisterBtn" type="button" role="tab" aria-selected="false">Đăng ký</button>
+        </div>
+
+        <!-- Trạng thái lỗi toàn cục (Hiển thị khi email hoặc mật khẩu không chính xác) -->
+        <div class="alert-banner" id="globalErrorAlert" role="alert">
+          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 2px;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="globalErrorMsg">Địa chỉ email hoặc mật khẩu không chính xác. Vui lòng thử lại.</span>
+        </div>
+
+        <!-- Danh sách các trường nhập liệu -->
+        <form id="authForm" onsubmit="event.preventDefault();" novalidate>
+          <div class="form-group-list">
+
+            <!-- Trường Họ tên (CHỈ xuất hiện ở tab Đăng ký) -->
+            <div class="form-field" id="nameFieldGroup" style="display: none;">
+              <label class="field-label" for="nameInput">Họ và tên</label>
+              <div class="input-wrapper">
+                <input class="form-input" id="nameInput" type="text" placeholder="Nguyễn Văn A" autocomplete="name">
+              </div>
+            </div>
+
+            <!-- Trường Email (Có hiển thị mẫu trạng thái lỗi định dạng) -->
+            <div class="form-field has-error" id="emailFieldGroup">
+              <label class="field-label" for="emailInput">Địa chỉ email</label>
+              <div class="input-wrapper">
+                <input class="form-input" id="emailInput" type="email" value="user@invalid-domain" placeholder="name@example.com" autocomplete="email">
+              </div>
+              <div class="field-error-text" id="emailErrorMsg">
+                <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>Email không đúng định dạng chuẩn.</span>
+              </div>
+            </div>
+
+            <!-- Trường Mật khẩu (Có nút hiện/ẩn) -->
+            <div class="form-field" id="passwordFieldGroup">
+              <div class="field-label">
+                <label for="passwordInput">Mật khẩu</label>
+              </div>
+              <div class="input-wrapper">
+                <input class="form-input" id="passwordInput" type="password" placeholder="Nhập mật khẩu" autocomplete="current-password" style="padding-right: 36px;">
+                <button class="toggle-password-btn" id="togglePasswordBtn" type="button" title="Hiện hoặc ẩn mật khẩu">
+                  <!-- Lucide Eye Icon -->
+                  <svg class="icon" id="eyeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Nút chính: Trạng thái bình thường hoặc Trạng thái Loading -->
+            <button class="btn-primary" id="submitBtn" type="submit">
+              <!-- Spinner (hiển thị khi ở trạng thái loading) -->
+              <svg class="icon spinner" id="btnSpinner" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+              </svg>
+              <span id="btnText">Đăng nhập</span>
+            </button>
+
+          </div>
+        </form>
+
+        <!-- Dòng chuyển tab ở cuối form -->
+        <p class="auth-switch-text">
+          <span id="switchPrompt">Chưa có tài khoản?</span>
+          <a class="auth-switch-link" id="switchLink" role="button">Đăng ký ngay</a>
+        </p>
+
+        <!-- Thanh công cụ demo nhanh các trạng thái thiết kế -->
+        <div class="demo-toolbar">
+          <span>Xem thử:</span>
+          <button class="demo-chip" id="demoToggleErrorBtn" type="button">Bật/Tắt Lỗi</button>
+          <button class="demo-chip" id="demoToggleLoadingBtn" type="button">Bật/Tắt Loading</button>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ======================================================================
+         CỘT PHẢI: NỀN TRƠN MÀU BỀ MẶT, KHÔNG MINH HỌA RƯỜM RÀ
+         Chỉ 1 câu ngắn giới thiệu hai chế độ Standard / Developer
+         ====================================================================== -->
+    <aside class="auth-right-pane">
+      <div class="intro-statement-card">
+        <div class="intro-badge">
+          <span>DUAL-MODE PRODUCTIVITY</span>
+        </div>
+        <p class="intro-statement">
+          Dylask hỗ trợ chuyển đổi linh hoạt giữa giao diện Standard nhẹ nhàng cho công việc đời sống và Developer chuyên sâu cho quy trình phát triển phần mềm.
+        </p>
+        <p class="intro-meta">
+          Chỉ với một tài khoản, bạn có thể đồng bộ kế hoạch cá nhân và quản lý sprint kỹ thuật trên cùng một nền tảng.
+        </p>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- JavaScript tối giản phục vụ tương tác chuyển Tab, Ẩn/Hiện mật khẩu & Demo trạng thái -->
+  <script>
+    (function() {
+      var currentTab = 'login';
+      var isPasswordVisible = false;
+      var isLoading = false;
+      var hasError = true;
+
+      var tabLoginBtn = document.getElementById('tabLoginBtn');
+      var tabRegisterBtn = document.getElementById('tabRegisterBtn');
+      var formTitle = document.getElementById('formTitle');
+      var formSubtitle = document.getElementById('formSubtitle');
+      var nameFieldGroup = document.getElementById('nameFieldGroup');
+      var btnText = document.getElementById('btnText');
+      var switchPrompt = document.getElementById('switchPrompt');
+      var switchLink = document.getElementById('switchLink');
+      var passwordInput = document.getElementById('passwordInput');
+      var togglePasswordBtn = document.getElementById('togglePasswordBtn');
+      var eyeIcon = document.getElementById('eyeIcon');
+      var submitBtn = document.getElementById('submitBtn');
+      var btnSpinner = document.getElementById('btnSpinner');
+      var globalErrorAlert = document.getElementById('globalErrorAlert');
+      var emailFieldGroup = document.getElementById('emailFieldGroup');
+      var demoToggleErrorBtn = document.getElementById('demoToggleErrorBtn');
+      var demoToggleLoadingBtn = document.getElementById('demoToggleLoadingBtn');
+
+      function setTab(tab) {
+        currentTab = tab;
+        if (tab === 'login') {
+          tabLoginBtn.classList.add('active');
+          tabLoginBtn.setAttribute('aria-selected', 'true');
+          tabRegisterBtn.classList.remove('active');
+          tabRegisterBtn.setAttribute('aria-selected', 'false');
+
+          formTitle.textContent = 'Đăng nhập';
+          formSubtitle.textContent = 'Nhập thông tin xác thực để truy cập hệ thống.';
+          nameFieldGroup.style.display = 'none';
+          btnText.textContent = isLoading ? 'Đang đăng nhập...' : 'Đăng nhập';
+          switchPrompt.textContent = 'Chưa có tài khoản?';
+          switchLink.textContent = 'Đăng ký ngay';
+        } else {
+          tabRegisterBtn.classList.add('active');
+          tabRegisterBtn.setAttribute('aria-selected', 'true');
+          tabLoginBtn.classList.remove('active');
+          tabLoginBtn.setAttribute('aria-selected', 'false');
+
+          formTitle.textContent = 'Tạo tài khoản mới';
+          formSubtitle.textContent = 'Bắt đầu tối ưu hóa năng suất với Dylask.';
+          nameFieldGroup.style.display = 'flex';
+          btnText.textContent = isLoading ? 'Đang tạo tài khoản...' : 'Tạo tài khoản';
+          switchPrompt.textContent = 'Đã có tài khoản?';
+          switchLink.textContent = 'Đăng nhập';
+        }
+      }
+
+      tabLoginBtn.addEventListener('click', function() { setTab('login'); });
+      tabRegisterBtn.addEventListener('click', function() { setTab('register'); });
+      switchLink.addEventListener('click', function() {
+        setTab(currentTab === 'login' ? 'register' : 'login');
+      });
+
+      // Toggle Hiện/Ẩn mật khẩu
+      togglePasswordBtn.addEventListener('click', function() {
+        isPasswordVisible = !isPasswordVisible;
+        passwordInput.type = isPasswordVisible ? 'text' : 'password';
+        if (isPasswordVisible) {
+          // EyeOff SVG icon
+          eyeIcon.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line>';
+        } else {
+          // Eye SVG icon
+          eyeIcon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle>';
+        }
+      });
+
+      // Toggle Demo Trạng thái Lỗi
+      demoToggleErrorBtn.addEventListener('click', function() {
+        hasError = !hasError;
+        if (hasError) {
+          globalErrorAlert.classList.remove('hidden');
+          emailFieldGroup.classList.add('has-error');
+        } else {
+          globalErrorAlert.classList.add('hidden');
+          emailFieldGroup.classList.remove('has-error');
+        }
+      });
+
+      // Toggle Demo Trạng thái Loading
+      demoToggleLoadingBtn.addEventListener('click', function() {
+        isLoading = !isLoading;
+        if (isLoading) {
+          submitBtn.disabled = true;
+          submitBtn.classList.add('is-loading');
+          btnSpinner.style.display = 'inline-block';
+          btnText.textContent = currentTab === 'login' ? 'Đang xử lý...' : 'Đang khởi tạo...';
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('is-loading');
+          btnSpinner.style.display = 'none';
+          btnText.textContent = currentTab === 'login' ? 'Đăng nhập' : 'Tạo tài khoản';
+        }
+      });
+
+      // Xử lý gửi Form Đăng nhập / Đăng ký -> Chuyển sang màn hình danh sách việc
+      document.getElementById('authForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        window.location.href = '../standard-list/layout.html';
+      });
+    })();
+  </script>
+
+</body>
+</html>
