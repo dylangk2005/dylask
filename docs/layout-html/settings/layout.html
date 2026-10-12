@@ -772,6 +772,197 @@
       border-radius: var(--radius-full);
       background-color: currentColor;
     }
+
+    /* Subscription & Quota Card */
+    .quota-stat-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      gap: var(--space-4);
+    }
+
+    .quota-progress-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .quota-progress-track {
+      height: 6px;
+      background-color: var(--color-border);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .quota-progress-fill {
+      height: 100%;
+      background-color: var(--color-primary);
+      width: 40%;
+    }
+
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: var(--font-weight-bold);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-family-mono);
+      border: var(--border-width) solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-text-muted);
+    }
+
+    .tier-badge.pro {
+      background-color: var(--color-primary-subtle);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    /* Modal Paywall */
+    .paywall-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(28, 27, 24, 0.6);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+
+    .paywall-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .paywall-dialog {
+      width: 100%;
+      max-width: 500px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .paywall-dialog-header {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .paywall-dialog-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .paywall-dialog-close {
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    .paywall-dialog-close:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .paywall-dialog-body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .paywall-pricing-card {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-primary);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .paywall-plan-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .paywall-plan-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .paywall-plan-price {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      font-family: var(--font-family-mono);
+    }
+
+    .paywall-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .paywall-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+    }
+
+    .paywall-feature-item .icon {
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .paywall-byok-note {
+      padding: 8px 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      line-height: 1.45;
+    }
+
+    .paywall-dialog-footer {
+      padding: var(--space-3) var(--space-4);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+    }
   </style>
 </head>
 <body>
@@ -948,7 +1139,14 @@
                   <path d="M3 5h4"></path>
                   <path d="M17 19h4"></path>
                 </svg>
-                <span>AI</span>
+                <span>AI & Khóa riêng</span>
+              </button>
+
+              <button class="settings-tab-btn" data-target="tab-subscription" type="button">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <span>Gói & Hạn mức AI</span>
               </button>
 
               <button class="settings-tab-btn" data-target="tab-git" type="button">
@@ -1043,6 +1241,82 @@
                   </button>
                 </div>
 
+              </div>
+
+              <!-- ==============================================================
+                   TAB 5: GÓI DỊCH VỤ & HẠN MỨC AI (SUBSCRIPTION & QUOTA)
+                   ============================================================== -->
+              <div class="tab-content" id="tab-subscription">
+                <!-- 1. Gói hiện tại -->
+                <div class="setting-card">
+                  <div class="card-header-row" style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);">
+                    <div class="setting-info">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="setting-label">Gói tài khoản hiện tại</span>
+                        <span class="tier-badge">GÓI MIỄN PHÍ (FREE)</span>
+                      </div>
+                      <p class="setting-desc">Bạn đang sử dụng phiên bản Dylask Free. Được cấp 10 lượt gọi AI dùng thử mỗi tháng và sử dụng không giới hạn toàn bộ tính năng quản lý công việc cơ bản.</p>
+                    </div>
+                    <button class="btn-action-primary" type="button" onclick="openSettingsPaywall()" style="white-space: nowrap;">
+                      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                      </svg>
+                      <span>Nâng cấp Premium</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 2. Hạn mức AI tháng này -->
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Hạn mức sử dụng AI tháng 10/2026</span>
+                    <p class="setting-desc">Mỗi chu kỳ tháng hệ thống cấp 10 lượt gọi AI dùng thử (NLP Quick-Add & Gợi ý chia nhỏ checklist). Chu kỳ tiếp theo được làm mới vào ngày 01/11/2026.</p>
+                  </div>
+
+                  <div class="quota-stat-box">
+                    <div class="quota-progress-container">
+                      <div style="display: flex; justify-content: space-between; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium);">
+                        <span>Đã sử dụng: <strong class="mono" style="color: var(--color-primary);">4 / 10</strong> lượt</span>
+                        <span style="color: var(--color-text-muted);">Còn lại: 6 lượt</span>
+                      </div>
+                      <div class="quota-progress-track">
+                        <div class="quota-progress-fill" style="width: 40%;"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="paywall-byok-note">
+                    <span>💡 <strong>Mẹo tiết kiệm:</strong> Nếu bạn không muốn mua gói Premium nhưng vẫn muốn dùng AI không giới hạn, hãy chuyển sang tab <strong>AI & Khóa riêng</strong> và nhập khóa API Google Gemini cá nhân (BYOK - Bring Your Own Key) hoàn toàn miễn phí.</span>
+                  </div>
+                </div>
+
+                <!-- 3. So sánh quyền lợi -->
+                <div class="setting-card">
+                  <div class="setting-info">
+                    <span class="setting-label">Quyền lợi khi nâng cấp Dylask Premium PRO (99.000₫/tháng)</span>
+                  </div>
+
+                  <ul class="paywall-features-list">
+                    <li class="paywall-feature-item">
+                      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span><strong>1.000 lượt gọi AI / tháng</strong> (hệ thống phục vụ trực tiếp, prompt tối ưu)</span>
+                    </li>
+                    <li class="paywall-feature-item">
+                      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>Mở khóa toàn diện AI Developer Mode: <strong>Sinh Test Cases, Release Notes, Debug Stack Trace</strong></span>
+                    </li>
+                    <li class="paywall-feature-item">
+                      <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>Lưu vết lịch sử <strong>Audit Log không giới hạn</strong> (Gói Free lưu tối đa 30 ngày)</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
 
               <!-- ==============================================================
@@ -1364,14 +1638,92 @@
       el.classList.add('selected');
     }
 
-    // Lựa chọn Thời gian nhắc
-    function selectReminderTime(el) {
-      var parent = el.parentElement;
-      var cards = parent.querySelectorAll('.selection-card');
-      cards.forEach(function(c) { c.classList.remove('selected'); });
-      el.classList.add('selected');
+    // Điều khiển Modal Nâng Cấp Premium trong Cài đặt
+    function openSettingsPaywall() {
+      document.getElementById('settingsPaywallModal').classList.add('is-open');
+    }
+
+    function closeSettingsPaywall() {
+      document.getElementById('settingsPaywallModal').classList.remove('is-open');
+    }
+
+    function simulateSettingsUpgrade() {
+      closeSettingsPaywall();
+      alert('Chúc mừng! Tài khoản của bạn đã được nâng cấp lên Dylask Premium PRO (1.000 lượt AI/tháng)!');
+      location.reload();
     }
   </script>
+
+  <!-- ==========================================================================
+       PAYWALL MODAL: NÂNG CẤP GÓI PREMIUM
+       ========================================================================== -->
+  <div class="paywall-modal-backdrop" id="settingsPaywallModal" onclick="if(event.target === this) closeSettingsPaywall()">
+    <div class="paywall-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsPaywallTitle">
+      <div class="paywall-dialog-header">
+        <div class="paywall-dialog-title" id="settingsPaywallTitle">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span>Nâng cấp Dylask Premium</span>
+        </div>
+        <button class="paywall-dialog-close" type="button" onclick="closeSettingsPaywall()" title="Đóng">
+          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="paywall-dialog-body">
+        <div class="paywall-pricing-card">
+          <div class="paywall-plan-info">
+            <span class="paywall-plan-name">
+              <span>Gói Chuyên Nghiệp (PRO)</span>
+              <span class="tier-badge pro">Khuyên dùng</span>
+            </span>
+            <span style="font-size: 12px; color: var(--color-text-muted);">Gia hạn hàng tháng, hủy bất cứ lúc nào</span>
+          </div>
+          <div class="paywall-plan-price">
+            <span>99.000₫</span><span style="font-size: 11px; color: var(--color-text-muted); font-weight: normal;">/tháng</span>
+          </div>
+        </div>
+
+        <ul class="paywall-features-list">
+          <li class="paywall-feature-item">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span><strong>1.000 lượt gọi AI / tháng</strong> (hệ thống phục vụ trực tiếp, prompt tối ưu)</span>
+          </li>
+          <li class="paywall-feature-item">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Mở khóa toàn diện AI Developer Mode: <strong>Sinh Test Cases, Release Notes, Debug Stack Trace</strong></span>
+          </li>
+          <li class="paywall-feature-item">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Lưu vết lịch sử <strong>Audit Log không giới hạn</strong> (Gói Free lưu tối đa 30 ngày)</span>
+          </li>
+        </ul>
+
+        <div class="paywall-byok-note">
+          <span>💡 <strong>Lập trình viên có thể dùng miễn phí:</strong> Bạn có thể cấu hình khóa Google Gemini API cá nhân (BYOK) tại tab <strong>AI & Khóa riêng</strong> để sử dụng AI không giới hạn mà không cần mua gói Premium.</span>
+        </div>
+      </div>
+
+      <div class="paywall-dialog-footer">
+        <button class="btn-action-outline" type="button" onclick="closeSettingsPaywall()">
+          Để sau
+        </button>
+        <button class="btn-action-primary" type="button" onclick="simulateSettingsUpgrade()">
+          <span>Nâng cấp ngay (99.000₫/tháng)</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

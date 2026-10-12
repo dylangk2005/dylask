@@ -9,7 +9,7 @@
 ### 1.1. Triết lý thiết kế
 - **Dual-Mode Experience:** Cho phép chuyển đổi linh hoạt giữa giao diện tối giản (*Standard Mode*) và giao diện kỹ thuật chuyên sâu (*Developer Mode*).
 - **Automation-First:** Tận dụng tối đa logic quy tắc (rule-based) và Webhook để tự động hóa quy trình mà không làm phát sinh chi phí vận hành.
-- **Cost-Effective AI:** Tích hợp mô hình trí tuệ nhân tạo dưới dạng tùy chọn (Opt-in / Toggle), hỗ trợ người dùng tự cấu hình khóa API riêng (BYOK - Bring Your Own Key) hoặc sử dụng hạn mức miễn phí.
+- **Cost-Effective AI & Sustainable Model:** Tích hợp mô hình trí tuệ nhân tạo có kiểm soát hạn mức (Quota-based). Gói Free hỗ trợ hạn mức dùng thử mỗi tháng hoặc tùy chọn tự cung cấp khóa API riêng (BYOK - Bring Your Own Key); gói Premium mở khóa toàn bộ tính năng AI nâng cao và hạn mức mở rộng.
 
 ---
 
@@ -123,6 +123,11 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     default_mode VARCHAR(20) DEFAULT 'standard', -- 'standard' hoặc 'developer'
+    subscription_tier VARCHAR(20) DEFAULT 'FREE', -- 'FREE' hoặc 'PREMIUM'
+    subscription_expires_at TIMESTAMP,
+    ai_usage_count INT DEFAULT 0,
+    ai_quota_limit INT DEFAULT 10,
+    quota_reset_at TIMESTAMP,
     ai_api_key VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

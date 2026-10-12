@@ -622,6 +622,240 @@
       color: var(--color-primary-hover);
     }
 
+    /* 2.1. Thẻ đo hạn mức gọi AI (AI Quota) & Nâng cấp Premium */
+    .ai-quota-card {
+      margin: var(--space-3) var(--space-4) 0;
+      padding: 8px var(--space-3);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ai-quota-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+    }
+
+    .ai-quota-badge-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ai-tier-tag {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      color: var(--color-text-muted);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: var(--font-weight-medium);
+    }
+
+    .ai-tier-tag.pro {
+      background-color: var(--color-primary-subtle);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .btn-upgrade-pro {
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background-color 0.15s ease;
+      font-family: var(--font-sans);
+    }
+
+    .btn-upgrade-pro:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .ai-quota-progress-track {
+      height: 4px;
+      background-color: var(--color-bg);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .ai-quota-progress-fill {
+      height: 100%;
+      background-color: var(--color-primary);
+      width: 40%;
+    }
+
+    .ai-quota-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--color-text-muted);
+    }
+
+    .ai-quota-byok-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: var(--font-weight-medium);
+    }
+
+    .ai-quota-byok-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Paywall Modal */
+    .paywall-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(14, 17, 22, 0.75);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+
+    .paywall-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .paywall-dialog {
+      width: 100%;
+      max-width: 500px;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .paywall-dialog-header {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .paywall-dialog-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .paywall-dialog-close {
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    .paywall-dialog-close:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .paywall-dialog-body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .paywall-pricing-card {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-primary);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .paywall-plan-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .paywall-plan-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .paywall-plan-price {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+    }
+
+    .paywall-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .paywall-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+    }
+
+    .paywall-feature-item .icon {
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .paywall-byok-note {
+      padding: 8px 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      line-height: 1.45;
+    }
+
+    .paywall-dialog-footer {
+      padding: var(--space-3) var(--space-4);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-2);
+    }
+
     /* 3. Ba Tab điều hướng: "Test Cases" | "Release Notes" | "Phân tích log" */
     .ai-tabs-nav {
       display: flex;
@@ -1157,6 +1391,31 @@
       </div>
     </div>
 
+    <!-- 2.1. THẺ HẠN MỨC GỌI AI & NÚT NÂNG CẤP PREMIUM -->
+    <div class="ai-quota-card" id="aiQuotaCard">
+      <div class="ai-quota-row">
+        <div class="ai-quota-badge-group">
+          <span class="ai-tier-tag">FREE</span>
+          <span style="font-weight: var(--font-weight-medium); color: var(--color-text);">Hạn mức AI tháng này</span>
+        </div>
+        <button class="btn-upgrade-pro" type="button" onclick="openPaywallModal()" title="Mở khóa AI không giới hạn">
+          <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span>Nâng cấp PRO</span>
+        </button>
+      </div>
+
+      <div class="ai-quota-progress-track" title="Đã dùng 4/10 lượt gọi">
+        <div class="ai-quota-progress-fill" style="width: 40%;"></div>
+      </div>
+
+      <div class="ai-quota-footer">
+        <span class="mono">Đã dùng: 4 / 10 lượt</span>
+        <a class="ai-quota-byok-link" href="../settings/layout.html" title="Tự nhập API Key Gemini để dùng miễn phí không giới hạn">Dùng key riêng (BYOK) &rarr;</a>
+      </div>
+    </div>
+
     <!-- 3. BA TAB: "TEST CASES" | "RELEASE NOTES" | "PHÂN TÍCH LOG" -->
     <nav class="ai-tabs-nav" aria-label="Các tab hỗ trợ AI">
       <button class="ai-tab-btn" id="tabBtnTestCases" type="button" onclick="switchAiTab('test-cases')">
@@ -1547,6 +1806,125 @@
         toast.classList.remove('is-open');
       }, 2500);
     }
+
+    // 5. Điều khiển Paywall Modal Nâng Cấp Premium
+    function openPaywallModal() {
+      document.getElementById('paywallModal').classList.add('is-open');
+    }
+
+    function closePaywallModal() {
+      document.getElementById('paywallModal').classList.remove('is-open');
+    }
+
+    function simulateUpgrade() {
+      closePaywallModal();
+      const quotaCard = document.getElementById('aiQuotaCard');
+      quotaCard.innerHTML = `
+        <div class="ai-quota-row">
+          <div class="ai-quota-badge-group">
+            <span class="ai-tier-tag pro">PREMIUM</span>
+            <span style="font-weight: var(--font-weight-medium); color: var(--color-primary);">AI Không giới hạn</span>
+          </div>
+          <span class="mono" style="font-size: 11px; color: var(--color-success); font-weight: var(--font-weight-bold);">&#10003; Đã kích hoạt</span>
+        </div>
+        <div class="ai-quota-progress-track">
+          <div class="ai-quota-progress-fill" style="width: 100%; background-color: var(--color-success);"></div>
+        </div>
+        <div class="ai-quota-footer">
+          <span>Hạn ngạch: 1.000 lượt / tháng</span>
+          <span style="color: var(--color-text-muted);">Gia hạn: 12/11/2026</span>
+        </div>
+      `;
+      showAiToast('Chúc mừng! Bạn đã nâng cấp thành công gói Dylask Premium PRO!');
+    }
   </script>
+
+  <!-- ==========================================================================
+       PAYWALL MODAL: NÂNG CẤP GÓI PREMIUM CHO TÍNH NĂNG AI
+       ========================================================================== -->
+  <div class="paywall-modal-backdrop" id="paywallModal" onclick="if(event.target === this) closePaywallModal()">
+    <div class="paywall-dialog" role="dialog" aria-modal="true" aria-labelledby="paywallTitle">
+      <div class="paywall-dialog-header">
+        <div class="paywall-dialog-title" id="paywallTitle">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span>Nâng cấp Dylask Premium</span>
+        </div>
+        <button class="paywall-dialog-close" type="button" onclick="closePaywallModal()" title="Đóng">
+          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="paywall-dialog-body">
+        <!-- Khối giá gói -->
+        <div class="paywall-pricing-card">
+          <div class="paywall-plan-info">
+            <span class="paywall-plan-name">
+              <span>Gói Chuyên Nghiệp (PRO)</span>
+              <span class="ai-tier-tag pro">Khuyên dùng</span>
+            </span>
+            <span class="paywall-plan-period">Thanh toán theo tháng, hủy bất cứ lúc nào</span>
+          </div>
+          <div class="paywall-plan-price">
+            <span>99.000₫</span><span style="font-size: 11px; color: var(--color-text-muted);">/tháng</span>
+          </div>
+        </div>
+
+        <!-- Danh sách tính năng mở khóa -->
+        <ul class="paywall-features-list">
+          <li class="paywall-feature-item">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span><strong>1.000 lượt gọi AI / tháng</strong> (thay vì 10 lượt dùng thử ở gói Free)</span>
+          </li>
+          <li class="paywall-feature-item">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Tự động sinh <strong>Test Cases, Acceptance Criteria</strong> & Edge Cases chuẩn kỹ thuật</span>
+          </li>
+          <li class="paywall-feature-item">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Tự động tổng hợp <strong>Release Notes (Changelog)</strong> định dạng Markdown theo Sprint</span>
+          </li>
+          <li class="paywall-feature-item">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Phân tích <strong>Stack Trace & Log lỗi</strong> thành danh sách checklist debug từng bước</span>
+          </li>
+          <li class="paywall-feature-item">
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Lưu vết lịch sử <strong>Audit Log không giới hạn</strong> (Gói Free lưu tối đa 30 ngày)</span>
+          </li>
+        </ul>
+
+        <!-- Tùy chọn miễn phí BYOK -->
+        <div class="paywall-byok-note">
+          <span>💡 <strong>Lập trình viên có thể dùng miễn phí:</strong> Nếu bạn đã có Google Gemini API Key hoặc OpenAI Key, bạn có thể chuyển sang trang </span>
+          <a class="banner-link" href="../settings/layout.html" style="display: inline;">Cài đặt &gt; AI</a>
+          <span> để cấu hình khoá riêng (BYOK) mà không cần nâng cấp gói trả phí.</span>
+        </div>
+      </div>
+
+      <div class="paywall-dialog-footer">
+        <button class="btn-cancel" type="button" onclick="closePaywallModal()" style="height: 32px; padding: 0 12px; background: transparent; border: var(--border-width) solid var(--color-border); color: var(--color-text-muted); border-radius: var(--radius-sm); font-size: 12px; cursor: pointer;">
+          Để sau
+        </button>
+        <button class="btn-ai-submit" type="button" onclick="simulateUpgrade()" style="height: 32px; padding: 0 16px; font-weight: var(--font-weight-semibold);">
+          <span>Nâng cấp ngay (99.000₫/tháng)</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
