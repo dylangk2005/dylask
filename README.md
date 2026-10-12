@@ -31,7 +31,15 @@ dylask-web/
 │   │   ├── types/           # Định nghĩa TypeScript types/interfaces
 │   │   └── utils/           # Helper functions
 │   └── package.json
+├── docs/                    # Tài liệu đặc tả kỹ thuật & hướng dẫn AI
+│   ├── specs/               # Quản lý vòng đời đặc tả tính năng
+│   │   ├── 01.draft/        # Specs đang soạn thảo / chờ review
+│   │   ├── 02.approved/     # Specs đã duyệt, sẵn sàng lập trình
+│   │   ├── 03.archive/      # Specs đã hoàn thành và lưu trữ
+│   │   └── feature-specifications.md # Tài liệu đặc tả chức năng tổng thể
+│   └── ai/                  # Quy trình làm việc với AI & Prompt templates
 ├── docker-compose.yml       # Khởi chạy MySQL container cho local development
+├── AGENTS.md                # Bộ quy tắc cốt lõi dành riêng cho AI Coding Assistants
 ├── .editorconfig            # Đồng bộ định dạng mã nguồn giữa các IDE
 ├── .env.example             # Biến môi trường mẫu cho database & backend
 └── .gitignore               # Root git ignore
