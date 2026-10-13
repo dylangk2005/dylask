@@ -193,7 +193,7 @@ com.dylask.modules.ai/
 
 ### 5. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
-1. **Giao diện tham chiếu:** `docs/layout-html/developer-ai-panel/layout.html` (Drawer 480px trượt từ cạnh phải, 3 tab: Test Cases, Release Notes, Phân tích log).
+1. **Giao diện tham chiếu:** [docs/layout-html/developer-ai-panel/layout.html](../../layout-html/developer-ai-panel/layout.html) (Drawer 480px trượt từ cạnh phải, 3 tab: Test Cases, Release Notes, Phân tích log).
 2. **Cấu trúc Component:**
    - `src/components/developer/ai/AiPanelDrawer.tsx`: Khung panel trượt từ phải.
    - `src/components/developer/ai/TestCaseGeneratorTab.tsx`: Form sinh kịch bản kiểm thử.

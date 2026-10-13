@@ -238,7 +238,7 @@ com.dylask.modules.user/
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
 1. **Layout & UI Components:**
-   - Liên kết giao diện mẫu: `docs/layout-html/settings/layout.html` (Tab Hồ sơ & Tab Giao diện).
+   - Liên kết giao diện mẫu: [docs/layout-html/settings/layout.html](../../layout-html/settings/layout.html) (Tab Hồ sơ & Tab Giao diện).
    - Component chuyển đổi chế độ: `src/components/common/ModeSwitcher.tsx` (nhúng tại Footer Sidebar của cả hai chế độ).
 2. **Custom Hook `useDualMode`:**
    ```typescript

@@ -217,6 +217,7 @@ com.dylask.modules.task/
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
 1. **Màn hình & Giao diện:**
+   - **Bản mẫu HTML tham chiếu:** [docs/layout-html/my-day/layout.html](../../layout-html/my-day/layout.html)
    - Màn hình My Day: `src/pages/standard/MyDayPage.tsx`.
    - Widget Pomodoro Timer: `src/components/pomodoro/PomodoroWidget.tsx` (Thanh đếm giờ nổi hoặc gắn trên header).
    - Panel gợi ý việc: `src/components/task/MyDaySuggestionsDrawer.tsx`.

@@ -309,6 +309,7 @@ Thành phần bảo mật toàn hệ thống tại `com.dylask.common.config.sec
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
 1. **Giao diện & Màn hình:**
+   - **Bản mẫu HTML tham chiếu:** [docs/layout-html/auth/layout.html](../../layout-html/auth/layout.html)
    - Trang Đăng nhập: `src/pages/auth/LoginPage.tsx`
    - Trang Đăng ký: `src/pages/auth/RegisterPage.tsx`
    - Tuân thủ thiết kế tối giản, tông màu thương hiệu `#0F766E`, font Plus Jakarta Sans, không gradient, không bóng mờ.

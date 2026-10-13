@@ -256,6 +256,7 @@ com.dylask.modules.analytics.developer/
 ### 6. Giao Diện & Frontend Implementation (`dylask-frontend`)
 
 #### 6.1. Cấu trúc Component
+- **Bản mẫu HTML tham chiếu:** [docs/layout-html/developer-metrics/layout.html](../../layout-html/developer-metrics/layout.html)
 - `src/pages/developer/AgileMetricsPage.tsx`: Màn hình tổng hợp dashboard kỹ thuật.
 - `src/components/developer/metrics/BurndownSvgChart.tsx`: Biểu đồ đường Burndown biểu diễn bằng SVG thuần (polyline / path) với tooltip xem điểm từng ngày.
 - `src/components/developer/metrics/VelocityBarChart.tsx`: Biểu đồ so sánh cột đôi (Committed vs Completed).

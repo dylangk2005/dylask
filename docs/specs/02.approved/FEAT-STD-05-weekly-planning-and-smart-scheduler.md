@@ -123,6 +123,6 @@ Là người dùng ở chế độ cá nhân (*Standard Mode*), tôi muốn có 
 ---
 
 ### 5. Đặc Tả Giao Diện (Layout HTML References)
-1. **Lập Kế Hoạch Tuần:** `docs/layout-html/standard-planning/layout.html`
-2. **7 Ngày Tới:** `docs/layout-html/standard-upcoming/layout.html`
-3. **Việc Quá Hạn:** `docs/layout-html/standard-overdue/layout.html`
+1. **Lập Kế Hoạch Tuần:** [docs/layout-html/standard-planning/layout.html](../../layout-html/standard-planning/layout.html)
+2. **7 Ngày Tới:** [docs/layout-html/standard-upcoming/layout.html](../../layout-html/standard-upcoming/layout.html)
+3. **Việc Quá Hạn:** [docs/layout-html/standard-overdue/layout.html](../../layout-html/standard-overdue/layout.html)

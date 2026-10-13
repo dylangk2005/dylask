@@ -234,7 +234,7 @@ com.dylask.modules.ai/
 
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
-1. **Giao diện tham chiếu:** `docs/layout-html/settings/layout.html` (Tab AI: công tắc bật/tắt, thẻ hiển thị 4/10 lượt thử, ô nhập API key có nút Hiện/Ẩn và nút Kiểm tra key).
+1. **Giao diện tham chiếu:** [docs/layout-html/settings/layout.html](../../layout-html/settings/layout.html) (Tab AI: công tắc bật/tắt, thẻ hiển thị 4/10 lượt thử, ô nhập API key có nút Hiện/Ẩn và nút Kiểm tra key).
 2. **Cấu trúc Component:**
    - `src/components/settings/AiSettingsTab.tsx`: Form cấu hình AI trong trang Cài đặt.
    - `src/components/common/AiBadgeIndicator.tsx`: Badge nhỏ hiển thị trạng thái `4/10 lượt thử` hoặc `BYOK active`.

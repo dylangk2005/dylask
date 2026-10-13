@@ -237,6 +237,7 @@ com.dylask.modules.analytics.personal/
 ### 6. Giao Diện & Frontend Implementation (`dylask-frontend`)
 
 #### 6.1. Cấu trúc Component
+- **Bản mẫu HTML tham chiếu:** [docs/layout-html/standard-analytics/layout.html](../../layout-html/standard-analytics/layout.html)
 - `src/pages/standard/PersonalAnalyticsPage.tsx`: Màn hình điều phối chính.
 - `src/components/analytics/MetricCard.tsx`: Thẻ hiển thị chỉ số (Completion Rate, Streak 🔥, Giờ tập trung).
 - `src/components/analytics/CategoryDonutChart.tsx`: Biểu đồ Donut vẽ bằng SVG thuần (stroke-dasharray), không cần cài thư viện Chart.js cồng kềnh.

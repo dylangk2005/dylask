@@ -171,8 +171,8 @@ com.dylask.modules.ai/
 ### 5. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
 1. **Giao diện tham chiếu:**
-   - Ô nhập NLP trên danh sách: `docs/layout-html/standard-list/layout.html`.
-   - Nút "Chia nhỏ bằng AI" và Modal đề xuất: `docs/layout-html/standard-task-modal/layout.html`.
+   - Ô nhập NLP trên danh sách: [docs/layout-html/standard-list/layout.html](../../layout-html/standard-list/layout.html).
+   - Nút "Chia nhỏ bằng AI" và Modal đề xuất: [docs/layout-html/standard-task-modal/layout.html](../../layout-html/standard-task-modal/layout.html).
 2. **Cấu trúc Component:**
    - `src/components/task/NlpQuickAddBar.tsx`: Ô nhập liệu có icon đũa thần và badge nguồn ("Luật" hoặc "AI").
    - `src/components/task/AiChecklistPreviewDialog.tsx`: Modal hiển thị các dòng checklist đề xuất kèm checkbox để người dùng chọn những mục ưng ý trước khi bấm "Thêm vào task".

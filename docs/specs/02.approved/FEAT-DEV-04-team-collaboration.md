@@ -276,8 +276,8 @@ com.dylask.common.audit/
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
 1. **Giao diện tham chiếu:**
-   - Layout Standup: `docs/layout-html/developer-standup/layout.html`.
-   - Layout Audit Log: `docs/layout-html/developer-audit-log/layout.html`.
+   - Báo cáo Async Standup: [docs/layout-html/developer-standup/layout.html](../../layout-html/developer-standup/layout.html).
+   - Lịch sử Audit Log: [docs/layout-html/developer-audit-log/layout.html](../../layout-html/developer-audit-log/layout.html).
 2. **Cấu trúc Component:**
    - `src/components/collaboration/ThreadedComments.tsx`: Danh sách comment dạng luồng có avatar và nút Reply.
    - `src/components/collaboration/StandupSummaryView.tsx`: Màn hình hiển thị 3 cột Standup kèm nút Copy Markdown.

@@ -181,7 +181,9 @@ com.dylask.modules.git/
 
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
-1. **Giao diện tham chiếu:** Thẻ task trên `docs/layout-html/developer-board/layout.html` và modal cài đặt dự án `docs/layout-html/developer-project-create/layout.html`.
+1. **Giao diện tham chiếu:**
+   - Thẻ task trên Bảng Kanban: [docs/layout-html/developer-board/layout.html](../../layout-html/developer-board/layout.html).
+   - Modal cài đặt / tạo dự án: [docs/layout-html/developer-project-create/layout.html](../../layout-html/developer-project-create/layout.html).
 2. **Cấu trúc Component:**
    - `src/components/git/GitBranchCopyButton.tsx`: Nút sao chép tên branch 1-click kèm tooltip copy thành công.
    - `src/components/git/GitPrBadge.tsx`: Badge gắn link mở trực tiếp PR trên GitHub kèm trạng thái Reviewer.

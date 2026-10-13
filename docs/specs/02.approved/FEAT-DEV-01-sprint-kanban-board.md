@@ -296,7 +296,10 @@ com.dylask.modules.task/
 
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
-1. **Giao diện tham chiếu:** `docs/layout-html/developer-board/layout.html` (chế độ nền tảng Developer Dark Mode).
+1. **Giao diện tham chiếu:**
+   - Bảng Kanban: [docs/layout-html/developer-board/layout.html](../../layout-html/developer-board/layout.html) (chế độ nền tảng Developer Dark Mode).
+   - Quản lý Backlog: [docs/layout-html/developer-backlog/layout.html](../../layout-html/developer-backlog/layout.html).
+   - Modal Task kỹ thuật: [docs/layout-html/developer-task-modal/layout.html](../../layout-html/developer-task-modal/layout.html).
 2. **Cấu trúc Component:**
    - `src/pages/developer/SprintBoardPage.tsx`: Màn hình chính của bảng Kanban.
    - `src/components/kanban/KanbanBoard.tsx`: Container 5 cột kéo thả.

@@ -326,8 +326,8 @@ com.dylask.modules.task/
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
 1. **Giao diện tham chiếu:**
-   - Danh sách công việc: `docs/layout-html/standard-list/layout.html`
-   - Modal chi tiết công việc & Checklist: `docs/layout-html/standard-task-modal/layout.html`
+   - Danh sách công việc: [docs/layout-html/standard-list/layout.html](../../layout-html/standard-list/layout.html)
+   - Modal chi tiết công việc & Checklist: [docs/layout-html/standard-task-modal/layout.html](../../layout-html/standard-task-modal/layout.html)
 2. **Cấu trúc Component:**
    - `src/pages/standard/TaskListPage.tsx`: Màn hình danh sách chính.
    - `src/components/task/TaskItemRow.tsx`: Dòng công việc với checkbox tròn, nhãn ưu tiên, hạn chót.

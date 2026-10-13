@@ -215,6 +215,7 @@ com.dylask.modules.task/
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
 1. **Màn hình & Giao diện:**
+   - **Bản mẫu HTML tham chiếu:** [docs/layout-html/calendar/layout.html](../../layout-html/calendar/layout.html)
    - Màn hình Lịch: `src/pages/standard/CalendarPage.tsx`.
    - Lưới Tháng: `src/components/calendar/MonthGridView.tsx`.
    - Lưới Tuần: `src/components/calendar/WeekGridView.tsx`.

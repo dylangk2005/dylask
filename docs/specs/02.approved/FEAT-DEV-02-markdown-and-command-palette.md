@@ -180,7 +180,8 @@ com.dylask.modules.task/
 ### 6. Cấu Trúc Mã Nguồn Frontend (`dylask-frontend`)
 
 1. **Giao diện tham chiếu:**
-   - Layout Command Palette: `docs/layout-html/developer-command-palette/layout.html`.
+   - Command Palette (`Ctrl+K`): [docs/layout-html/developer-command-palette/layout.html](../../layout-html/developer-command-palette/layout.html).
+   - Chế độ Focus Coding: [docs/layout-html/developer-focus/layout.html](../../layout-html/developer-focus/layout.html).
 2. **Cấu trúc Component:**
    - `src/components/developer/CommandPaletteModal.tsx`: Modal tìm kiếm lệnh dạng Spotlight.
    - `src/components/developer/MarkdownEditor.tsx`: Soạn thảo Markdown với tab Preview.
