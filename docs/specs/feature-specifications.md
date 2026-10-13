@@ -43,6 +43,13 @@ Chế độ dành cho nhu cầu cá nhân hóa, giao diện thân thiện, tinh 
   - **Làm sạch nội dung (Sanitization):** Nội dung Markdown do AI trả về phải được sanitize trước khi hiển thị để phòng chống tấn công XSS.
   - **Giới hạn đầu vào & Cảnh báo an toàn:** Giới hạn độ dài input gửi AI (tối đa 4.000 ký tự) và hiện cảnh báo: *"Không dán mật khẩu, token hoặc secret vào ô này. Nội dung sẽ được gửi tới nhà cung cấp AI bạn đã chọn."*
 
+### 2.5. Thống kê & Năng suất cá nhân (Personal Productivity Analytics)
+- **Tỷ lệ hoàn thành công việc:** Đo lường tổng số việc tạo ra so với số việc đã hoàn tất theo khoảng thời gian tùy chọn (7 ngày, 30 ngày, tháng này).
+- **Chuỗi ngày duy trì kỷ luật (Streak 🔥):** Ghi nhận số ngày liên tiếp hoàn thành ít nhất 1 việc hoặc 1 phiên Pomodoro, giúp duy trì thói quen và động lực làm việc tích cực.
+- **Phân bổ theo danh mục:** Biểu đồ Donut SVG trực quan hóa tỷ trọng công việc giữa các mảng đời sống (*Học tập, Công việc, Cá nhân, Gia đình*).
+- **Hiệu suất Pomodoro & Giờ tập trung:** Thống kê tổng số phiên tập trung 25 phút đã hoàn tất, tổng giờ làm việc sâu (Deep Work) và phát hiện khung giờ vàng tập trung cao nhất trong ngày.
+- **Chi phí vận hành:** 0đ, toàn bộ tính năng dựa trên truy vấn tổng hợp SQL (Aggregation) nội bộ, không phụ thuộc vào AI.
+
 ---
 
 ## 3. Chi tiết chức năng: Chế độ Lập trình viên (Developer Mode)
@@ -81,6 +88,13 @@ Tuân thủ đầy đủ quy tắc kích hoạt và nguyên tắc xử lý AI t�
 - **Tự động sinh Release Notes:** Tổng hợp nội dung các commit và task đã hoàn thành trong Sprint thành bản tin phát hành (Changelog) dạng Markdown đề xuất có cấu trúc.
 - **Phân tích Log lỗi thành Checklist:** Cho phép lập trình viên dán Stack Trace hoặc mã lỗi (tối đa 4.000 ký tự, có cảnh báo không dán secret) để AI đề xuất các bước gỡ lỗi (Debug Steps) có hệ thống.
 
+### 3.6. Đo lường & Báo cáo kỹ thuật Agile (Agile Metrics & Engineering Reports)
+- **Biểu đồ Sprint Burndown (SVG):** So sánh đường công số lý tưởng (Ideal Story Points) với đường thực tế (Actual Remaining Points) theo từng ngày; nhận diện rủi ro trễ hạn và hiện tượng mở rộng phạm vi (Scope Creep).
+- **Đo lường Team Velocity:** Biểu đồ so sánh Story Points cam kết vs hoàn thành qua 3–5 Sprint liên tiếp; tự động gợi ý công số khả thi cho Sprint kế tiếp.
+- **Độ chính xác ước lượng (Estimation Accuracy):** So sánh giờ dự toán (`estimated_hours`) so với giờ thực tế ghi nhận (`actual_hours`) theo phân loại Feature, Bug, Refactor.
+- **Chỉ số luân chuyển (Lead Time & Cycle Time):** Thời gian trung bình hoàn thành thẻ task từ khi khởi tạo hoặc từ khi bắt đầu làm (`in_progress`) đến khi hoàn tất (`done`).
+- **Chi phí vận hành:** 0đ, tự động lưu trữ ảnh chụp nhanh hàng ngày (Daily Sprint Snapshot) qua Spring Scheduler và tổng hợp dữ liệu nội bộ.
+
 ---
 
 ## 4. Ma trận so sánh tính năng giữa hai chế độ
@@ -94,6 +108,7 @@ Tuân thủ đầy đủ quy tắc kích hoạt và nguyên tắc xử lý AI t�
 | **Thao tác điều hướng** | Thao tác chuột, chạm trực quan | Phím tắt & Command Palette (`Ctrl + K`) |
 | **Tự động hóa** | Nhắc hẹn theo mốc thời gian | Webhook đồng bộ trạng thái GitHub / GitLab |
 | **Đơn vị đo lường** | Đếm phiên Pomodoro | Story Points, Giờ dự tính vs. Giờ thực tế |
+| **Báo cáo & Thống kê** | Tỷ lệ hoàn thành, Chuỗi ngày kỷ luật (Streak), Phân bổ danh mục, Pomodoro Focus hours | Sprint Burndown Chart, Team Velocity, Độ chính xác ước lượng (Hours/SP), Lead/Cycle Time |
 | **Tương tác nhóm** | Cá nhân hóa hoặc chia sẻ cơ bản | Phân quyền RBAC, Comment luồng, Async Standup |
 | **Tính năng AI** | Phân tích câu tự nhiên, gợi ý việc sinh hoạt | Sinh Test Cases, tóm tắt Release Notes, Debug log |
 
