@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Thống kê & Năng suất cá nhân (Standard Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS (STANDARD MODE - LIGHT)
+       Định nghĩa từ docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root {
+      /* Typography */
+      --font-family-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Standard Mode Colors */
+      --color-bg: #FAFAF7;
+      --color-surface: #FFFFFF;
+      --color-surface-subtle: #F4F3EF;
+      --color-border: #E7E5E0;
+      --color-border-strong: #D1CFCA;
+
+      --color-text: #1C1B18;
+      --color-text-muted: #6B6A63;
+
+      --color-primary: #0F766E;
+      --color-primary-hover: #115E59;
+      --color-primary-subtle: #E6F4F1;
+      --color-primary-text: #FFFFFF;
+
+      /* Standard Priorities */
+      --priority-low: #3B82F6;
+      --priority-low-bg: #EFF6FF;
+      --priority-medium: #F59E0B;
+      --priority-medium-bg: #FFFBEB;
+      --priority-high: #DC2626;
+      --priority-high-bg: #FEF2F2;
+
+      /* Status */
+      --color-success: #16A34A;
+      --color-success-bg: #F0FDF4;
+      --color-warning: #D97706;
+      --color-warning-bg: #FFFBEB;
+      --color-danger: #DC2626;
+      --color-info: #2563EB;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      stroke-width: 1.75;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* ==========================================================================
+       APP LAYOUT - ĐỒNG BỘ 100% VỚI MY-DAY & STANDARD-LIST
+       ========================================================================== */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* 1. SIDEBAR TRÁI (240px) */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      z-index: 20;
+    }
+
+    .sidebar-top {
+      padding: var(--space-4) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-2);
+      height: 36px;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+    }
+
+    .brand-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+    }
+
+    .nav-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-section-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-2) var(--space-2) var(--space-1);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: background-color 0.15s ease, color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-item.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .nav-item .icon {
+      color: var(--color-text-muted);
+    }
+
+    .nav-item.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-count {
+      margin-left: auto;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      padding: 1px 6px;
+      background-color: var(--color-surface-subtle);
+      border-radius: var(--radius-full);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* Sidebar Footer / Mode Switch */
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      background-color: var(--color-bg);
+    }
+
+    .mode-switch-container {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 3px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .mode-switch-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: 6px 8px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-family-sans);
+      text-decoration: none;
+    }
+
+    .mode-switch-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* ==========================================================================
+       2. MAIN WRAPPER & TOP BAR
+       ========================================================================== */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 52px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+      flex-shrink: 0;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 6px var(--space-3);
+      width: 280px;
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-sm);
+      color: var(--color-text);
+      width: 100%;
+    }
+
+    .search-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .topbar-right-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .range-selector {
+      display: flex;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+    }
+
+    .range-btn {
+      border: none;
+      background: none;
+      padding: 4px 10px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .range-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      text-decoration: none;
+    }
+
+    .user-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-primary-subtle);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* ==========================================================================
+       3. NỘI DUNG CHÍNH (ANALYTICS STAGE)
+       ========================================================================== */
+    .analytics-stage {
+      flex: 1;
+      padding: var(--space-6);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .stage-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stage-title {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.5px;
+    }
+
+    .stage-subtitle {
+      font-size: var(--font-size-base);
+      color: var(--color-text-muted);
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+    }
+
+    .kpi-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      box-shadow: var(--box-shadow);
+    }
+
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-icon-wrap {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius);
+      background-color: var(--color-surface-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+    }
+
+    .kpi-value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      line-height: 1.1;
+      font-family: var(--font-family-mono);
+    }
+
+    .kpi-footer {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid transparent;
+    }
+
+    .badge-pill.streak {
+      background-color: var(--priority-medium-bg);
+      color: var(--priority-medium);
+      border-color: #FDE68A;
+    }
+
+    .badge-pill.success {
+      background-color: var(--color-success-bg);
+      color: var(--color-success);
+      border-color: #BBF7D0;
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: var(--space-5);
+    }
+
+    .chart-panel {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      box-shadow: var(--box-shadow);
+    }
+
+    .chart-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chart-panel-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .chart-panel-desc {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    /* SVG Bar Chart */
+    .bar-chart-container {
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .bar-chart-svg {
+      width: 100%;
+      height: 180px;
+    }
+
+    .chart-legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-4);
+      padding-top: var(--space-2);
+      border-top: var(--border-width) solid var(--color-surface-subtle);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .legend-box {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    /* Donut Chart Layout */
+    .donut-layout {
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+      min-height: 200px;
+    }
+
+    .donut-svg-wrap {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+    }
+
+    .donut-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .donut-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .donut-center-val {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      font-family: var(--font-family-mono);
+      line-height: 1;
+    }
+
+    .donut-center-lbl {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .category-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .category-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-sm);
+    }
+
+    .category-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .category-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .category-pct {
+      font-family: var(--font-family-mono);
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+    }
+
+    /* History & Insights Table Grid */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: var(--space-5);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-sm);
+    }
+
+    .data-table th {
+      text-align: left;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      padding: var(--space-2) var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .data-table td {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-surface-subtle);
+      color: var(--color-text);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .task-title-cell {
+      font-weight: var(--font-weight-medium);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .mono-cell {
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .insight-card {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .insight-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .insight-text {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+
+    .streak-progress-bar {
+      width: 100%;
+      height: 6px;
+      background-color: var(--color-border);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: var(--space-2);
+    }
+
+    .streak-progress-fill {
+      height: 100%;
+      background-color: var(--priority-medium);
+      border-radius: var(--radius-full);
+    }
+  </style>
+  <link rel="stylesheet" href="../responsive-sidebar.css">
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- ======================================================================
+         1. SIDEBAR TRÁI (240px) - ĐỒNG NHẤT 100% VỚI MY-DAY & STANDARD-LIST
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="brand-name">Dylask</span>
+          <span class="brand-badge" style="font-size:11px;font-weight:600;color:var(--color-primary);background-color:var(--color-primary-subtle);padding:2px 6px;border-radius:4px;margin-left:auto;">Standard</span>
+        </div>
+
+        <div class="nav-section">
+          <!-- 1. THỐNG KÊ (ĐẦU THANH THEO YÊU CẦU USER) -->
+          <a class="nav-item active" href="../standard-analytics/layout.html" title="Thống kê năng suất cá nhân">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>Thống kê</span>
+          </a>
+
+          <!-- 2. KẾ HOẠCH (LẬP KẾ HOẠCH TUẦN & MỤC TIÊU) -->
+          <a class="nav-item" href="../standard-planning/layout.html" title="Lập kế hoạch tuần">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <path d="M3 10h18"></path>
+              <path d="m9 16 2 2 4-4"></path>
+            </svg>
+            <span>Kế hoạch</span>
+          </a>
+
+          <!-- 3. HÔM NAY -->
+          <a class="nav-item" href="../my-day/layout.html" title="Kế hoạch hôm nay">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Hôm nay</span>
+            <span class="nav-count">3</span>
+          </a>
+
+          <!-- 4. 7 NGÀY TỚI (VIEW CHUYÊN BIỆT) -->
+          <a class="nav-item" href="../standard-upcoming/layout.html" title="7 ngày tới">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="M8 14h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M16 14h.01"></path>
+            </svg>
+            <span>7 ngày tới</span>
+            <span class="nav-count">8</span>
+          </a>
+
+          <!-- 5. QUÁ HẠN (VIEW CHUYÊN BIỆT CẢNH BÁO ĐỎ) -->
+          <a class="nav-item" href="../standard-overdue/layout.html" title="Quá hạn">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12"></line>
+              <line x1="12" x2="12.01" y1="16" y2="16"></line>
+            </svg>
+            <span>Quá hạn</span>
+            <span class="nav-count" style="color: var(--color-danger); background-color: #FEF2F2; border-color: #FECACA;">3</span>
+          </a>
+
+          <!-- 6. LỊCH -->
+          <a class="nav-item" href="../calendar/layout.html" title="Xem lịch">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+            </svg>
+            <span>Lịch</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Danh mục</div>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span>Học tập</span>
+            <span class="nav-count">2</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="7" rx="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>Công việc</span>
+            <span class="nav-count">1</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Cá nhân</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="21" r="1"></circle>
+              <circle cx="19" cy="21" r="1"></circle>
+              <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+            </svg>
+            <span>Mua sắm</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Gia đình</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a class="nav-item" href="../settings/layout.html" title="Cài đặt hệ thống">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Cài đặt</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="mode-switch-container">
+          <a class="mode-switch-btn active" href="../standard-list/layout.html" title="Chế độ người dùng phổ thông"><span>Standard</span></a>
+          <a class="mode-switch-btn" href="../developer-board/layout.html" title="Chuyển sang Chế độ Lập trình viên"><span>Developer</span></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         2. MAIN WRAPPER & TOP BAR
+         ====================================================================== -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn-topbar" id="sidebarToggleBtn" title="Ẩn/Hiện thanh điều hướng (Ctrl+B)">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+              <line x1="9" x2="9" y1="3" y2="21"></line>
+            </svg>
+          </button>
+          <div class="search-box">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+          </svg>
+          <input class="search-input" type="text" placeholder="Tìm kiếm công việc...">
+        </div>
+        </div>
+
+        <div class="topbar-right-group">
+          <div class="range-selector">
+            <button class="range-btn active">7 ngày qua</button>
+            <button class="range-btn">30 ngày</button>
+            <button class="range-btn">Tháng này</button>
+          </div>
+
+          <a class="user-profile" href="../settings/layout.html" title="Cài đặt tài khoản">
+            <span class="user-name">Duy Anh</span>
+            <div class="user-avatar" title="Tài khoản cá nhân">DA</div>
+          </a>
+        </div>
+      </header>
+
+      <!-- ======================================================================
+           3. NỘI DUNG CHÍNH (ANALYTICS STAGE)
+           ====================================================================== -->
+      <main class="analytics-stage">
+        <!-- HEADER -->
+        <div class="stage-header">
+          <h1 class="stage-title">Thống kê & Năng suất cá nhân</h1>
+          <p class="stage-subtitle">Thứ Hai, ngày 12 tháng 10 · Đo lường nhịp độ hoàn thành công việc, chuỗi ngày tập trung và phân bổ năng lượng.</p>
+        </div>
+
+        <!-- 4 KPI CARDS -->
+        <div class="kpi-grid">
+          <!-- CARD 1: COMPLETION RATE -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Tỷ lệ hoàn thành</span>
+              <div class="kpi-icon-wrap">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value">82.1%</div>
+            <div class="kpi-footer">
+              <span class="badge-pill success">
+                <svg class="icon" style="width:12px;height:12px;" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+                +5.4%
+              </span>
+              <span>23 / 28 công việc xong</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: STREAK -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Chuỗi ngày kỷ luật</span>
+              <div class="kpi-icon-wrap" style="color:var(--priority-medium);">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value">7 ngày</div>
+            <div class="kpi-footer">
+              <span class="badge-pill streak">
+                <svg class="icon" style="width:12px;height:12px;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Kỷ lục: 19 ngày
+              </span>
+              <span>Giữ vững nhịp độ</span>
+            </div>
+          </div>
+
+          <!-- CARD 3: FOCUS TIME -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Giờ tập trung sâu</span>
+              <div class="kpi-icon-wrap">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value">9.2h</div>
+            <div class="kpi-footer">
+              <span class="mono-cell">22 phiên Pomodoro</span>
+              <span>(550 phút)</span>
+            </div>
+          </div>
+
+          <!-- CARD 4: PEAK HOUR -->
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">Khung giờ vàng</span>
+              <div class="kpi-icon-wrap" style="color:var(--priority-low);">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" style="font-size:var(--font-size-xl);">09:00 - 11:00</div>
+            <div class="kpi-footer">
+              <span>Đạt hiệu suất cao nhất buổi sáng</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHARTS GRID: 2 COLUMNS -->
+        <div class="charts-grid">
+          <!-- BAR CHART: TIẾN ĐỘ TUẦN -->
+          <div class="chart-panel">
+            <div class="chart-panel-header">
+              <div>
+                <h2 class="chart-panel-title">Tiến độ công việc 7 ngày qua</h2>
+                <p class="chart-panel-desc">So sánh số công việc hoàn thành so với tạo mới mỗi ngày</p>
+              </div>
+              <span class="mono-cell">23 Hoàn thành / 28 Tạo mới</span>
+            </div>
+
+            <div class="bar-chart-container">
+              <!-- SVG Bar Chart -->
+              <svg class="bar-chart-svg" viewBox="0 0 560 170">
+                <!-- Grid Lines -->
+                <line x1="40" y1="20" x2="540" y2="20" stroke="#E7E5E0" stroke-dasharray="3 3"/>
+                <line x1="40" y1="60" x2="540" y2="60" stroke="#E7E5E0" stroke-dasharray="3 3"/>
+                <line x1="40" y1="100" x2="540" y2="100" stroke="#E7E5E0" stroke-dasharray="3 3"/>
+                <line x1="40" y1="140" x2="540" y2="140" stroke="#E7E5E0"/>
+
+                <!-- Y Axis Labels -->
+                <text x="25" y="24" font-size="10" fill="#6B6A63" text-anchor="end" font-family="JetBrains Mono">6</text>
+                <text x="25" y="64" font-size="10" fill="#6B6A63" text-anchor="end" font-family="JetBrains Mono">4</text>
+                <text x="25" y="104" font-size="10" fill="#6B6A63" text-anchor="end" font-family="JetBrains Mono">2</text>
+                <text x="25" y="144" font-size="10" fill="#6B6A63" text-anchor="end" font-family="JetBrains Mono">0</text>
+
+                <!-- Monday (T2): Created 4, Done 3 -->
+                <rect x="65" y="60" width="18" height="80" rx="3" fill="#D1CFCA"/>
+                <rect x="87" y="80" width="18" height="60" rx="3" fill="#0F766E"/>
+                <text x="85" y="158" font-size="11" fill="#6B6A63" text-anchor="middle">T2</text>
+
+                <!-- Tuesday (T3): Created 5, Done 5 -->
+                <rect x="135" y="40" width="18" height="100" rx="3" fill="#D1CFCA"/>
+                <rect x="157" y="40" width="18" height="100" rx="3" fill="#0F766E"/>
+                <text x="155" y="158" font-size="11" fill="#6B6A63" text-anchor="middle">T3</text>
+
+                <!-- Wednesday (T4): Created 3, Done 2 -->
+                <rect x="205" y="80" width="18" height="60" rx="3" fill="#D1CFCA"/>
+                <rect x="227" y="100" width="18" height="40" rx="3" fill="#0F766E"/>
+                <text x="225" y="158" font-size="11" fill="#6B6A63" text-anchor="middle">T4</text>
+
+                <!-- Thursday (T5): Created 6, Done 4 -->
+                <rect x="275" y="20" width="18" height="120" rx="3" fill="#D1CFCA"/>
+                <rect x="297" y="60" width="18" height="80" rx="3" fill="#0F766E"/>
+                <text x="295" y="158" font-size="11" fill="#6B6A63" text-anchor="middle">T5</text>
+
+                <!-- Friday (T6): Created 4, Done 4 -->
+                <rect x="345" y="60" width="18" height="80" rx="3" fill="#D1CFCA"/>
+                <rect x="367" y="60" width="18" height="80" rx="3" fill="#0F766E"/>
+                <text x="365" y="158" font-size="11" fill="#6B6A63" text-anchor="middle">T6</text>
+
+                <!-- Saturday (T7): Created 3, Done 3 -->
+                <rect x="415" y="80" width="18" height="60" rx="3" fill="#D1CFCA"/>
+                <rect x="437" y="80" width="18" height="60" rx="3" fill="#0F766E"/>
+                <text x="435" y="158" font-size="11" fill="#6B6A63" text-anchor="middle">T7</text>
+
+                <!-- Sunday (CN): Created 3, Done 2 -->
+                <rect x="485" y="80" width="18" height="60" rx="3" fill="#D1CFCA"/>
+                <rect x="507" y="100" width="18" height="40" rx="3" fill="#0F766E"/>
+                <text x="505" y="158" font-size="11" fill="#6B6A63" text-anchor="middle">CN</text>
+              </svg>
+
+              <!-- Legend -->
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="legend-box" style="background-color:#0F766E;"></span>
+                  <span>Đã hoàn thành</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-box" style="background-color:#D1CFCA;"></span>
+                  <span>Đã tạo mới</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DONUT CHART: PHÂN BỔ DANH MỤC -->
+          <div class="chart-panel">
+            <div class="chart-panel-header">
+              <div>
+                <h2 class="chart-panel-title">Phân bổ theo danh mục</h2>
+                <p class="chart-panel-desc">Tỷ trọng công việc trong 7 ngày</p>
+              </div>
+            </div>
+
+            <div class="donut-layout">
+              <!-- SVG Donut -->
+              <div class="donut-svg-wrap">
+                <svg class="donut-svg" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="38" fill="transparent" stroke="#F4F3EF" stroke-width="12"/>
+                  <circle cx="50" cy="50" r="38" fill="transparent" stroke="#0F766E" stroke-width="12"
+                          stroke-dasharray="102.4 238.76" stroke-dashoffset="0"/>
+                  <circle cx="50" cy="50" r="38" fill="transparent" stroke="#2563EB" stroke-width="12"
+                          stroke-dasharray="68.3 238.76" stroke-dashoffset="-102.4"/>
+                  <circle cx="50" cy="50" r="38" fill="transparent" stroke="#D97706" stroke-width="12"
+                          stroke-dasharray="42.7 238.76" stroke-dashoffset="-170.7"/>
+                  <circle cx="50" cy="50" r="38" fill="transparent" stroke="#6B6A63" stroke-width="12"
+                          stroke-dasharray="25.3 238.76" stroke-dashoffset="-213.4"/>
+                </svg>
+                <div class="donut-center-text">
+                  <div class="donut-center-val">28</div>
+                  <div class="donut-center-lbl">Công việc</div>
+                </div>
+              </div>
+
+              <!-- Legend List -->
+              <div class="category-list">
+                <div class="category-row">
+                  <div class="category-name-wrap">
+                    <span class="category-dot" style="background-color:#0F766E;"></span>
+                    <span>Công việc</span>
+                  </div>
+                  <span class="category-pct">42.9% (12)</span>
+                </div>
+
+                <div class="category-row">
+                  <div class="category-name-wrap">
+                    <span class="category-dot" style="background-color:#2563EB;"></span>
+                    <span>Học tập</span>
+                  </div>
+                  <span class="category-pct">28.6% (8)</span>
+                </div>
+
+                <div class="category-row">
+                  <div class="category-name-wrap">
+                    <span class="category-dot" style="background-color:#D97706;"></span>
+                    <span>Cá nhân</span>
+                  </div>
+                  <span class="category-pct">17.9% (5)</span>
+                </div>
+
+                <div class="category-row">
+                  <div class="category-name-wrap">
+                    <span class="category-dot" style="background-color:#6B6A63;"></span>
+                    <span>Khác</span>
+                  </div>
+                  <span class="category-pct">10.6% (3)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DETAILS GRID: LỊCH SỬ PHIÊN TẬP TRUNG & INSIGHTS -->
+        <div class="details-grid">
+          <!-- TABLE: NHẬT KÝ POMODORO GẦN NHẤT -->
+          <div class="chart-panel">
+            <div class="chart-panel-header">
+              <div>
+                <h2 class="chart-panel-title">Nhật ký phiên tập trung gần nhất</h2>
+                <p class="chart-panel-desc">Các phiên Pomodoro 25 phút đã hoàn tất hôm nay</p>
+              </div>
+              <a href="../my-day/layout.html" style="font-size:var(--font-size-xs); color:var(--color-primary); text-decoration:none; font-weight:var(--font-weight-semibold);">Đến Kế hoạch hôm nay</a>
+            </div>
+
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Công việc</th>
+                  <th>Danh mục</th>
+                  <th>Thời lượng</th>
+                  <th>Khung giờ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="task-title-cell">
+                    <svg class="icon" style="color:var(--color-success);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Viết tài liệu đặc tả API v1</span>
+                  </td>
+                  <td><span class="badge-pill" style="background-color:var(--color-primary-subtle); color:var(--color-primary);">Công việc</span></td>
+                  <td class="mono-cell">25 phút</td>
+                  <td class="mono-cell">09:15 - 09:40</td>
+                </tr>
+                <tr>
+                  <td class="task-title-cell">
+                    <svg class="icon" style="color:var(--color-success);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Học ngữ pháp tiếng Anh Unit 4</span>
+                  </td>
+                  <td><span class="badge-pill" style="background-color:#EFF6FF; color:#2563EB;">Học tập</span></td>
+                  <td class="mono-cell">25 phút</td>
+                  <td class="mono-cell">10:00 - 10:25</td>
+                </tr>
+                <tr>
+                  <td class="task-title-cell">
+                    <svg class="icon" style="color:var(--color-success);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Đọc sách Atomic Habits ch.3</span>
+                  </td>
+                  <td><span class="badge-pill" style="background-color:#FFFBEB; color:#D97706;">Cá nhân</span></td>
+                  <td class="mono-cell">25 phút</td>
+                  <td class="mono-cell">14:30 - 14:55</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- INSIGHT CARD -->
+          <div class="insight-card">
+            <div class="insight-title">
+              <svg class="icon" style="color:var(--priority-medium);" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              <span>Duy trì chuỗi kỷ luật (Streak)</span>
+            </div>
+            
+            <p class="insight-text">
+              Bạn đang có chuỗi <strong>7 ngày liên tiếp</strong> hoàn thành mục tiêu. Chỉ cần hoàn thành thêm <strong>1 công việc</strong> nữa hôm nay để giữ chuỗi đến ngày thứ 8!
+            </p>
+
+            <div style="margin-top:auto;">
+              <div style="display:flex; justify-content:space-between; font-size:var(--font-size-xs); color:var(--color-text-muted);">
+                <span>Mục tiêu tuần: 7 / 7 ngày</span>
+                <span class="mono-cell">100%</span>
+              </div>
+              <div class="streak-progress-bar">
+                <div class="streak-progress-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../responsive-sidebar.js"></script>
+</body>
+</html>

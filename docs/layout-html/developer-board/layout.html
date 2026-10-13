@@ -1299,7 +1299,277 @@
       color: var(--color-primary-text);
       border-color: var(--color-primary);
     }
+  
+    /* Sprint Select Component */
+    .sprint-select {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+    .sprint-select:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       SUB-TOOLBAR: VIEW SWITCHER, SPRINT SELECT, FILTERS & TAB PILLS
+       ========================================================================== */
+    .board-subbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px var(--space-4);
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      flex-shrink: 0;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .board-subbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .column-tab-pills {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 4px;
+    }
+
+    .col-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .col-pill:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .col-pill.active {
+      background-color: rgba(45, 212, 191, 0.15);
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .btn-toggle-all {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+    .btn-toggle-all:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    /* Đảm bảo căn chỉnh Card hoàn hảo trên mọi kích thước */
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .card-meta-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding-top: 6px;
+      border-top: var(--border-width) solid rgba(38, 44, 54, 0.7);
+      width: 100%;
+    }
+
+    .card-tags-list {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-assignee {
+      margin-left: auto;
+    }
+
+    /* Desktop Vertical Mode: Căn chỉnh dạng dòng ngang mượt mà trên màn hình lớn */
+    @media (min-width: 769px) {
+      .kanban-viewport.vertical-mode .task-card {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        gap: 16px;
+      }
+      .kanban-viewport.vertical-mode .card-top-row {
+        width: auto;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      .kanban-viewport.vertical-mode .task-card-title-group {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .kanban-viewport.vertical-mode .card-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1 1 auto;
+      }
+      .kanban-viewport.vertical-mode .card-git-row {
+        flex-shrink: 0;
+      }
+      .kanban-viewport.vertical-mode .card-bottom-row {
+        width: auto;
+        border-top: none;
+        padding-top: 0;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+    }
+
+    /* Mobile: Tối ưu cho iPhone 16 SE và màn hình nhỏ */
+    @media (max-width: 768px) {
+      .topbar {
+        height: 48px !important;
+        min-height: 48px !important;
+        padding: 0 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+        overflow: hidden !important;
+      }
+      .topbar-left {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
+      }
+      .sidebar-toggle-btn-topbar {
+        display: inline-flex !important;
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        flex-shrink: 0 !important;
+      }
+      .topbar-right {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+      }
+      .topbar-right .ai-trigger-chip span {
+        display: none !important;
+      }
+      .topbar-right .ai-trigger-chip {
+        width: 30px !important;
+        min-width: 30px !important;
+        height: 30px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .new-task-btn {
+        height: 30px !important;
+        padding: 0 8px !important;
+        font-size: 11px !important;
+      }
+      .board-subbar {
+        padding: 6px 10px !important;
+        gap: 6px !important;
+      }
+      .task-card {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 10px 12px !important;
+        gap: 8px !important;
+      }
+      .card-top-row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+      }
+      .task-card-title-group {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 4px !important;
+        width: 100% !important;
+      }
+      .card-title {
+        white-space: normal !important;
+        font-size: 13px !important;
+      }
+      .card-bottom-row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        padding-top: 6px !important;
+        border-top: var(--border-width) solid rgba(38, 44, 54, 0.7) !important;
+      }
+      .card-assignee {
+        margin-left: auto !important;
+      }
+      .kanban-viewport:not(.vertical-mode) {
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 10px !important;
+        gap: 12px !important;
+      }
+      .kanban-viewport:not(.vertical-mode) .kanban-column {
+        min-width: 85vw !important;
+        max-width: 85vw !important;
+        scroll-snap-align: center !important;
+        flex-shrink: 0 !important;
+      }
+    }
+
   </style>
+  <link rel="stylesheet" href="../responsive-sidebar.css">
 </head>
 <body>
 
@@ -1310,57 +1580,46 @@
          ====================================================================== -->
     <aside class="sidebar">
       <div class="sidebar-top">
-        
-        <!-- Workspace > Project > Sprint Context -->
+        <!-- Context Header (Workspace > Project > Sprint) -->
         <div class="workspace-header">
           <div class="workspace-row">
             <div class="brand-group">
               <div class="brand-mark">D</div>
               <span class="brand-title">Dylask</span>
             </div>
-            <button class="sidebar-toggle-btn" type="button" title="Thu gọn Sidebar">
-              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
-                <line x1="9" x2="9" y1="3" y2="21"></line>
-              </svg>
-            </button>
           </div>
 
-          <!-- Project Dropdown Pill -->
-          <a class="project-selector" href="../developer-project-create/layout.html" style="text-decoration: none;" title="Chuyển kho / Tạo dự án mới">
-            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="project-selector" title="Dự án hiện tại">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
             </svg>
-            <span>dylask-api</span>
-            <svg class="icon" style="margin-left: auto;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <span style="font-weight: 600;">dylask-api</span>
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto; color: var(--color-text-muted);">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
-          </a>
+          </div>
 
-          <!-- Sprint Badge Indicator -->
           <div class="sprint-badge-row">
             <span class="sprint-active-dot"></span>
-            <span>Sprint 3 (Đang chạy)</span>
+            <span>Sprint 3: Active</span>
           </div>
         </div>
 
-        <!-- Điều hướng Agile / Technical Views -->
+        <!-- Navigation Menu (Dự Án & Sprint) -->
         <nav class="nav-group">
-          <span class="nav-group-label">Quản lý Sprint</span>
+          <div class="nav-group-label">Dự Án & Sprint</div>
 
-          <a class="nav-link" href="../developer-backlog/layout.html" title="Danh sách tồn đọng">
+          <!-- 1. BÁO CÁO AGILE (ĐẦU THANH THEO YÊU CẦU USER) -->
+          <a class="nav-link" href="../developer-metrics/layout.html" title="Báo cáo & Đo lường Agile Sprint">
             <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="8" x2="21" y1="6" y2="6"></line>
-              <line x1="8" x2="21" y1="12" y2="12"></line>
-              <line x1="8" x2="21" y1="18" y2="18"></line>
-              <line x1="3" x2="3.01" y1="6" y2="6"></line>
-              <line x1="3" x2="3.01" y1="12" y2="12"></line>
-              <line x1="3" x2="3.01" y1="18" y2="18"></line>
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
             </svg>
-            <span>Backlog</span>
-            <span class="nav-badge">6</span>
+            <span>Báo Cáo Agile</span>
           </a>
 
+          <!-- 2. BOARD -->
           <a class="nav-link active" href="../developer-board/layout.html" title="Bảng Kanban tiến độ">
             <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <rect width="18" height="18" x="3" y="3" rx="2"></rect>
@@ -1372,6 +1631,31 @@
             <span class="nav-badge">5</span>
           </a>
 
+          <!-- 3. BACKLOG -->
+          <a class="nav-link" href="../developer-backlog/layout.html" title="Danh sách tồn đọng">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="20" x2="21" y2="20"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="4" x2="21" y2="4"></line>
+              <line x1="3" y1="20" x2="3.01" y2="20"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="4" x2="3.01" y2="4"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">6</span>
+          </a>
+
+          <!-- 4. FOCUS CODING -->
+          <a class="nav-link" href="../developer-focus/layout.html" title="Chế độ tập trung code">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+            <span>Focus Coding</span>
+          </a>
+
+          <!-- 5. STANDUP -->
           <a class="nav-link" href="../developer-standup/layout.html" title="Báo cáo tiến độ tự động 24h">
             <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -1381,6 +1665,7 @@
             <span>Standup</span>
           </a>
 
+          <!-- 6. AUDIT LOG -->
           <a class="nav-link" href="../developer-audit-log/layout.html" title="Nhật ký thay đổi hệ thống">
             <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -1389,10 +1674,9 @@
             <span>Audit Log</span>
           </a>
         </nav>
-
       </div>
 
-      <!-- Cuối Sidebar: Công tắc Dual-Mode & Trạng thái Git -->
+      <!-- Cuối Sidebar: Trạng thái Git & Dual-Mode Toggle -->
       <div class="sidebar-footer">
         <div class="git-status-bar">
           <span class="git-status-dot"></span>
@@ -1400,7 +1684,7 @@
         </div>
 
         <div class="mode-switch-group">
-          <a class="mode-btn" href="../standard-list/layout.html" style="text-decoration: none;" title="Chuyển sang chế độ Standard">
+          <a class="mode-btn" href="../standard-list/layout.html" title="Chuyển sang chế độ Standard">
             <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="5"></circle>
               <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -1408,7 +1692,7 @@
             </svg>
             <span>Standard</span>
           </a>
-          <a class="mode-btn active" href="../developer-board/layout.html" style="text-decoration: none;" title="Chế độ Lập trình viên đang bật">
+          <a class="mode-btn active" href="../developer-board/layout.html" title="Chế độ Lập trình viên đang bật">
             <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="16 18 22 12 16 6"></polyline>
               <polyline points="8 6 2 12 8 18"></polyline>
@@ -1427,19 +1711,25 @@
       <!-- 2. THANH TRÊN CÙNG (TOP BAR) -->
       <header class="topbar">
         <div class="topbar-left">
-          <!-- Breadcrumb: Dylask / dylask-api / Sprint 3 -->
+        <button class="sidebar-toggle-btn-topbar" id="sidebarToggleBtn" title="Ẩn/Hiện thanh điều hướng (Ctrl+B)">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+            <line x1="9" x2="9" y1="3" y2="21"></line>
+          </svg>
+        </button>
+          <!-- Breadcrumb: Dylask / dylask-api / Sprint Board -->
           <nav class="breadcrumb" aria-label="Breadcrumb">
             <span class="breadcrumb-item">Dylask</span>
             <span class="breadcrumb-sep">/</span>
             <span class="breadcrumb-item">dylask-api</span>
             <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-item current">Sprint 3</span>
+            <span class="breadcrumb-item current">Sprint Board</span>
           </nav>
-          <span class="sprint-stats-tag">18 SP · 5 Tasks</span>
+          <span class="sprint-stats-tag">Sprint 3: Active (18 SP · 5 Tasks)</span>
         </div>
 
         <div class="topbar-right">
-          <!-- Nút Command Palette Ctrl+K dạng thẻ nhỏ -->
+          <!-- Nút Command Palette Ctrl+K -->
           <a class="command-palette-trigger" href="../developer-command-palette/layout.html" style="text-decoration: none;" title="Mở bảng lệnh phím tắt (Ctrl+K)">
             <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
@@ -1451,32 +1741,15 @@
           </a>
 
           <!-- Nút mở Trợ lý AI kỹ thuật -->
-          <a class="filter-chip" href="../developer-ai-panel/layout.html" style="text-decoration: none; display: flex; align-items: center; gap: 5px; color: var(--color-primary); border-color: var(--color-primary);" title="Mở Trợ lý AI">
+          <a class="filter-chip ai-trigger-chip" href="../developer-ai-panel/layout.html" style="text-decoration: none; display: flex; align-items: center; gap: 5px; color: var(--color-primary); border-color: var(--color-primary);" title="Mở Trợ lý AI">
             <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
             </svg>
             <span>Trợ lý AI</span>
           </a>
 
-          <!-- Bộ lọc Assignee & Nhãn -->
-          <div class="filter-group">
-            <button class="filter-chip active" type="button">
-              <span>Người phụ trách: Tất cả</span>
-              <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-
-            <button class="filter-chip" type="button">
-              <span>Nhãn: All</span>
-              <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-          </div>
-
           <!-- Nút tạo Task mới -->
-          <button class="new-task-btn" type="button">
+          <button class="new-task-btn" type="button" onclick="openDevTaskModal()" title="Tạo công việc mới">
             <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1486,52 +1759,138 @@
         </div>
       </header>
 
+      <!-- 2.1 THANH CÔNG CỤ PHỤ (SUB-BAR): CHUYỂN BỐ CỤC, SPRINT, BỘ LỌC VÀ TAB NHÓM CỘT -->
+      <div class="board-subbar" id="boardSubbar">
+        <!-- Bố cục xem: Dọc (Vertical - Mặc định) / Ngang (Horizontal Kanban) -->
+        <div class="board-view-switcher" title="Chuyển đổi bố cục Sprint Board">
+          <button class="btn-board-view active" id="btnViewVertical" type="button" onclick="setBoardLayout('vertical')" title="Dạng danh sách dọc theo trạng thái (Mặc định)">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span>Dọc</span>
+          </button>
+          <button class="btn-board-view" id="btnViewHorizontal" type="button" onclick="setBoardLayout('horizontal')" title="Dạng cột ngang (Kanban truyền thống)">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="18" rx="1"></rect>
+              <rect x="14" y="3" width="7" height="18" rx="1"></rect>
+            </svg>
+            <span>Ngang</span>
+          </button>
+        </div>
+
+        <!-- Dropdown chọn Sprint đồng bộ -->
+        <select class="sprint-select" title="Chuyển đổi chu kỳ Sprint">
+          <option selected>Sprint 3 (01/10 - 14/10) [ACTIVE]</option>
+          <option>Sprint 2 (17/09 - 30/09) [CLOSED]</option>
+          <option>Sprint 1 (03/09 - 16/09) [CLOSED]</option>
+        </select>
+
+        <!-- Bộ lọc Assignee & Nhãn -->
+        <div class="filter-group">
+          <button class="filter-chip active" type="button" title="Lọc theo người nhận">
+            <span>Assignee: Tất cả</span>
+            <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <button class="filter-chip" type="button" title="Lọc theo nhãn">
+            <span>Nhãn: All</span>
+            <svg class="icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Nút Thu gọn / Mở rộng tất cả các cột trạng thái -->
+        <button class="filter-chip btn-toggle-all" id="btnToggleAll" type="button" onclick="toggleAllColumns()" title="Thu gọn / Mở rộng tất cả các nhóm trạng thái">
+          <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+          <span id="toggleAllText">Thu gọn tất cả</span>
+        </button>
+
+        <!-- Dải Tab chuyển nhanh nhóm cột trạng thái (Mobile & Quick-Jump) -->
+        <div class="column-tab-pills" role="tablist" aria-label="Chuyển nhanh tab cột Kanban">
+          <button class="col-pill active" type="button" onclick="filterColumnView('all', this)">Tất cả (5)</button>
+          <button class="col-pill" type="button" onclick="filterColumnView('colBacklog', this)">Backlog (1)</button>
+          <button class="col-pill" type="button" onclick="filterColumnView('colToDo', this)">To Do (1)</button>
+          <button class="col-pill" type="button" onclick="filterColumnView('colInProgress', this)">In Progress (1)</button>
+          <button class="col-pill" type="button" onclick="filterColumnView('colInReview', this)">In Review (1)</button>
+          <button class="col-pill" type="button" onclick="filterColumnView('colDone', this)">Done (1)</button>
+        </div>
+      </div>
+
       <!-- KHUNG BỐ CỤC: BOARD + DRAWER -->
       <div class="board-layout-container">
 
         <!-- ====================================================================
-             3. SPRINT BOARD (KANBAN 5 CỘT CUỘN ĐỘC LẬP)
+             3. SPRINT BOARD (DẠNG DỌC THEO NHÓM TRẠNG THÁI / HOẶC CỘT NGANG)
              ==================================================================== -->
-        <main class="kanban-viewport">
+        <main class="kanban-viewport vertical-mode" id="kanbanViewport">
 
           <!-- CỘT 1: BACKLOG -->
-          <section class="kanban-column">
-            <div class="column-header">
+          <section class="kanban-column" id="colBacklog">
+            <div class="column-header" onclick="toggleColumnCollapse(this)">
               <div class="column-title-group">
-                <span class="column-name">Backlog</span>
-                <span class="column-count">1</span>
+                <span class="column-collapse-caret" title="Thu gọn/Mở rộng nhóm Backlog">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+                <span class="status-pill backlog">Backlog</span>
+                <span class="column-name" style="display:none;">Backlog</span>
+                <span class="column-count">1 việc</span>
               </div>
-              <span class="column-sp-total">3 SP</span>
+              <div class="column-meta-actions">
+                <span class="column-sp-total">3 SP</span>
+                <button class="column-add-btn-header" type="button" onclick="event.stopPropagation(); openDevTaskModal();" title="Thêm công việc vào Backlog">
+                  <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Thêm thẻ</span>
+                </button>
+              </div>
             </div>
 
             <div class="column-cards-container">
-              <!-- Task mẫu Backlog -->
-              <article class="task-card">
+              <!-- Task mẫu Backlog: DYL-105 -->
+              <article class="task-card" data-task-id="DYL-105">
                 <div class="card-top-row">
-                  <span class="card-id">DYL-105</span>
-                  <div class="card-badges">
+                  <div class="card-meta-inline">
+                    <span class="card-id">DYL-105</span>
                     <span class="badge-priority p3">P3</span>
-                    <span class="badge-sp">3 SP</span>
+                  </div>
+                  <span class="badge-sp">3 SP</span>
+                </div>
+                <div class="task-card-title-group">
+                  <h3 class="card-title">Viết unit test cho AuthService</h3>
+                  <div class="card-git-row">
+                    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="6" x2="6" y1="3" y2="15"></line>
+                      <circle cx="18" cy="6" r="3"></circle>
+                      <circle cx="6" cy="18" r="3"></circle>
+                      <path d="M18 9a9 9 0 0 1-9 9"></path>
+                    </svg>
+                    <span class="card-git-branch">test/DYL-105-auth-mock</span>
                   </div>
                 </div>
-                <h3 class="card-title">Viết unit test cho AuthService</h3>
-                <div class="card-git-row">
-                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="6" x2="6" y1="3" y2="15"></line>
-                    <circle cx="18" cy="6" r="3"></circle>
-                    <circle cx="6" cy="18" r="3"></circle>
-                    <path d="M18 9a9 9 0 0 1-9 9"></path>
-                  </svg>
-                  <span class="card-git-branch">test/DYL-105-auth-mock</span>
-                </div>
                 <div class="card-bottom-row">
-                  <span class="label-tag backend">Backend</span>
+                  <div class="card-tags-list">
+                    <span class="label-tag backend">Backend</span>
+                  </div>
                   <div class="card-assignee" title="@huy">H</div>
                 </div>
               </article>
             </div>
 
-            <button class="column-footer-btn" type="button">
+            <button class="column-footer-btn" type="button" onclick="openDevTaskModal()">
               <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1541,43 +1900,62 @@
           </section>
 
           <!-- CỘT 2: TO DO -->
-          <section class="kanban-column">
-            <div class="column-header">
+          <section class="kanban-column" id="colToDo">
+            <div class="column-header" onclick="toggleColumnCollapse(this)">
               <div class="column-title-group">
-                <span class="column-name">To Do</span>
-                <span class="column-count">1</span>
+                <span class="column-collapse-caret" title="Thu gọn/Mở rộng nhóm To Do">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+                <span class="status-pill todo">To Do</span>
+                <span class="column-name" style="display:none;">To Do</span>
+                <span class="column-count">1 việc</span>
               </div>
-              <span class="column-sp-total">8 SP</span>
+              <div class="column-meta-actions">
+                <span class="column-sp-total">8 SP</span>
+                <button class="column-add-btn-header" type="button" onclick="event.stopPropagation(); openDevTaskModal();" title="Thêm công việc vào To Do">
+                  <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Thêm thẻ</span>
+                </button>
+              </div>
             </div>
 
             <div class="column-cards-container">
-              <!-- DYL-104 | Webhook nhận sự kiện GitHub | Backend | P2 | 8 SP | To Do -->
-              <article class="task-card">
+              <!-- DYL-104 | Webhook nhận sự kiện GitHub -->
+              <article class="task-card" data-task-id="DYL-104">
                 <div class="card-top-row">
-                  <span class="card-id">DYL-104</span>
-                  <div class="card-badges">
+                  <div class="card-meta-inline">
+                    <span class="card-id">DYL-104</span>
                     <span class="badge-priority p2">P2</span>
-                    <span class="badge-sp">8 SP</span>
+                  </div>
+                  <span class="badge-sp">8 SP</span>
+                </div>
+                <div class="task-card-title-group">
+                  <h3 class="card-title">Webhook nhận sự kiện GitHub</h3>
+                  <div class="card-git-row">
+                    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="6" x2="6" y1="3" y2="15"></line>
+                      <circle cx="18" cy="6" r="3"></circle>
+                      <circle cx="6" cy="18" r="3"></circle>
+                      <path d="M18 9a9 9 0 0 1-9 9"></path>
+                    </svg>
+                    <span class="card-git-branch">feature/DYL-104-webhook</span>
                   </div>
                 </div>
-                <h3 class="card-title">Webhook nhận sự kiện GitHub</h3>
-                <div class="card-git-row">
-                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="6" x2="6" y1="3" y2="15"></line>
-                    <circle cx="18" cy="6" r="3"></circle>
-                    <circle cx="6" cy="18" r="3"></circle>
-                    <path d="M18 9a9 9 0 0 1-9 9"></path>
-                  </svg>
-                  <span class="card-git-branch">feature/DYL-104-webhook</span>
-                </div>
                 <div class="card-bottom-row">
-                  <span class="label-tag backend">Backend</span>
+                  <div class="card-tags-list">
+                    <span class="label-tag backend">Backend</span>
+                  </div>
                   <div class="card-assignee" title="@ngoc">N</div>
                 </div>
               </article>
             </div>
 
-            <button class="column-footer-btn" type="button">
+            <button class="column-footer-btn" type="button" onclick="openDevTaskModal()">
               <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1587,43 +1965,62 @@
           </section>
 
           <!-- CỘT 3: IN PROGRESS -->
-          <section class="kanban-column">
-            <div class="column-header">
+          <section class="kanban-column" id="colInProgress">
+            <div class="column-header" onclick="toggleColumnCollapse(this)">
               <div class="column-title-group">
-                <span class="column-name">In Progress</span>
-                <span class="column-count">1</span>
+                <span class="column-collapse-caret" title="Thu gọn/Mở rộng nhóm In Progress">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+                <span class="status-pill inprogress">In Progress</span>
+                <span class="column-name" style="display:none;">In Progress</span>
+                <span class="column-count">1 việc</span>
               </div>
-              <span class="column-sp-total">5 SP</span>
+              <div class="column-meta-actions">
+                <span class="column-sp-total">5 SP</span>
+                <button class="column-add-btn-header" type="button" onclick="event.stopPropagation(); openDevTaskModal();" title="Thêm công việc vào In Progress">
+                  <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Thêm thẻ</span>
+                </button>
+              </div>
             </div>
 
             <div class="column-cards-container">
-              <!-- DYL-102 | Triển khai xác thực JWT | Backend | P1 | 5 SP | In Progress (ACTIVE / SELECTED) -->
-              <article class="task-card active-selected">
+              <!-- DYL-102 | Triển khai xác thực JWT (ACTIVE / SELECTED) -->
+              <article class="task-card active-selected" data-task-id="DYL-102">
                 <div class="card-top-row">
-                  <span class="card-id">DYL-102</span>
-                  <div class="card-badges">
+                  <div class="card-meta-inline">
+                    <span class="card-id">DYL-102</span>
                     <span class="badge-priority p1">P1</span>
-                    <span class="badge-sp">5 SP</span>
+                  </div>
+                  <span class="badge-sp">5 SP</span>
+                </div>
+                <div class="task-card-title-group">
+                  <h3 class="card-title">Triển khai xác thực JWT</h3>
+                  <div class="card-git-row">
+                    <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="6" x2="6" y1="3" y2="15"></line>
+                      <circle cx="18" cy="6" r="3"></circle>
+                      <circle cx="6" cy="18" r="3"></circle>
+                      <path d="M18 9a9 9 0 0 1-9 9"></path>
+                    </svg>
+                    <span class="card-git-branch">feature/DYL-102-jwt-auth</span>
                   </div>
                 </div>
-                <h3 class="card-title">Triển khai xác thực JWT</h3>
-                <div class="card-git-row">
-                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="6" x2="6" y1="3" y2="15"></line>
-                    <circle cx="18" cy="6" r="3"></circle>
-                    <circle cx="6" cy="18" r="3"></circle>
-                    <path d="M18 9a9 9 0 0 1-9 9"></path>
-                  </svg>
-                  <span class="card-git-branch">feature/DYL-102-jwt-auth</span>
-                </div>
                 <div class="card-bottom-row">
-                  <span class="label-tag backend">Backend</span>
+                  <div class="card-tags-list">
+                    <span class="label-tag backend">Backend</span>
+                  </div>
                   <div class="card-assignee" title="@dylan">D</div>
                 </div>
               </article>
             </div>
 
-            <button class="column-footer-btn" type="button">
+            <button class="column-footer-btn" type="button" onclick="openDevTaskModal()">
               <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1633,46 +2030,65 @@
           </section>
 
           <!-- CỘT 4: IN REVIEW -->
-          <section class="kanban-column">
-            <div class="column-header">
+          <section class="kanban-column" id="colInReview">
+            <div class="column-header" onclick="toggleColumnCollapse(this)">
               <div class="column-title-group">
-                <span class="column-name">In Review</span>
-                <span class="column-count">1</span>
+                <span class="column-collapse-caret" title="Thu gọn/Mở rộng nhóm In Review">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+                <span class="status-pill inreview">In Review</span>
+                <span class="column-name" style="display:none;">In Review</span>
+                <span class="column-count">1 việc</span>
               </div>
-              <span class="column-sp-total">3 SP</span>
+              <div class="column-meta-actions">
+                <span class="column-sp-total">3 SP</span>
+                <button class="column-add-btn-header" type="button" onclick="event.stopPropagation(); openDevTaskModal();" title="Thêm công việc vào In Review">
+                  <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Thêm thẻ</span>
+                </button>
+              </div>
             </div>
 
             <div class="column-cards-container">
-              <!-- DYL-103 | Trang đăng nhập | Frontend | P2 | 3 SP | In Review (PR #14) -->
-              <article class="task-card">
+              <!-- DYL-103 | Trang đăng nhập -->
+              <article class="task-card" data-task-id="DYL-103">
                 <div class="card-top-row">
-                  <span class="card-id">DYL-103</span>
-                  <div class="card-badges">
+                  <div class="card-meta-inline">
+                    <span class="card-id">DYL-103</span>
                     <span class="badge-priority p2">P2</span>
-                    <span class="badge-sp">3 SP</span>
+                  </div>
+                  <span class="badge-sp">3 SP</span>
+                </div>
+                <div class="task-card-title-group">
+                  <h3 class="card-title">Trang đăng nhập</h3>
+                  <div class="card-git-row">
+                    <span class="card-pr-tag">
+                      <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="18" r="3"></circle>
+                        <circle cx="6" cy="6" r="3"></circle>
+                        <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                        <line x1="6" x2="6" y1="9" y2="21"></line>
+                      </svg>
+                      <span>PR #14</span>
+                    </span>
+                    <span class="card-git-branch">feature/DYL-103-login-ui</span>
                   </div>
                 </div>
-                <h3 class="card-title">Trang đăng nhập</h3>
-                <div class="card-git-row">
-                  <span class="card-pr-tag">
-                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="18" cy="18" r="3"></circle>
-                      <circle cx="6" cy="6" r="3"></circle>
-                      <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
-                      <line x1="6" x2="6" y1="9" y2="21"></line>
-                    </svg>
-                    <span>PR #14</span>
-                  </span>
-                  <span class="card-git-branch">feature/DYL-103-login-ui</span>
-                </div>
                 <div class="card-bottom-row">
-                  <span class="label-tag frontend">Frontend</span>
+                  <div class="card-tags-list">
+                    <span class="label-tag frontend">Frontend</span>
+                  </div>
                   <div class="card-assignee" title="@an">A</div>
                 </div>
               </article>
             </div>
 
-            <button class="column-footer-btn" type="button">
+            <button class="column-footer-btn" type="button" onclick="openDevTaskModal()">
               <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1682,42 +2098,61 @@
           </section>
 
           <!-- CỘT 5: DONE -->
-          <section class="kanban-column">
-            <div class="column-header">
+          <section class="kanban-column" id="colDone">
+            <div class="column-header" onclick="toggleColumnCollapse(this)">
               <div class="column-title-group">
-                <span class="column-name">Done</span>
-                <span class="column-count">1</span>
+                <span class="column-collapse-caret" title="Thu gọn/Mở rộng nhóm Done">
+                  <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+                <span class="status-pill done">Done</span>
+                <span class="column-name" style="display:none;">Done</span>
+                <span class="column-count">1 việc</span>
               </div>
-              <span class="column-sp-total">2 SP</span>
+              <div class="column-meta-actions">
+                <span class="column-sp-total">2 SP</span>
+                <button class="column-add-btn-header" type="button" onclick="event.stopPropagation(); openDevTaskModal();" title="Thêm công việc vào Done">
+                  <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Thêm thẻ</span>
+                </button>
+              </div>
             </div>
 
             <div class="column-cards-container">
-              <!-- DYL-098 | Lỗi 500 khi tạo task trống | Bug | P1 | 2 SP | Done -->
-              <article class="task-card done-card">
+              <!-- DYL-098 | Lỗi 500 khi tạo task trống -->
+              <article class="task-card done-card" data-task-id="DYL-098">
                 <div class="card-top-row">
-                  <span class="card-id">DYL-098</span>
-                  <div class="card-badges">
+                  <div class="card-meta-inline">
+                    <span class="card-id">DYL-098</span>
                     <span class="badge-priority p1">P1</span>
-                    <span class="badge-sp">2 SP</span>
+                  </div>
+                  <span class="badge-sp">2 SP</span>
+                </div>
+                <div class="task-card-title-group">
+                  <h3 class="card-title">Lỗi 500 khi tạo task trống</h3>
+                  <div class="card-git-row">
+                    <span class="card-pr-tag" style="color: var(--color-success); background-color: var(--color-success-bg); border-color: rgba(35, 134, 54, 0.4);">
+                      <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>Merged #11</span>
+                    </span>
                   </div>
                 </div>
-                <h3 class="card-title">Lỗi 500 khi tạo task trống</h3>
-                <div class="card-git-row">
-                  <span class="card-pr-tag" style="color: var(--color-success); background-color: var(--color-success-bg); border-color: rgba(35, 134, 54, 0.4);">
-                    <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    <span>Merged #11</span>
-                  </span>
-                </div>
                 <div class="card-bottom-row">
-                  <span class="label-tag bug">Bug</span>
+                  <div class="card-tags-list">
+                    <span class="label-tag bug">Bug</span>
+                  </div>
                   <div class="card-assignee" title="@dylan">D</div>
                 </div>
               </article>
             </div>
 
-            <button class="column-footer-btn" type="button">
+            <button class="column-footer-btn" type="button" onclick="openDevTaskModal()">
               <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1732,7 +2167,7 @@
              4. DRAWER CHI TIẾT TASK (420px)
              Hiển thị task DYL-102 đang chọn: Markdown, code block, branch, PR, comment
              ==================================================================== -->
-        <aside class="task-drawer" aria-label="Chi tiết nhiệm vụ kỹ thuật">
+        <aside class="task-drawer" id="taskDrawer" aria-label="Chi tiết nhiệm vụ kỹ thuật">
           
           <!-- Drawer Header -->
           <div class="drawer-header">
@@ -1761,7 +2196,7 @@
                   <line x1="10" x2="21" y1="14" y2="3"></line>
                 </svg>
               </button>
-              <button class="drawer-btn-icon" type="button" title="Đóng panel chi tiết">
+              <button class="drawer-btn-icon" type="button" title="Đóng panel chi tiết" onclick="toggleDrawer()">
                 <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1982,6 +2417,100 @@
   </div>
 
   <script>
+    // Điều khiển Bố cục Sprint Board: Dọc (Vertical) hoặc Ngang (Horizontal Kanban)
+    function setBoardLayout(mode) {
+      const viewport = document.getElementById('kanbanViewport');
+      const btnVertical = document.getElementById('btnViewVertical');
+      const btnHorizontal = document.getElementById('btnViewHorizontal');
+
+      if (!viewport) return;
+
+      if (mode === 'vertical') {
+        viewport.classList.add('vertical-mode');
+        if (btnVertical) btnVertical.classList.add('active');
+        if (btnHorizontal) btnHorizontal.classList.remove('active');
+        try { localStorage.setItem('dylask_dev_board_layout', 'vertical'); } catch (e) {}
+      } else {
+        viewport.classList.remove('vertical-mode');
+        if (btnHorizontal) btnHorizontal.classList.add('active');
+        if (btnVertical) btnVertical.classList.remove('active');
+        try { localStorage.setItem('dylask_dev_board_layout', 'horizontal'); } catch (e) {}
+      }
+    }
+
+    // Thu gọn / Mở rộng nhóm trạng thái khi click vào Header cột (ở dạng dọc)
+    function toggleColumnCollapse(headerEl) {
+      const column = headerEl.closest('.kanban-column');
+      if (column) {
+        column.classList.toggle('collapsed');
+        updateToggleAllButtonState();
+      }
+    }
+
+    // Bật/Tắt (Thu gọn hoặc Mở rộng) tất cả các cột trạng thái cùng lúc
+    function toggleAllColumns() {
+      const columns = document.querySelectorAll('.kanban-column');
+      const textEl = document.getElementById('toggleAllText');
+      const isAnyOpen = Array.from(columns).some(col => !col.classList.contains('collapsed'));
+
+      columns.forEach(col => {
+        if (isAnyOpen) {
+          col.classList.add('collapsed');
+        } else {
+          col.classList.remove('collapsed');
+        }
+      });
+
+      if (textEl) {
+        textEl.textContent = isAnyOpen ? 'Mở rộng tất cả' : 'Thu gọn tất cả';
+      }
+    }
+
+    function updateToggleAllButtonState() {
+      const columns = document.querySelectorAll('.kanban-column');
+      const textEl = document.getElementById('toggleAllText');
+      const isAnyOpen = Array.from(columns).some(col => !col.classList.contains('collapsed'));
+      if (textEl) {
+        textEl.textContent = isAnyOpen ? 'Thu gọn tất cả' : 'Mở rộng tất cả';
+      }
+    }
+
+    // Chuyển nhanh giữa các Tab Cột trạng thái (Pills)
+    function filterColumnView(colId, tabBtn) {
+      document.querySelectorAll('.col-pill').forEach(btn => btn.classList.remove('active'));
+      if (tabBtn) tabBtn.classList.add('active');
+
+      const viewport = document.getElementById('kanbanViewport');
+      const columns = document.querySelectorAll('.kanban-column');
+      const isVertical = viewport && viewport.classList.contains('vertical-mode');
+
+      if (colId === 'all') {
+        columns.forEach(col => {
+          col.style.display = '';
+        });
+      } else {
+        columns.forEach(col => {
+          if (col.id === colId) {
+            col.style.display = '';
+            col.classList.remove('collapsed');
+            col.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+          } else {
+            col.style.display = isVertical ? 'none' : '';
+          }
+        });
+      }
+      updateToggleAllButtonState();
+    }
+
+    // Khởi tạo mặc định DẠNG DỌC (Vertical Mode) theo yêu cầu người dùng
+    document.addEventListener('DOMContentLoaded', () => {
+      let savedMode = 'vertical';
+      try {
+        savedMode = localStorage.getItem('dylask_dev_board_layout') || 'vertical';
+      } catch (e) {}
+      setBoardLayout(savedMode);
+    });
+
     function toggleDrawer() {
       const drawer = document.getElementById('taskDrawer');
       if (drawer) {
@@ -2007,5 +2536,6 @@
       }
     });
   </script>
+  <script src="../responsive-sidebar.js"></script>
 </body>
 </html>

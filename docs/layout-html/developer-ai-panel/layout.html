@@ -962,6 +962,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+  <link rel="stylesheet" href="../responsive-sidebar.css">
 </head>
 <body>
 
@@ -973,53 +974,49 @@
     <!-- 1. SIDEBAR TRÁI (220px) -->
     <aside class="sidebar">
       <div class="sidebar-top">
+        <!-- Context Header (Workspace > Project > Sprint) -->
         <div class="workspace-header">
           <div class="workspace-row">
             <div class="brand-group">
               <div class="brand-mark">D</div>
               <span class="brand-title">Dylask</span>
             </div>
-            <button class="sidebar-toggle-btn" type="button" tabindex="-1">
-              <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
-                <line x1="9" x2="9" y1="3" y2="21"></line>
-              </svg>
-            </button>
           </div>
 
-          <div class="project-selector">
-            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="project-selector" title="Dự án hiện tại">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
             </svg>
-            <span>dylask-api</span>
-            <svg class="icon" style="margin-left: auto;" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <span style="font-weight: 600;">dylask-api</span>
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto; color: var(--color-text-muted);">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </div>
 
           <div class="sprint-badge-row">
             <span class="sprint-active-dot"></span>
-            <span>Sprint 3 (Đang chạy)</span>
+            <span>Sprint 3: Active</span>
           </div>
         </div>
 
+        <!-- Navigation Menu (Dự Án & Sprint) -->
         <nav class="nav-group">
-          <span class="nav-group-label">Quản lý Sprint</span>
-          <a class="nav-link" href="../developer-backlog/layout.html">
+          <div class="nav-group-label">Dự Án & Sprint</div>
+
+          <!-- 1. BÁO CÁO AGILE (ĐẦU THANH THEO YÊU CẦU USER) -->
+          <a class="nav-link" href="../developer-metrics/layout.html" title="Báo cáo & Đo lường Agile Sprint">
             <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="8" x2="21" y1="6" y2="6"></line>
-              <line x1="8" x2="21" y1="12" y2="12"></line>
-              <line x1="8" x2="21" y1="18" y2="18"></line>
-              <line x1="3" x2="3.01" y1="6" y2="6"></line>
-              <line x1="3" x2="3.01" y1="12" y2="12"></line>
-              <line x1="3" x2="3.01" y1="18" y2="18"></line>
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
             </svg>
-            <span>Backlog</span>
-            <span class="nav-badge">7</span>
+            <span>Báo Cáo Agile</span>
           </a>
-          <a class="nav-link active" href="../developer-board/layout.html">
+
+          <!-- 2. BOARD -->
+          <a class="nav-link" href="../developer-board/layout.html" title="Bảng Kanban tiến độ">
             <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="18" height="18" x="3" y="2" rx="2"></rect>
+              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
               <path d="M8 7v7"></path>
               <path d="M12 7v4"></path>
               <path d="M16 7v9"></path>
@@ -1027,7 +1024,33 @@
             <span>Board</span>
             <span class="nav-badge">5</span>
           </a>
-          <a class="nav-link" href="../developer-standup/layout.html">
+
+          <!-- 3. BACKLOG -->
+          <a class="nav-link" href="../developer-backlog/layout.html" title="Danh sách tồn đọng">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="20" x2="21" y2="20"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="4" x2="21" y2="4"></line>
+              <line x1="3" y1="20" x2="3.01" y2="20"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="4" x2="3.01" y2="4"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">6</span>
+          </a>
+
+          <!-- 4. FOCUS CODING -->
+          <a class="nav-link" href="../developer-focus/layout.html" title="Chế độ tập trung code">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+            <span>Focus Coding</span>
+          </a>
+
+          <!-- 5. STANDUP -->
+          <a class="nav-link" href="../developer-standup/layout.html" title="Báo cáo tiến độ tự động 24h">
             <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
               <circle cx="9" cy="7" r="4"></circle>
@@ -1035,7 +1058,9 @@
             </svg>
             <span>Standup</span>
           </a>
-          <a class="nav-link" href="../developer-audit-log/layout.html">
+
+          <!-- 6. AUDIT LOG -->
+          <a class="nav-link" href="../developer-audit-log/layout.html" title="Nhật ký thay đổi hệ thống">
             <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
@@ -1045,13 +1070,15 @@
         </nav>
       </div>
 
+      <!-- Cuối Sidebar: Trạng thái Git & Dual-Mode Toggle -->
       <div class="sidebar-footer">
         <div class="git-status-bar">
           <span class="git-status-dot"></span>
-          <span>git: main · synced</span>
+          <span>git: main · syncd</span>
         </div>
+
         <div class="mode-switch-group">
-          <a class="mode-btn" href="../standard-list/layout.html">
+          <a class="mode-btn" href="../standard-list/layout.html" title="Chuyển sang chế độ Standard">
             <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="5"></circle>
               <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -1059,7 +1086,7 @@
             </svg>
             <span>Standard</span>
           </a>
-          <a class="mode-btn active" href="../developer-board/layout.html" style="text-decoration: none;" title="Chế độ Lập trình viên đang bật">
+          <a class="mode-btn active" href="../developer-board/layout.html" title="Chế độ Lập trình viên đang bật">
             <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="16 18 22 12 16 6"></polyline>
               <polyline points="8 6 2 12 8 18"></polyline>
@@ -1074,6 +1101,12 @@
     <div class="main-viewport">
       <header class="topbar">
         <div class="topbar-left">
+        <button class="sidebar-toggle-btn-topbar" id="sidebarToggleBtn" title="Ẩn/Hiện thanh điều hướng (Ctrl+B)">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+            <line x1="9" x2="9" y1="3" y2="21"></line>
+          </svg>
+        </button>
           <nav class="breadcrumb">
             <span class="breadcrumb-item">Dylask</span>
             <span class="breadcrumb-sep">/</span>
@@ -1610,5 +1643,6 @@
       }, 2500);
     }
   </script>
+  <script src="../responsive-sidebar.js"></script>
 </body>
 </html>

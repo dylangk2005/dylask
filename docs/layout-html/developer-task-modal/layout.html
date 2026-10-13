@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Mẫu Tạo Task Kỹ Thuật (Developer Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../responsive-sidebar.css">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      --font-family-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Dark Theme */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3B1214;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3E1F0F;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382D0D;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      --color-backdrop: rgba(10, 12, 16, 0.75);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      stroke-width: 1.75;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .app-shell {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--color-bg);
+    }
+
+    /* Modal Backdrop */
+    .dev-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--color-backdrop);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: var(--space-4);
+    }
+
+    /* Modal Container (640px) */
+    .dev-task-modal-card {
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border-strong);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalFadeIn 0.18s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Modal Header */
+    .modal-head {
+      padding: var(--space-3) var(--space-5);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #12161D;
+    }
+
+    .modal-head-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .issue-type-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    .issue-key-tag {
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-subtle);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .modal-close-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .modal-close-btn:hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text);
+    }
+
+    /* Modal Body */
+    .modal-content-scroll {
+      padding: var(--space-5);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    /* Title Input */
+    .field-title-wrap input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--color-border);
+      padding: var(--space-2) 0;
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      font-family: inherit;
+      color: var(--color-text);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .field-title-wrap input:focus {
+      border-color: var(--color-primary);
+    }
+
+    /* 2 Columns Grid for Meta Fields */
+    .meta-fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3) var(--space-4);
+      background-color: #12161D;
+      padding: var(--space-4);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+    }
+
+    .meta-field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meta-field-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta-field-input select,
+    .meta-field-input input {
+      width: 100%;
+      height: 32px;
+      padding: 0 var(--space-2);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      font-size: var(--font-size-xs);
+      font-family: inherit;
+      outline: none;
+    }
+
+    .meta-field-input select:focus,
+    .meta-field-input input:focus {
+      border-color: var(--color-primary);
+    }
+
+    /* Git Branch Preview */
+    .git-branch-preview-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px var(--space-3);
+      background-color: #0E1116;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-xs);
+    }
+
+    .branch-name-text {
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-copy-branch {
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: var(--font-size-xs);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-copy-branch:hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text);
+    }
+
+    /* Description Markdown */
+    .description-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .description-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .description-wrap textarea {
+      width: 100%;
+      min-height: 90px;
+      padding: var(--space-3);
+      background-color: #12161D;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text);
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-xs);
+      line-height: 1.5;
+      outline: none;
+      resize: vertical;
+    }
+
+    .description-wrap textarea:focus {
+      border-color: var(--color-primary);
+    }
+
+    /* Checklist / Acceptance Criteria */
+    .checklist-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .checklist-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      background-color: #12161D;
+      padding: 6px 10px;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+    }
+
+    .checklist-item input[type="checkbox"] {
+      accent-color: var(--color-primary);
+    }
+
+    .btn-add-criteria {
+      background: none;
+      border: 1px dashed var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      padding: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .btn-add-criteria:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    /* Modal Footer */
+    .modal-foot {
+      padding: var(--space-3) var(--space-5);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #12161D;
+    }
+
+    .foot-hint {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      font-family: var(--font-family-mono);
+    }
+
+    .foot-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn-cancel {
+      padding: 6px 14px;
+      background: none;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+    }
+
+    .btn-cancel:hover {
+      background-color: var(--color-surface-subtle);
+      color: var(--color-text);
+    }
+
+    .btn-submit-task {
+      padding: 6px 16px;
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-submit-task:hover {
+      background-color: var(--color-primary-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MODAL TẠO TASK KỸ THUẬT (DEVELOPER MODE) -->
+  <div class="dev-modal-overlay" id="devTaskModal">
+    <div class="dev-task-modal-card" role="dialog" aria-modal="true">
+
+      <!-- 1. Header -->
+      <div class="modal-head">
+        <div class="modal-head-left">
+          <div class="issue-type-select">
+            <svg class="icon" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="m9 12 2 2 4-4"></path></svg>
+            <span>Story</span>
+          </div>
+          <span class="issue-key-tag">DYL-186</span>
+          <span style="font-size: var(--font-size-xs); color: var(--color-text-muted);">trong dự án <strong>dylask-api</strong></span>
+        </div>
+        <button class="modal-close-btn" onclick="window.history.back()" title="Đóng modal">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- 2. Body -->
+      <div class="modal-content-scroll">
+
+        <!-- Tiêu đề Task -->
+        <div class="field-title-wrap">
+          <input id="taskTitleInput" type="text" placeholder="Tiêu đề công việc kỹ thuật..." value="Triển khai bộ lọc JWT Authentication Filter" oninput="updateBranchPreview(this.value)" autofocus>
+        </div>
+
+        <!-- Thuộc tính Agile (Sprint, Story Points, Priority, Assignee) -->
+        <div class="meta-fields-grid">
+
+          <div class="meta-field-item">
+            <span class="meta-field-label">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              <span>Chu kỳ Sprint</span>
+            </span>
+            <div class="meta-field-input">
+              <select>
+                <option selected>Sprint 3 (01/10 - 14/10) [ACTIVE]</option>
+                <option>Sprint 4 (15/10 - 28/10) [PLANNING]</option>
+                <option>Product Backlog (Chưa xếp Sprint)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="meta-field-item">
+            <span class="meta-field-label">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>Story Points (Độ phức tạp)</span>
+            </span>
+            <div class="meta-field-input">
+              <select>
+                <option>1 SP (~2-4h)</option>
+                <option>2 SP (~4-8h)</option>
+                <option>3 SP (~8-12h)</option>
+                <option selected>5 SP (~16h dự tính)</option>
+                <option>8 SP (~24h)</option>
+                <option>13 SP (Cần tách nhỏ)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="meta-field-item">
+            <span class="meta-field-label">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
+              <span>Mức độ ưu tiên kỹ thuật</span>
+            </span>
+            <div class="meta-field-input">
+              <select>
+                <option selected>P1 - Critical (Blocker / Khẩn cấp)</option>
+                <option>P2 - High (Trọng tâm Sprint)</option>
+                <option>P3 - Medium (Tính năng bình thường)</option>
+                <option>P4 - Low (Cải tiến nhỏ / Backlog)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="meta-field-item">
+            <span class="meta-field-label">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span>Người phụ trách (Assignee)</span>
+            </span>
+            <div class="meta-field-input">
+              <select>
+                <option selected>@dylan (Dylan Nguyen - Backend)</option>
+                <option>@hoang (Hoang Tran - Frontend)</option>
+                <option>@lan (Lan Pham - QA/Tester)</option>
+                <option>Chưa gán (Unassigned)</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Git Branch Preview -->
+        <div class="git-branch-preview-box">
+          <div class="branch-name-text">
+            <svg class="icon" viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>
+            <span id="branchPreviewText">feature/DYL-186-trien-khai-jwt-auth-filter</span>
+          </div>
+          <button class="btn-copy-branch" onclick="copyBranchName()">Sao chép branch</button>
+        </div>
+
+        <!-- Mô tả kỹ thuật (Markdown) -->
+        <div class="description-wrap">
+          <div class="description-label">
+            <span>Mô tả kỹ thuật (Markdown)</span>
+            <span style="font-family: var(--font-family-mono); font-size: 10px;">Markdown Supported</span>
+          </div>
+          <textarea placeholder="Nhập yêu cầu kiến trúc, API contract, checklist kỹ thuật...">Cần triển khai `JwtAuthenticationFilter` kế thừa `OncePerRequestFilter`.
+- Parse JWT header `Authorization: Bearer <token>`
+- Validate signature qua SecurityContextHolder
+- Trả về mã lỗi 401 Unauthorized nếu token hết hạn</textarea>
+        </div>
+
+        <!-- Tiêu chí nghiệm thu (Acceptance Criteria) -->
+        <div class="checklist-wrap">
+          <div class="checklist-head">
+            <span>Tiêu chí nghiệm thu (Acceptance Criteria)</span>
+            <span>2/2</span>
+          </div>
+
+          <div class="checklist-item">
+            <input type="checkbox" checked>
+            <span>Unit test đạt coverage trên 85% cho JwtUtils và Filter</span>
+          </div>
+
+          <div class="checklist-item">
+            <input type="checkbox" checked>
+            <span>Integration test qua Swagger UI trả về 200 OK khi có token hợp lệ</span>
+          </div>
+
+          <button class="btn-add-criteria" onclick="promptCriteria()">+ Thêm tiêu chí nghiệm thu mới</button>
+        </div>
+
+      </div>
+
+      <!-- 3. Footer -->
+      <div class="modal-foot">
+        <span class="foot-hint">Phím tắt: Enter để tạo, Esc để hủy</span>
+        <div class="foot-actions">
+          <button class="btn-cancel" onclick="window.history.back()">Hủy bỏ</button>
+          <button class="btn-submit-task" onclick="handleCreateTaskSubmit()">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Tạo Task</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function updateBranchPreview(title) {
+      const slug = title.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      document.getElementById('branchPreviewText').textContent = 'feature/DYL-186-' + (slug || 'new-task');
+    }
+
+    function copyBranchName() {
+      const text = document.getElementById('branchPreviewText').textContent;
+      navigator.clipboard.writeText(text);
+      alert('Đã sao chép tên Git Branch: ' + text);
+    }
+
+    function promptCriteria() {
+      const c = prompt('Nhập tiêu chí nghiệm thu mới:');
+      if (c && c.trim()) {
+        const item = document.createElement('div');
+        item.className = 'checklist-item';
+        item.innerHTML = `<input type="checkbox"><span>${c.trim()}</span>`;
+        const wrap = document.querySelector('.checklist-wrap');
+        const btn = document.querySelector('.btn-add-criteria');
+        wrap.insertBefore(item, btn);
+      }
+    }
+
+    function handleCreateTaskSubmit() {
+      const title = document.getElementById('taskTitleInput').value.trim();
+      if (!title) {
+        alert('Vui lòng nhập tiêu đề task!');
+        return;
+      }
+      alert('✅ Đã tạo thành công task kỹ thuật: "' + title + '" (DYL-186) và đưa vào Sprint 3!');
+      window.location.href = '../developer-board/layout.html';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        window.history.back();
+      }
+    });
+  </script>
+  <script src="../responsive-sidebar.js"></script>
+</body>
+</html>

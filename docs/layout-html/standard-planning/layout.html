@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Lập kế hoạch tuần (Standard Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS (STANDARD MODE - LIGHT)
+       Định nghĩa từ docs/layout-html/DESIGN.md - Không hard-code màu
+       ========================================================================== */
+    :root {
+      /* Typography */
+      --font-family-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 14px;
+      --font-size-md: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Standard Mode Colors */
+      --color-bg: #FAFAF7;
+      --color-surface: #FFFFFF;
+      --color-surface-subtle: #F4F3EF;
+      --color-border: #E7E5E0;
+      --color-border-strong: #D1CFCA;
+
+      --color-text: #1C1B18;
+      --color-text-muted: #6B6A63;
+
+      --color-primary: #0F766E;
+      --color-primary-hover: #115E59;
+      --color-primary-subtle: #E6F4F1;
+      --color-primary-text: #FFFFFF;
+
+      /* Standard Priorities */
+      --priority-low: #3B82F6;
+      --priority-low-bg: #EFF6FF;
+      --priority-medium: #F59E0B;
+      --priority-medium-bg: #FFFBEB;
+      --priority-high: #DC2626;
+      --priority-high-bg: #FEF2F2;
+
+      /* Status */
+      --color-success: #16A34A;
+      --color-success-bg: #F0FDF4;
+      --color-warning: #D97706;
+      --color-warning-bg: #FFFBEB;
+      --color-danger: #DC2626;
+      --color-info: #2563EB;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      stroke-width: 1.75;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    /* App Shell Layout */
+    .app-shell {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--color-bg);
+    }
+
+    /* ==========================================================================
+       SIDEBAR CỐT LÕI (240px)
+       ========================================================================== */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      height: 100%;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      z-index: 20;
+    }
+
+    .sidebar-top {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-1) 0;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+    }
+
+    .brand-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+    }
+
+    .brand-badge {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      margin-left: auto;
+    }
+
+    .nav-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-section-title {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-2) var(--space-2) var(--space-1);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: background-color 0.15s ease, color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-item.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .nav-item .icon {
+      color: var(--color-text-muted);
+    }
+
+    .nav-item.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-count {
+      margin-left: auto;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      padding: 1px 6px;
+      background-color: var(--color-surface-subtle);
+      border-radius: var(--radius-full);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-3) var(--space-4);
+      border-top: var(--border-width) solid var(--color-border);
+      background-color: var(--color-surface);
+    }
+
+    .mode-switch-container {
+      display: flex;
+      align-items: center;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+    }
+
+    .mode-switch-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 0;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mode-switch-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* ==========================================================================
+       MAIN WRAPPER & TOPBAR
+       ========================================================================== */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 52px;
+      min-height: 52px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+      z-index: 10;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-1) var(--space-3);
+      width: 320px;
+      height: 32px;
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: var(--font-size-base);
+      font-family: inherit;
+      color: var(--color-text);
+      width: 100%;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      text-decoration: none;
+    }
+
+    .user-name {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-primary-subtle);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    /* ==========================================================================
+       PLANNING STAGE
+       ========================================================================== */
+    .planning-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: var(--space-6);
+      gap: var(--space-5);
+    }
+
+    /* Header & Week Selector */
+    .planning-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+
+    .planning-title-box h1 {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .planning-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .week-navigator {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .nav-arrow-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: var(--border-width) solid transparent;
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      cursor: pointer;
+    }
+
+    .nav-arrow-btn:hover {
+      background-color: var(--color-surface-subtle);
+      border-color: var(--color-border);
+    }
+
+    .current-week-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      padding: 0 var(--space-2);
+    }
+
+    .btn-today-pill {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: none;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn-ai-suggest {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-primary);
+      padding: 7px var(--space-3);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-ai-suggest:hover {
+      background-color: #d7ede7;
+    }
+
+    .btn-primary-action {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary-text);
+      background-color: var(--color-primary);
+      border: none;
+      padding: 7px var(--space-4);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-primary-action:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    /* SECTION 1: WEEKLY FOCUS GOALS (MỤC TIÊU TUẦN) */
+    .weekly-goals-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .goals-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .goals-title-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+    }
+
+    .goals-progress-badge {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .goals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-3);
+    }
+
+    .goal-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      transition: border-color 0.15s ease;
+    }
+
+    .goal-item:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    .goal-checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-sm);
+      border: var(--border-width) solid var(--color-border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background-color: var(--color-surface);
+      flex-shrink: 0;
+    }
+
+    .goal-checkbox.checked {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #FFFFFF;
+    }
+
+    .goal-text {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      flex: 1;
+    }
+
+    .goal-item.done .goal-text {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+
+    .btn-add-goal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      padding: var(--space-3);
+      background-color: transparent;
+      border: 1px dashed var(--color-border-strong);
+      border-radius: var(--radius);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .btn-add-goal:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background-color: var(--color-surface);
+    }
+
+    /* SECTION 2: PLANNING BOARD (2 COLUMNS) */
+    .planning-board {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: var(--space-5);
+      flex: 1;
+      min-height: 520px;
+    }
+
+    /* CỘT TRÁI: UNSCHEDULED TASKS (INBOX) */
+    .inbox-column {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .inbox-header {
+      padding: var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .inbox-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+    }
+
+    .inbox-counter {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      padding: 1px 6px;
+      background-color: var(--color-surface-subtle);
+      border-radius: var(--radius-full);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .inbox-quick-add {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: var(--border-width) solid var(--color-border);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .inbox-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 6px var(--space-2);
+    }
+
+    .inbox-input-wrap input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: var(--font-size-sm);
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .inbox-list {
+      flex: 1;
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      overflow-y: auto;
+    }
+
+    .task-plan-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      cursor: grab;
+      transition: all 0.15s ease;
+    }
+
+    .task-plan-card:hover {
+      border-color: var(--color-border-strong);
+      background-color: #FAFAF8;
+    }
+
+    .task-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+
+    .card-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-sm);
+      border: var(--border-width) solid var(--color-border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .card-checkbox.checked {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    .card-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      line-height: 1.35;
+      flex: 1;
+    }
+
+    .task-plan-card.completed .card-title {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+    }
+
+    .task-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      padding-left: 24px;
+    }
+
+    .meta-tag {
+      padding: 1px 6px;
+      background-color: var(--color-surface-subtle);
+      border-radius: var(--radius-sm);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .priority-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .priority-badge.high {
+      background-color: var(--priority-high-bg);
+      color: var(--priority-high);
+    }
+
+    .priority-badge.medium {
+      background-color: var(--priority-medium-bg);
+      color: var(--priority-medium);
+    }
+
+    .priority-badge.low {
+      background-color: var(--priority-low-bg);
+      color: var(--priority-low);
+    }
+
+    .btn-schedule-chip {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid var(--color-border);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    /* CỘT PHẢI: LƯỚI 7 NGÀY (WEEKLY GRID) */
+    .week-grid-column {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: var(--space-3);
+      flex: 1;
+    }
+
+    .day-column-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      min-height: 480px;
+    }
+
+    .day-column-card.is-today {
+      border: 1.5px solid var(--color-primary);
+      background-color: #FFFFFF;
+    }
+
+    .day-col-header {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      text-align: center;
+    }
+
+    .day-name {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    .day-date {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      margin: 2px 0;
+    }
+
+    .is-today .day-date {
+      color: var(--color-primary);
+    }
+
+    .day-task-count {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .day-tasks-container {
+      flex: 1;
+      padding: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      overflow-y: auto;
+    }
+
+    .day-col-footer {
+      padding: var(--space-2);
+      border-top: var(--border-width) solid var(--color-border);
+    }
+
+    .btn-add-day-task {
+      width: 100%;
+      padding: 6px 0;
+      background: none;
+      border: 1px dashed var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .btn-add-day-task:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .empty-day-state {
+      padding: var(--space-6) var(--space-2);
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+      line-height: 1.4;
+    }
+
+    /* Modal xếp lịch nhanh */
+    .schedule-menu {
+      position: absolute;
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-1);
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      width: 140px;
+    }
+
+    .schedule-menu-item {
+      padding: 6px var(--space-2);
+      font-size: var(--font-size-xs);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--color-text);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .schedule-menu-item:hover {
+      background-color: var(--color-primary-subtle);
+      color: var(--color-primary);
+    }
+  </style>
+  <link rel="stylesheet" href="../responsive-sidebar.css">
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- ======================================================================
+         1. SIDEBAR (STANDARD MODE) - ĐỒNG BỘ 100%
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="brand-name">Dylask</span>
+          <span class="brand-badge" style="font-size:11px;font-weight:600;color:var(--color-primary);background-color:var(--color-primary-subtle);padding:2px 6px;border-radius:4px;margin-left:auto;">Standard</span>
+        </div>
+
+        <div class="nav-section">
+          <!-- 1. THỐNG KÊ (ĐẦU THANH THEO YÊU CẦU USER) -->
+          <a class="nav-item" href="../standard-analytics/layout.html" title="Thống kê năng suất cá nhân">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>Thống kê</span>
+          </a>
+
+          <!-- 2. KẾ HOẠCH (LẬP KẾ HOẠCH TUẦN & MỤC TIÊU) -->
+          <a class="nav-item active" href="../standard-planning/layout.html" title="Lập kế hoạch tuần">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <path d="M3 10h18"></path>
+              <path d="m9 16 2 2 4-4"></path>
+            </svg>
+            <span>Kế hoạch</span>
+          </a>
+
+          <!-- 3. HÔM NAY -->
+          <a class="nav-item" href="../my-day/layout.html" title="Kế hoạch hôm nay">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Hôm nay</span>
+            <span class="nav-count">3</span>
+          </a>
+
+          <!-- 4. 7 NGÀY TỚI (VIEW CHUYÊN BIỆT) -->
+          <a class="nav-item" href="../standard-upcoming/layout.html" title="7 ngày tới">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+              <path d="M8 14h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M16 14h.01"></path>
+            </svg>
+            <span>7 ngày tới</span>
+            <span class="nav-count">8</span>
+          </a>
+
+          <!-- 5. QUÁ HẠN (VIEW CHUYÊN BIỆT CẢNH BÁO ĐỎ) -->
+          <a class="nav-item" href="../standard-overdue/layout.html" title="Quá hạn">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12"></line>
+              <line x1="12" x2="12.01" y1="16" y2="16"></line>
+            </svg>
+            <span>Quá hạn</span>
+            <span class="nav-count" style="color: var(--color-danger); background-color: #FEF2F2; border-color: #FECACA;">3</span>
+          </a>
+
+          <!-- 6. LỊCH -->
+          <a class="nav-item" href="../calendar/layout.html" title="Xem lịch">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" x2="21" y1="10" y2="10"></line>
+            </svg>
+            <span>Lịch</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Danh mục</div>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span>Học tập</span>
+            <span class="nav-count">2</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="7" rx="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span>Công việc</span>
+            <span class="nav-count">1</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Cá nhân</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="21" r="1"></circle>
+              <circle cx="19" cy="21" r="1"></circle>
+              <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+            </svg>
+            <span>Mua sắm</span>
+          </a>
+
+          <a class="nav-item" href="../standard-list/layout.html">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Gia đình</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Hệ thống</div>
+          <a class="nav-item" href="../settings/layout.html" title="Cài đặt hệ thống">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Cài đặt</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="mode-switch-container">
+          <a class="mode-switch-btn active" href="../standard-list/layout.html" title="Chế độ người dùng phổ thông"><span>Standard</span></a>
+          <a class="mode-switch-btn" href="../developer-board/layout.html" title="Chuyển sang Chế độ Lập trình viên"><span>Developer</span></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         2. MAIN WRAPPER
+         ====================================================================== -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn-topbar" id="sidebarToggleBtn" title="Ẩn/Hiện thanh điều hướng (Ctrl+B)">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+              <line x1="9" x2="9" y1="3" y2="21"></line>
+            </svg>
+          </button>
+          <div class="search-box">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+          </svg>
+          <input class="search-input" type="text" placeholder="Tìm kiếm công việc...">
+        </div>
+        </div>
+        <a class="user-profile" href="../settings/layout.html" style="text-decoration: none; cursor: pointer;" title="Cài đặt tài khoản">
+          <span class="user-name">Duy Anh</span>
+          <div class="user-avatar" title="Tài khoản cá nhân">DA</div>
+        </a>
+      </header>
+
+      <!-- ====================================================================
+           3. PLANNING STAGE (KHÔNG GIAN LẬP KẾ HOẠCH TUẦN)
+           ==================================================================== -->
+      <main class="planning-stage">
+
+        <!-- HEADER ROW: TIÊU ĐỀ + CHỌN TUẦN + NÚT AI -->
+        <div class="planning-header-row">
+          <div class="planning-title-box">
+            <h1>
+              <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+              </svg>
+              Lập Kế Hoạch Tuần
+            </h1>
+            <p class="planning-subtitle">Phân bổ các mục tiêu tồn đọng vào 7 ngày trong tuần để làm chủ thời gian và tránh quá tải.</p>
+          </div>
+
+          <div class="week-navigator">
+            <button class="nav-arrow-btn" title="Tuần trước">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg>
+            </button>
+            <span class="current-week-label">Tuần 42: 12/10 – 18/10/2026</span>
+            <button class="nav-arrow-btn" title="Tuần tiếp theo">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+            </button>
+            <button class="btn-today-pill">Tuần này</button>
+          </div>
+
+          <div class="header-actions">
+            <button class="btn-ai-suggest" onclick="aiAutoSchedule()">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path></svg>
+              <span>AI Xếp lịch tự động</span>
+            </button>
+            <button class="btn-primary-action" onclick="openStandardTaskModal()">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>+ Thêm việc mới</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 1: MỤC TIÊU TRỌNG TÂM CỦA TUẦN (WEEKLY FOCUS GOALS) -->
+        <section class="weekly-goals-card">
+          <div class="goals-header">
+            <div class="goals-title-group">
+              <svg class="icon" width="16" height="16" viewBox="0 0 24 24" style="color: var(--color-warning);">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span>Mục Tiêu Trọng Tâm Của Tuần (Weekly Focus)</span>
+            </div>
+            <span class="goals-progress-badge" id="goalsProgress">2/3 Hoàn thành (67%)</span>
+          </div>
+
+          <div class="goals-grid">
+            <div class="goal-item done" onclick="toggleGoal(this)">
+              <div class="goal-checkbox checked">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span class="goal-text">Hoàn thành bài tập lớn môn CSDL (Nộp thứ Tư)</span>
+            </div>
+
+            <div class="goal-item done" onclick="toggleGoal(this)">
+              <div class="goal-checkbox checked">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span class="goal-text">Đọc xong 2 chương sách Thiết Kế Hệ Thống</span>
+            </div>
+
+            <div class="goal-item" onclick="toggleGoal(this)">
+              <div class="goal-checkbox"></div>
+              <span class="goal-text">Chạy bộ 3 buổi sáng (Tổng 10km)</span>
+            </div>
+
+            <button class="btn-add-goal" onclick="addNewGoalPrompt()">
+              <svg class="icon" width="14" height="14" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>+ Đặt mục tiêu tuần mới</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- SECTION 2: BỐ CỤC 2 CỘT (HỘP VIỆC TỒN ĐỌNG & LƯỚI 7 NGÀY) -->
+        <div class="planning-board">
+
+          <!-- CỘT 1: HỘP VIỆC CHƯA XẾP LỊCH (INBOX / UNSCHEDULED) -->
+          <div class="inbox-column">
+            <div class="inbox-header">
+              <div class="inbox-title-wrap">
+                <svg class="icon" width="16" height="16" viewBox="0 0 24 24">
+                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                  <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                </svg>
+                <span>Chưa Xếp Lịch (Inbox)</span>
+              </div>
+              <span class="inbox-counter" id="inboxCount">4 việc</span>
+            </div>
+
+            <div class="inbox-quick-add">
+              <div class="inbox-input-wrap">
+                <svg class="icon" width="14" height="14" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <input id="quickInboxInput" type="text" placeholder="Nhập việc cần lên lịch + Enter..." onkeydown="handleInboxQuickAdd(event)">
+              </div>
+            </div>
+
+            <div class="inbox-list" id="inboxList">
+
+              <div class="task-plan-card" data-task-id="inbox-1">
+                <div class="task-card-header">
+                  <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                  <span class="card-title">Ôn tập từ vựng IELTS Unit 6</span>
+                </div>
+                <div class="task-card-meta">
+                  <span class="meta-tag">Học tập</span>
+                  <span class="priority-badge medium">Vừa</span>
+                  <button class="btn-schedule-chip" onclick="openScheduleMenu(event, 'inbox-1')">Xếp lịch &rarr;</button>
+                </div>
+              </div>
+
+              <div class="task-plan-card" data-task-id="inbox-2">
+                <div class="task-card-header">
+                  <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                  <span class="card-title">Thay nhớt xe máy và kiểm tra phanh</span>
+                </div>
+                <div class="task-card-meta">
+                  <span class="meta-tag">Cá nhân</span>
+                  <span class="priority-badge low">Thấp</span>
+                  <button class="btn-schedule-chip" onclick="openScheduleMenu(event, 'inbox-2')">Xếp lịch &rarr;</button>
+                </div>
+              </div>
+
+              <div class="task-plan-card" data-task-id="inbox-3">
+                <div class="task-card-header">
+                  <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                  <span class="card-title">Mua quà sinh nhật em gái</span>
+                </div>
+                <div class="task-card-meta">
+                  <span class="meta-tag">Gia đình</span>
+                  <span class="priority-badge high">Cao</span>
+                  <button class="btn-schedule-chip" onclick="openScheduleMenu(event, 'inbox-3')">Xếp lịch &rarr;</button>
+                </div>
+              </div>
+
+              <div class="task-plan-card" data-task-id="inbox-4">
+                <div class="task-card-header">
+                  <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                  <span class="card-title">Dọn dẹp hòm thư điện tử & sao lưu ảnh</span>
+                </div>
+                <div class="task-card-meta">
+                  <span class="meta-tag">Cá nhân</span>
+                  <span class="priority-badge low">Thấp</span>
+                  <button class="btn-schedule-chip" onclick="openScheduleMenu(event, 'inbox-4')">Xếp lịch &rarr;</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- CỘT 2: LƯỚI 7 NGÀY TRONG TUẦN (WEEKLY GRID) -->
+          <div class="week-grid-column">
+            <div class="days-grid">
+
+              <!-- THỨ HAI (HÔM NAY - ACTIVE) -->
+              <div class="day-column-card is-today" id="dayCol-mon">
+                <div class="day-col-header">
+                  <div class="day-name" style="color: var(--color-primary);">Thứ Hai</div>
+                  <div class="day-date">12</div>
+                  <div class="day-task-count">3 việc (Hôm nay)</div>
+                </div>
+                <div class="day-tasks-container">
+                  <div class="task-plan-card" data-task-id="mon-1">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Ôn từ vựng IELTS Unit 5</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Học tập</span>
+                      <span class="priority-badge medium">Vừa</span>
+                    </div>
+                  </div>
+
+                  <div class="task-plan-card" data-task-id="mon-2">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Đóng tiền điện tháng 10</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Gia đình</span>
+                      <span class="priority-badge high">Cao</span>
+                    </div>
+                  </div>
+
+                  <div class="task-plan-card completed" data-task-id="mon-3">
+                    <div class="task-card-header">
+                      <div class="card-checkbox checked" onclick="toggleTaskDoneCard(this)">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      </div>
+                      <span class="card-title">Mua cà phê và sữa tươi</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Mua sắm</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="day-col-footer">
+                  <button class="btn-add-day-task" onclick="addTaskToDay('dayCol-mon', 'Thứ Hai')">+ Thêm việc</button>
+                </div>
+              </div>
+
+              <!-- THỨ BA -->
+              <div class="day-column-card" id="dayCol-tue">
+                <div class="day-col-header">
+                  <div class="day-name">Thứ Ba</div>
+                  <div class="day-date">13</div>
+                  <div class="day-task-count">2 việc</div>
+                </div>
+                <div class="day-tasks-container">
+                  <div class="task-plan-card" data-task-id="tue-1">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Đóng học phí kỳ 1</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Học tập</span>
+                      <span class="priority-badge high">Cao</span>
+                    </div>
+                  </div>
+
+                  <div class="task-plan-card" data-task-id="tue-2">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Gặp cố vấn học tập tại phòng 302</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Học tập</span>
+                      <span class="priority-badge medium">Vừa</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="day-col-footer">
+                  <button class="btn-add-day-task" onclick="addTaskToDay('dayCol-tue', 'Thứ Ba')">+ Thêm việc</button>
+                </div>
+              </div>
+
+              <!-- THỨ TƯ -->
+              <div class="day-column-card" id="dayCol-wed">
+                <div class="day-col-header">
+                  <div class="day-name">Thứ Tư</div>
+                  <div class="day-date">14</div>
+                  <div class="day-task-count">2 việc</div>
+                </div>
+                <div class="day-tasks-container">
+                  <div class="task-plan-card" data-task-id="wed-1">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Nộp bài tập Assignment 1 môn CSDL</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Học tập</span>
+                      <span class="priority-badge high">Cao</span>
+                    </div>
+                  </div>
+
+                  <div class="task-plan-card" data-task-id="wed-2">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Chạy bộ 3km công viên</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Cá nhân</span>
+                      <span class="priority-badge low">Thấp</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="day-col-footer">
+                  <button class="btn-add-day-task" onclick="addTaskToDay('dayCol-wed', 'Thứ Tư')">+ Thêm việc</button>
+                </div>
+              </div>
+
+              <!-- THỨ NĂM -->
+              <div class="day-column-card" id="dayCol-thu">
+                <div class="day-col-header">
+                  <div class="day-name">Thứ Năm</div>
+                  <div class="day-date">15</div>
+                  <div class="day-task-count">1 việc</div>
+                </div>
+                <div class="day-tasks-container">
+                  <div class="task-plan-card" data-task-id="thu-1">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Bảo dưỡng định kỳ máy tính xách tay</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Cá nhân</span>
+                      <span class="priority-badge low">Thấp</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="day-col-footer">
+                  <button class="btn-add-day-task" onclick="addTaskToDay('dayCol-thu', 'Thứ Năm')">+ Thêm việc</button>
+                </div>
+              </div>
+
+              <!-- THỨ SÁU -->
+              <div class="day-column-card" id="dayCol-fri">
+                <div class="day-col-header">
+                  <div class="day-name">Thứ Sáu</div>
+                  <div class="day-date">16</div>
+                  <div class="day-task-count">2 việc</div>
+                </div>
+                <div class="day-tasks-container">
+                  <div class="task-plan-card" data-task-id="fri-1">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Tổng kết tuần & dọn dẹp bàn học</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Gia đình</span>
+                      <span class="priority-badge low">Thấp</span>
+                    </div>
+                  </div>
+
+                  <div class="task-plan-card" data-task-id="fri-2">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Họp nhóm thuyết trình môn Kỹ năng</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Học tập</span>
+                      <span class="priority-badge medium">Vừa</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="day-col-footer">
+                  <button class="btn-add-day-task" onclick="addTaskToDay('dayCol-fri', 'Thứ Sáu')">+ Thêm việc</button>
+                </div>
+              </div>
+
+              <!-- THỨ BẢY -->
+              <div class="day-column-card" id="dayCol-sat">
+                <div class="day-col-header">
+                  <div class="day-name">Thứ Bảy</div>
+                  <div class="day-date">17</div>
+                  <div class="day-task-count">1 việc</div>
+                </div>
+                <div class="day-tasks-container">
+                  <div class="task-plan-card" data-task-id="sat-1">
+                    <div class="task-card-header">
+                      <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+                      <span class="card-title">Đi siêu thị mua sắm đồ dùng cả tuần</span>
+                    </div>
+                    <div class="task-card-meta">
+                      <span class="meta-tag">Mua sắm</span>
+                      <span class="priority-badge medium">Vừa</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="day-col-footer">
+                  <button class="btn-add-day-task" onclick="addTaskToDay('dayCol-sat', 'Thứ Bảy')">+ Thêm việc</button>
+                </div>
+              </div>
+
+              <!-- CHỦ NHẬT -->
+              <div class="day-column-card" id="dayCol-sun">
+                <div class="day-col-header">
+                  <div class="day-name">Chủ Nhật</div>
+                  <div class="day-date">18</div>
+                  <div class="day-task-count">0 việc</div>
+                </div>
+                <div class="day-tasks-container">
+                  <div class="empty-day-state">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" style="margin-bottom: 6px;"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
+                    <div>Chưa có việc nào.<br>Ngày nghỉ ngơi tái tạo năng lượng!</div>
+                  </div>
+                </div>
+                <div class="day-col-footer">
+                  <button class="btn-add-day-task" onclick="addTaskToDay('dayCol-sun', 'Chủ Nhật')">+ Thêm việc</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- POPUP SCHEDULE MENU -->
+  <div id="scheduleMenu" class="schedule-menu">
+    <div class="schedule-menu-item" onclick="moveTaskToDay('dayCol-mon')">Thứ Hai <span>(12)</span></div>
+    <div class="schedule-menu-item" onclick="moveTaskToDay('dayCol-tue')">Thứ Ba <span>(13)</span></div>
+    <div class="schedule-menu-item" onclick="moveTaskToDay('dayCol-wed')">Thứ Tư <span>(14)</span></div>
+    <div class="schedule-menu-item" onclick="moveTaskToDay('dayCol-thu')">Thứ Năm <span>(15)</span></div>
+    <div class="schedule-menu-item" onclick="moveTaskToDay('dayCol-fri')">Thứ Sáu <span>(16)</span></div>
+    <div class="schedule-menu-item" onclick="moveTaskToDay('dayCol-sat')">Thứ Bảy <span>(17)</span></div>
+    <div class="schedule-menu-item" onclick="moveTaskToDay('dayCol-sun')">Chủ Nhật <span>(18)</span></div>
+  </div>
+
+  <script>
+    let activeMovingTaskId = null;
+
+    function toggleGoal(item) {
+      item.classList.toggle('done');
+      const box = item.querySelector('.goal-checkbox');
+      box.classList.toggle('checked');
+      if (box.classList.contains('checked')) {
+        box.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+      } else {
+        box.innerHTML = '';
+      }
+      updateGoalsProgress();
+    }
+
+    function updateGoalsProgress() {
+      const items = document.querySelectorAll('.goals-grid .goal-item');
+      const doneItems = document.querySelectorAll('.goals-grid .goal-item.done');
+      const progressEl = document.getElementById('goalsProgress');
+      const percent = items.length ? Math.round((doneItems.length / items.length) * 100) : 0;
+      progressEl.textContent = `${doneItems.length}/${items.length} Hoàn thành (${percent}%)`;
+    }
+
+    function toggleTaskDoneCard(box) {
+      const card = box.closest('.task-plan-card');
+      card.classList.toggle('completed');
+      box.classList.toggle('checked');
+      if (box.classList.contains('checked')) {
+        box.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+      } else {
+        box.innerHTML = '';
+      }
+    }
+
+    function handleInboxQuickAdd(e) {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        const val = e.target.value.trim();
+        const list = document.getElementById('inboxList');
+        const newCard = document.createElement('div');
+        newCard.className = 'task-plan-card';
+        const id = 'inbox-' + Date.now();
+        newCard.setAttribute('data-task-id', id);
+        newCard.innerHTML = `
+          <div class="task-card-header">
+            <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+            <span class="card-title">${val}</span>
+          </div>
+          <div class="task-card-meta">
+            <span class="meta-tag">Cá nhân</span>
+            <span class="priority-badge medium">Vừa</span>
+            <button class="btn-schedule-chip" onclick="openScheduleMenu(event, '${id}')">Xếp lịch &rarr;</button>
+          </div>
+        `;
+        list.prepend(newCard);
+        e.target.value = '';
+        updateInboxCount();
+      }
+    }
+
+    function updateInboxCount() {
+      const count = document.querySelectorAll('#inboxList .task-plan-card').length;
+      document.getElementById('inboxCount').textContent = count + ' việc';
+    }
+
+    function openScheduleMenu(event, taskId) {
+      event.stopPropagation();
+      activeMovingTaskId = taskId;
+      const menu = document.getElementById('scheduleMenu');
+      menu.style.display = 'flex';
+      menu.style.left = (event.pageX - 70) + 'px';
+      menu.style.top = (event.pageY + 10) + 'px';
+    }
+
+    function moveTaskToDay(colId) {
+      if (!activeMovingTaskId) return;
+      const taskCard = document.querySelector(`[data-task-id="${activeMovingTaskId}"]`);
+      if (taskCard) {
+        const targetCol = document.getElementById(colId);
+        const container = targetCol.querySelector('.day-tasks-container');
+        const emptyState = container.querySelector('.empty-day-state');
+        if (emptyState) emptyState.remove();
+
+        // remove schedule button in meta
+        const schedBtn = taskCard.querySelector('.btn-schedule-chip');
+        if (schedBtn) schedBtn.remove();
+
+        container.appendChild(taskCard);
+        updateInboxCount();
+      }
+      closeScheduleMenu();
+    }
+
+    function closeScheduleMenu() {
+      const menu = document.getElementById('scheduleMenu');
+      menu.style.display = 'none';
+      activeMovingTaskId = null;
+    }
+
+    document.addEventListener('click', () => {
+      closeScheduleMenu();
+    });
+
+    function addTaskToDay(colId, dayName) {
+      const title = prompt(`Nhập công việc mới cho ${dayName}:`);
+      if (title && title.trim()) {
+        const targetCol = document.getElementById(colId);
+        const container = targetCol.querySelector('.day-tasks-container');
+        const emptyState = container.querySelector('.empty-day-state');
+        if (emptyState) emptyState.remove();
+
+        const card = document.createElement('div');
+        card.className = 'task-plan-card';
+        card.setAttribute('data-task-id', 'task-' + Date.now());
+        card.innerHTML = `
+          <div class="task-card-header">
+            <div class="card-checkbox" onclick="toggleTaskDoneCard(this)"></div>
+            <span class="card-title">${title.trim()}</span>
+          </div>
+          <div class="task-card-meta">
+            <span class="meta-tag">Cá nhân</span>
+            <span class="priority-badge medium">Vừa</span>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function addNewGoalPrompt() {
+      const g = prompt("Nhập mục tiêu trọng tâm mới cho tuần này:");
+      if (g && g.trim()) {
+        const grid = document.querySelector('.goals-grid');
+        const addBtn = document.querySelector('.btn-add-goal');
+        const item = document.createElement('div');
+        item.className = 'goal-item';
+        item.onclick = function() { toggleGoal(this); };
+        item.innerHTML = `
+          <div class="goal-checkbox"></div>
+          <span class="goal-text">${g.trim()}</span>
+        `;
+        grid.insertBefore(item, addBtn);
+        updateGoalsProgress();
+      }
+    }
+
+    function aiAutoSchedule() {
+      alert("✨ AI Dylask Assistant:\nĐã phân tích 4 việc trong Inbox và độ ưu tiên.\nĐề xuất: Chuyển 'Ôn từ vựng Unit 6' sang Thứ Ba, 'Thay nhớt xe' sang Thứ Năm, 'Dọn dẹp hòm thư' sang Chủ Nhật.");
+    }
+  </script>
+  <script src="../responsive-sidebar.js"></script>
+</body>
+</html>

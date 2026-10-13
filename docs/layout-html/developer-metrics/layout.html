@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="vi" data-mode="developer">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylask - Báo cáo & Đo lường Agile Sprint (Developer Mode)</title>
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code/Metadata) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DYLASK DESIGN SYSTEM TOKENS - DEVELOPER MODE (DARK)
+       Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md & developer-board layout
+       ========================================================================== */
+    :root, [data-mode="developer"] {
+      /* Typography */
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+      --font-size-xs: 11px;
+      --font-size-sm: 12px;
+      --font-size-base: 13px;
+      --font-size-md: 14px;
+      --font-size-lg: 16px;
+      --font-size-xl: 18px;
+      --font-size-2xl: 22px;
+
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Geometry & Borders */
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-full: 9999px;
+      --border-width: 1px;
+      --box-shadow: none;
+
+      /* Developer Mode Colors (Dark Theme) */
+      --color-bg: #0E1116;
+      --color-surface: #161B22;
+      --color-surface-subtle: #21262D;
+      --color-border: #262C36;
+      --color-border-strong: #3A4250;
+
+      --color-text: #E6EDF3;
+      --color-text-muted: #8B949E;
+
+      --color-primary: #2DD4BF;
+      --color-primary-hover: #14B8A6;
+      --color-primary-subtle: #0D3331;
+      --color-primary-text: #0E1116;
+
+      /* Priorities P1 - P4 */
+      --priority-p1: #EF4444;
+      --priority-p1-bg: #3D1418;
+      --priority-p2: #F97316;
+      --priority-p2-bg: #3B1F11;
+      --priority-p3: #EAB308;
+      --priority-p3-bg: #382C10;
+      --priority-p4: #6E7681;
+      --priority-p4-bg: #1F242C;
+
+      /* Status */
+      --color-success: #238636;
+      --color-success-bg: #0F2D17;
+      --color-warning: #D29922;
+      --color-warning-bg: #332408;
+      --color-danger: #F85149;
+      --color-danger-bg: #3E1616;
+      --color-info: #58A6FF;
+      --color-info-bg: #12243D;
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .icon {
+      width: 15px;
+      height: 15px;
+      stroke-width: 1.75;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* ==========================================================================
+       APP SHELL - ĐỒNG BỘ 100% VỚI DEVELOPER-BOARD & BACKLOG
+       ========================================================================== */
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    /* 1. SIDEBAR TRÁI (220px) */
+    .sidebar {
+      width: 220px;
+      min-width: 220px;
+      height: 100vh;
+      background-color: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      z-index: 20;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Context Header (Workspace > Project > Sprint) */
+    .workspace-header {
+      padding: var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .workspace-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-text);
+      font-weight: var(--font-weight-bold);
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    .brand-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-toggle-btn {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+
+    .sidebar-toggle-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+    }
+
+    .project-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      color: var(--color-text);
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+
+    .project-selector .icon {
+      color: var(--color-primary);
+    }
+
+    .sprint-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+
+    .sprint-active-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    /* Navigation Menu */
+    .nav-group {
+      padding: var(--space-3) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-group-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: var(--space-1) var(--space-2);
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--color-text);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .nav-link.active {
+      color: var(--color-primary);
+      background-color: var(--color-surface-subtle);
+      border-left: 2px solid var(--color-primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .nav-link.active .icon {
+      color: var(--color-primary);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 0 5px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Sidebar Footer / Mode Switch */
+    .sidebar-footer {
+      padding: var(--space-3);
+      border-top: var(--border-width) solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 6px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      text-decoration: none;
+    }
+
+    .mode-btn.active {
+      background-color: var(--color-surface);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid var(--color-border);
+    }
+
+    .git-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      padding: 2px 4px;
+    }
+
+    .git-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-success);
+    }
+
+    /* ==========================================================================
+       2. MAIN VIEWPORT & TOPBAR
+       ========================================================================== */
+    .main-viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--color-bg);
+    }
+
+    .topbar {
+      height: 48px;
+      background-color: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      flex-shrink: 0;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+    }
+
+    .breadcrumb-sep {
+      color: var(--color-border-strong);
+    }
+
+    .breadcrumb-item.current {
+      color: var(--color-text);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .sprint-stats-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-primary);
+      background-color: var(--color-primary-subtle);
+      border: var(--border-width) solid rgba(45, 212, 191, 0.25);
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .command-palette-trigger {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .command-palette-trigger:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text);
+    }
+
+    .command-palette-trigger kbd {
+      background-color: var(--color-bg);
+      border: var(--border-width) solid var(--color-border);
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+
+    .sprint-select {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+
+    .btn-dev {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 5px 10px;
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+      color: var(--color-text);
+      cursor: pointer;
+    }
+
+    .btn-dev:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    /* ==========================================================================
+       3. METRICS VIEWPORT BODY
+       ========================================================================== */
+    .metrics-viewport {
+      flex: 1;
+      padding: var(--space-4);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .dash-h1 {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .dash-sub {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* KPI Strip */
+    .dev-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3);
+    }
+
+    .dev-kpi-box {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      box-shadow: var(--box-shadow);
+    }
+
+    .dev-kpi-label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dev-kpi-num {
+      font-size: var(--font-size-2xl);
+      font-family: var(--font-mono);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      line-height: 1.1;
+    }
+
+    .dev-kpi-footer {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+    }
+
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: var(--font-weight-semibold);
+      border: var(--border-width) solid transparent;
+    }
+
+    .stat-badge.ahead {
+      background-color: var(--color-success-bg);
+      color: #4ADE80;
+      border-color: rgba(74, 222, 128, 0.2);
+    }
+
+    .stat-badge.cyan {
+      background-color: var(--color-primary-subtle);
+      color: var(--color-primary);
+      border-color: rgba(45, 212, 191, 0.3);
+    }
+
+    /* Charts Row */
+    .grid-charts {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .dev-card {
+      background-color: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      box-shadow: var(--box-shadow);
+    }
+
+    .dev-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dev-card-title {
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .dev-card-meta {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+    }
+
+    /* Burndown SVG */
+    .burndown-container {
+      position: relative;
+      width: 100%;
+      height: 240px;
+    }
+
+    .burndown-svg {
+      width: 100%;
+      height: 200px;
+    }
+
+    .chart-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-2);
+      border-top: var(--border-width) solid var(--color-surface-subtle);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+    }
+
+    .legend-pair {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .legend-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .line-indicator {
+      width: 16px;
+      height: 2px;
+      display: inline-block;
+    }
+
+    /* Velocity Chart SVG */
+    .velocity-container {
+      width: 100%;
+      height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .velocity-svg {
+      width: 100%;
+      height: 200px;
+    }
+
+    /* Tables Grid */
+    .grid-breakdown {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: var(--space-3);
+    }
+
+    .dev-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+    }
+
+    .dev-table th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      padding: var(--space-2) var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      background-color: var(--color-surface-subtle);
+    }
+
+    .dev-table td {
+      padding: var(--space-2) var(--space-3);
+      border-bottom: var(--border-width) solid var(--color-border);
+      color: var(--color-text);
+    }
+
+    .dev-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .type-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      font-size: 10px;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .type-feat {
+      background-color: var(--color-info-bg);
+      color: var(--color-info);
+      border: var(--border-width) solid rgba(88, 166, 255, 0.2);
+    }
+
+    .type-bug {
+      background-color: var(--color-danger-bg);
+      color: var(--color-danger);
+      border: var(--border-width) solid rgba(248, 81, 73, 0.2);
+    }
+
+    .type-refactor {
+      background-color: var(--color-warning-bg);
+      color: var(--color-warning);
+      border: var(--border-width) solid rgba(210, 153, 34, 0.2);
+    }
+
+    /* Engineering Health Panel */
+    .health-block {
+      background-color: var(--color-surface-subtle);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .health-head {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .health-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: var(--font-size-xs);
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      padding: 3px 0;
+      border-bottom: var(--border-width) solid rgba(255, 255, 255, 0.05);
+    }
+
+    .health-row:last-child {
+      border-bottom: none;
+    }
+
+    .health-val {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
+  </style>
+  <link rel="stylesheet" href="../responsive-sidebar.css">
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- ======================================================================
+         1. SIDEBAR TRÁI (220px) - ĐỒNG NHẤT 100% VỚI DEVELOPER-BOARD & BACKLOG
+         ====================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <!-- Context Header (Workspace > Project > Sprint) -->
+        <div class="workspace-header">
+          <div class="workspace-row">
+            <div class="brand-group">
+              <div class="brand-mark">D</div>
+              <span class="brand-title">Dylask</span>
+            </div>
+          </div>
+
+          <div class="project-selector" title="Dự án hiện tại">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span style="font-weight: 600;">dylask-api</span>
+            <svg class="icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto; color: var(--color-text-muted);">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="sprint-badge-row">
+            <span class="sprint-active-dot"></span>
+            <span>Sprint 3: Active</span>
+          </div>
+        </div>
+
+        <!-- Navigation Menu (Dự Án & Sprint) -->
+        <nav class="nav-group">
+          <div class="nav-group-label">Dự Án & Sprint</div>
+
+          <!-- 1. BÁO CÁO AGILE (ĐẦU THANH THEO YÊU CẦU USER) -->
+          <a class="nav-link active" href="../developer-metrics/layout.html" title="Báo cáo & Đo lường Agile Sprint">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>Báo Cáo Agile</span>
+          </a>
+
+          <!-- 2. BOARD -->
+          <a class="nav-link" href="../developer-board/layout.html" title="Bảng Kanban tiến độ">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+              <path d="M8 7v7"></path>
+              <path d="M12 7v4"></path>
+              <path d="M16 7v9"></path>
+            </svg>
+            <span>Board</span>
+            <span class="nav-badge">5</span>
+          </a>
+
+          <!-- 3. BACKLOG -->
+          <a class="nav-link" href="../developer-backlog/layout.html" title="Danh sách tồn đọng">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="20" x2="21" y2="20"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="4" x2="21" y2="4"></line>
+              <line x1="3" y1="20" x2="3.01" y2="20"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="4" x2="3.01" y2="4"></line>
+            </svg>
+            <span>Backlog</span>
+            <span class="nav-badge">6</span>
+          </a>
+
+          <!-- 4. FOCUS CODING -->
+          <a class="nav-link" href="../developer-focus/layout.html" title="Chế độ tập trung code">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+            <span>Focus Coding</span>
+          </a>
+
+          <!-- 5. STANDUP -->
+          <a class="nav-link" href="../developer-standup/layout.html" title="Báo cáo tiến độ tự động 24h">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+            <span>Standup</span>
+          </a>
+
+          <!-- 6. AUDIT LOG -->
+          <a class="nav-link" href="../developer-audit-log/layout.html" title="Nhật ký thay đổi hệ thống">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Audit Log</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Cuối Sidebar: Trạng thái Git & Dual-Mode Toggle -->
+      <div class="sidebar-footer">
+        <div class="git-status-bar">
+          <span class="git-status-dot"></span>
+          <span>git: main · syncd</span>
+        </div>
+
+        <div class="mode-switch-group">
+          <a class="mode-btn" href="../standard-list/layout.html" title="Chuyển sang chế độ Standard">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+            </svg>
+            <span>Standard</span>
+          </a>
+          <a class="mode-btn active" href="../developer-board/layout.html" title="Chế độ Lập trình viên đang bật">
+            <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Developer</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         2. VÙNG XỬ LÝ CHÍNH (MAIN VIEWPORT)
+         ====================================================================== -->
+    <div class="main-viewport">
+      <!-- TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+        <button class="sidebar-toggle-btn-topbar" id="sidebarToggleBtn" title="Ẩn/Hiện thanh điều hướng (Ctrl+B)">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+            <line x1="9" x2="9" y1="3" y2="21"></line>
+          </svg>
+        </button>
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <span class="breadcrumb-item">Dylask</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item">dylask-api</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-item current">Báo Cáo Agile</span>
+          </nav>
+          <span class="sprint-stats-tag">Sprint 3: Active (14 ngày)</span>
+        </div>
+
+        <div class="topbar-right">
+          <a class="command-palette-trigger" href="../developer-command-palette/layout.html" title="Mở bảng lệnh phím tắt (Ctrl+K)">
+            <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+            </svg>
+            <span>Tìm kiếm & Lệnh</span>
+            <kbd>Ctrl</kbd>
+            <kbd>K</kbd>
+          </a>
+
+          <select class="sprint-select">
+            <option selected>Sprint 3 (01/10 - 14/10) [ACTIVE]</option>
+            <option>Sprint 2 (17/09 - 30/09) [CLOSED]</option>
+            <option>Sprint 1 (03/09 - 16/09) [CLOSED]</option>
+          </select>
+
+          <button class="btn-dev">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export CSV</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- METRICS BODY -->
+      <main class="metrics-viewport">
+        <!-- HEADER -->
+        <div class="header-row">
+          <div class="header-title-block">
+            <h1 class="dash-h1">
+              <span>Đo Lường & Báo Cáo Agile Sprint</span>
+            </h1>
+            <p class="dash-sub">Dự án: dylask-api | Chu kỳ Sprint 3 (14 ngày) | Cập nhật lúc 21:30 UTC+7</p>
+          </div>
+
+          <span class="stat-badge ahead" style="font-size:11px; padding:3px 8px;">
+            <svg class="icon" style="width:13px;height:13px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Sprint Health: On Track (-1 SP Variance)
+          </span>
+        </div>
+
+        <!-- 4 KPI STRIP -->
+        <div class="dev-kpi-grid">
+          <!-- KPI 1: SPRINT PROGRESS -->
+          <div class="dev-kpi-box">
+            <div class="dev-kpi-label">
+              <span>Tiến độ hoàn thành</span>
+              <svg class="icon" style="color:var(--color-primary);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+            </div>
+            <div class="dev-kpi-num">80.9%</div>
+            <div class="dev-kpi-footer">
+              <span class="stat-badge cyan">34 / 42 SP</span>
+              <span>Còn 8 Story Points</span>
+            </div>
+          </div>
+
+          <!-- KPI 2: BURNDOWN VARIANCE -->
+          <div class="dev-kpi-box">
+            <div class="dev-kpi-label">
+              <span>Sai lệch Burndown</span>
+              <svg class="icon" style="color:#4ADE80;" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            </div>
+            <div class="dev-kpi-num" style="color:#4ADE80;">-1.0 SP</div>
+            <div class="dev-kpi-footer">
+              <span class="stat-badge ahead">Vượt tiến độ</span>
+              <span>Ngày 12/14 Sprint</span>
+            </div>
+          </div>
+
+          <!-- KPI 3: VELOCITY -->
+          <div class="dev-kpi-box">
+            <div class="dev-kpi-label">
+              <span>Team Velocity (Avg)</span>
+              <svg class="icon" style="color:var(--color-info);" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="dev-kpi-num">38.5 SP</div>
+            <div class="dev-kpi-footer">
+              <span>Khuyến nghị Sprint 4:</span>
+              <span style="color:var(--color-text); font-weight:600;">38 SP</span>
+            </div>
+          </div>
+
+          <!-- KPI 4: CYCLE TIME -->
+          <div class="dev-kpi-box">
+            <div class="dev-kpi-label">
+              <span>Cycle Time trung bình</span>
+              <svg class="icon" style="color:var(--color-warning);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="dev-kpi-num">18.4h</div>
+            <div class="dev-kpi-footer">
+              <span>Lead Time:</span>
+              <span style="color:var(--color-text); font-weight:600;">42.1h</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHARTS GRID -->
+        <div class="grid-charts">
+          <!-- BURNDOWN CHART -->
+          <div class="dev-card">
+            <div class="dev-card-head">
+              <h2 class="dev-card-title">
+                <svg class="icon" style="color:var(--color-primary);" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Sprint Burndown Chart</span>
+              </h2>
+              <span class="dev-card-meta">Story Points còn lại theo ngày</span>
+            </div>
+
+            <div class="burndown-container">
+              <svg class="burndown-svg" viewBox="0 0 600 200">
+                <!-- Grid Lines -->
+                <line x1="40" y1="20" x2="580" y2="20" stroke="#262C36" stroke-dasharray="3 3"/>
+                <line x1="40" y1="60" x2="580" y2="60" stroke="#262C36" stroke-dasharray="3 3"/>
+                <line x1="40" y1="100" x2="580" y2="100" stroke="#262C36" stroke-dasharray="3 3"/>
+                <line x1="40" y1="140" x2="580" y2="140" stroke="#262C36" stroke-dasharray="3 3"/>
+                <line x1="40" y1="180" x2="580" y2="180" stroke="#262C36"/>
+
+                <!-- Y Labels -->
+                <text x="30" y="24" font-size="10" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">42 SP</text>
+                <text x="30" y="64" font-size="10" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">30 SP</text>
+                <text x="30" y="104" font-size="10" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">20 SP</text>
+                <text x="30" y="144" font-size="10" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">10 SP</text>
+                <text x="30" y="184" font-size="10" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">0 SP</text>
+
+                <!-- IDEAL BURNDOWN LINE -->
+                <line x1="40" y1="20" x2="580" y2="180" stroke="#6E7681" stroke-width="2" stroke-dasharray="5 5"/>
+
+                <!-- ACTUAL BURNDOWN LINE -->
+                <polyline points="40,20 130,35 265,58 400,107 500,149" fill="none" stroke="#2DD4BF" stroke-width="2.5"/>
+
+                <!-- Data point dots -->
+                <circle cx="40" cy="20" r="4" fill="#2DD4BF"/>
+                <circle cx="130" cy="35" r="4" fill="#2DD4BF"/>
+                <circle cx="265" cy="58" r="4" fill="#2DD4BF"/>
+                <circle cx="400" cy="107" r="4" fill="#2DD4BF"/>
+                <circle cx="500" cy="149" r="5" fill="#2DD4BF" stroke="#161B22" stroke-width="2"/>
+
+                <!-- Current Day Marker Line (Day 12) -->
+                <line x1="500" y1="10" x2="500" y2="180" stroke="#2DD4BF" stroke-width="1" stroke-dasharray="2 2"/>
+                <text x="500" y="196" font-size="10" fill="#2DD4BF" text-anchor="middle" font-family="JetBrains Mono">Hôm nay (D12)</text>
+
+                <!-- X Axis Day Labels -->
+                <text x="40" y="196" font-size="10" fill="#8B949E" text-anchor="middle" font-family="JetBrains Mono">D1</text>
+                <text x="130" y="196" font-size="10" fill="#8B949E" text-anchor="middle" font-family="JetBrains Mono">D3</text>
+                <text x="265" y="196" font-size="10" fill="#8B949E" text-anchor="middle" font-family="JetBrains Mono">D6</text>
+                <text x="400" y="196" font-size="10" fill="#8B949E" text-anchor="middle" font-family="JetBrains Mono">D9</text>
+                <text x="580" y="196" font-size="10" fill="#8B949E" text-anchor="middle" font-family="JetBrains Mono">D14</text>
+              </svg>
+            </div>
+
+            <div class="chart-footer-row">
+              <div class="legend-pair">
+                <div class="legend-chip">
+                  <span class="line-indicator" style="background-color:#2DD4BF;"></span>
+                  <span>Actual Remaining (8 SP)</span>
+                </div>
+                <div class="legend-chip">
+                  <span class="line-indicator" style="border-top:2px dashed #6E7681;"></span>
+                  <span>Ideal Burndown (9 SP)</span>
+                </div>
+              </div>
+              <span>Scope Creep: +3 SP tại Ngày 6</span>
+            </div>
+          </div>
+
+          <!-- VELOCITY CHART -->
+          <div class="dev-card">
+            <div class="dev-card-head">
+              <h2 class="dev-card-title">
+                <svg class="icon" style="color:var(--color-info);" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Team Velocity</span>
+              </h2>
+              <span class="dev-card-meta">3 Sprint gần nhất</span>
+            </div>
+
+            <div class="velocity-container">
+              <svg class="velocity-svg" viewBox="0 0 360 200">
+                <!-- Grid Lines -->
+                <line x1="35" y1="20" x2="340" y2="20" stroke="#262C36" stroke-dasharray="3 3"/>
+                <line x1="35" y1="70" x2="340" y2="70" stroke="#262C36" stroke-dasharray="3 3"/>
+                <line x1="35" y1="120" x2="340" y2="120" stroke="#262C36" stroke-dasharray="3 3"/>
+                <line x1="35" y1="170" x2="340" y2="170" stroke="#262C36"/>
+
+                <text x="25" y="24" font-size="9" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">45</text>
+                <text x="25" y="74" font-size="9" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">30</text>
+                <text x="25" y="124" font-size="9" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">15</text>
+                <text x="25" y="174" font-size="9" fill="#8B949E" text-anchor="end" font-family="JetBrains Mono">0</text>
+
+                <!-- Sprint 1 -->
+                <rect x="65" y="53" width="20" height="117" rx="3" fill="#3A4250"/>
+                <rect x="90" y="63" width="20" height="107" rx="3" fill="#2DD4BF"/>
+                <text x="87" y="188" font-size="10" fill="#8B949E" text-anchor="middle" font-family="JetBrains Mono">Sprint 1</text>
+
+                <!-- Sprint 2 -->
+                <rect x="155" y="37" width="20" height="133" rx="3" fill="#3A4250"/>
+                <rect x="180" y="40" width="20" height="130" rx="3" fill="#2DD4BF"/>
+                <text x="177" y="188" font-size="10" fill="#8B949E" text-anchor="middle" font-family="JetBrains Mono">Sprint 2</text>
+
+                <!-- Sprint 3 -->
+                <rect x="245" y="30" width="20" height="140" rx="3" fill="#3A4250"/>
+                <rect x="270" y="57" width="20" height="113" rx="3" fill="#2DD4BF"/>
+                <text x="267" y="188" font-size="10" fill="#8B949E" text-anchor="middle" font-family="JetBrains Mono">Sprint 3*</text>
+              </svg>
+
+              <div class="chart-footer-row">
+                <div class="legend-pair">
+                  <div class="legend-chip">
+                    <span style="width:10px;height:10px;background:#3A4250;border-radius:2px;display:inline-block;"></span>
+                    <span>Committed</span>
+                  </div>
+                  <div class="legend-chip">
+                    <span style="width:10px;height:10px;background:#2DD4BF;border-radius:2px;display:inline-block;"></span>
+                    <span>Completed</span>
+                  </div>
+                </div>
+                <span>*Sprint 3 đang chạy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOWER SECTION: ESTIMATION ACCURACY & ENGINEERING HEALTH -->
+        <div class="grid-breakdown">
+          <!-- ESTIMATION ACCURACY TABLE -->
+          <div class="dev-card">
+            <div class="dev-card-head">
+              <h2 class="dev-card-title">
+                <svg class="icon" style="color:var(--color-warning);" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Độ Chính Xác Ước Lượng (Estimated vs Actual)</span>
+              </h2>
+              <span class="stat-badge ahead">Độ chính xác: 92.4%</span>
+            </div>
+
+            <table class="dev-table">
+              <thead>
+                <tr>
+                  <th>Loại công việc</th>
+                  <th>Task Count</th>
+                  <th>Ước tính</th>
+                  <th>Thực tế Log</th>
+                  <th>Tỷ lệ sai lệch</th>
+                  <th>Đánh giá</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="type-tag type-feat">FEATURE</span></td>
+                  <td>14 tasks</td>
+                  <td>110.0h</td>
+                  <td>118.0h</td>
+                  <td>+7.2%</td>
+                  <td style="color:#4ADE80;">Chuẩn xác</td>
+                </tr>
+                <tr>
+                  <td><span class="type-tag type-bug">BUG</span></td>
+                  <td>6 tasks</td>
+                  <td>30.0h</td>
+                  <td>38.5h</td>
+                  <td>+28.3%</td>
+                  <td style="color:var(--color-warning);">Under-estimated</td>
+                </tr>
+                <tr>
+                  <td><span class="type-tag type-refactor">REFACTOR</span></td>
+                  <td>3 tasks</td>
+                  <td>20.0h</td>
+                  <td>16.0h</td>
+                  <td>-20.0%</td>
+                  <td style="color:var(--color-info);">Over-estimated</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ENGINEERING HEALTH -->
+          <div class="dev-card">
+            <div class="dev-card-head">
+              <h2 class="dev-card-title">
+                <svg class="icon" style="color:#2DD4BF;" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span>Chỉ Số Vận Hành Kỹ Thuật</span>
+              </h2>
+            </div>
+
+            <div class="health-block">
+              <div class="health-head">
+                <svg class="icon" style="width:14px;height:14px;color:var(--color-primary);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Delivery Metrics</span>
+              </div>
+              <div class="health-row">
+                <span>Cycle Time (In Progress -> Done):</span>
+                <span class="health-val">18.4 giờ</span>
+              </div>
+              <div class="health-row">
+                <span>Lead Time (Created -> Done):</span>
+                <span class="health-val">42.1 giờ</span>
+              </div>
+              <div class="health-row">
+                <span>PR Review Turnaround:</span>
+                <span class="health-val">3.2 giờ</span>
+              </div>
+              <div class="health-row">
+                <span>Bug Discovery Rate:</span>
+                <span class="health-val" style="color:var(--color-success);">2.1 bug / Sprint</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../responsive-sidebar.js"></script>
+</body>
+</html>
