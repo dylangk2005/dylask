@@ -3,7 +3,7 @@ param(
     [string]$Description
 )
 
-$rootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+$rootDir = (Resolve-Path "$PSScriptRoot\..\..\..\..").Path
 $migrationDir = Join-Path $rootDir "dylask-backend\src\main\resources\db\migration"
 
 if (-not (Test-Path $migrationDir)) {

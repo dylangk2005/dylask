@@ -2,7 +2,7 @@ param(
     [string]$FeatureName = ""
 )
 
-$rootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+$rootDir = (Resolve-Path "$PSScriptRoot\..\..\..\..").Path
 $draftDir = Join-Path $rootDir "docs\specs\01.draft"
 $approvedDir = Join-Path $rootDir "docs\specs\02.approved"
 $archiveDir = Join-Path $rootDir "docs\specs\03.archive"
@@ -11,9 +11,9 @@ Write-Host "=== KIỂM TRA TRẠNG THÁI SPEC: $FeatureName ===" -ForegroundColo
 
 if (-not $FeatureName) {
     Write-Host "Danh sách spec trong 02.approved:" -ForegroundColor Green
-    Get-ChildItem -Path $approvedDir -Filter "*.md" | Select-Object Name
+    Get-ChildItem -Path $approvedDir -Filter "*.md" | ForEach-Object { Write-Host "  - $($_.Name)" }
     Write-Host "`nDanh sách spec trong 01.draft:" -ForegroundColor Yellow
-    Get-ChildItem -Path $draftDir -Filter "*.md" | Select-Object Name
+    Get-ChildItem -Path $draftDir -Filter "*.md" | ForEach-Object { Write-Host "  - $($_.Name)" }
     exit 0
 }
 
