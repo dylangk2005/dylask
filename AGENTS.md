@@ -32,6 +32,11 @@ Tài liệu này là quy ước bắt buộc cho các AI Assistant (Antigravity,
 - Luôn trả về phản hồi theo chuẩn `ApiResponse<T>` (quy định tại `docs/specs/api-specs.md`).
 - Xử lý ngoại lệ tập trung qua `GlobalExceptionHandler` (`@RestControllerAdvice`).
 - Mọi thay đổi cấu trúc bảng database phải thông qua **Flyway migration** (`V{timestamp}__{description}.sql` hoặc `V{n}__{description}.sql` trong `src/main/resources/db/migration`). Không sửa file migration đã được áp dụng.
+- **Quy chuẩn Comment mã nguồn:** Tuân thủ bắt buộc `.agents/rules/code-commenting-guidelines.md`:
+  - Javadoc đầy đủ cho mọi method Service, Repository, Controller.
+  - Đánh số thứ tự các bước `// 1.`, `// 2.` trong mọi hàm nghiệp vụ phức tạp.
+  - Giải thích "TẠI SAO" (quyết định kiến trúc, bảo mật SHA-256/Token Rotation, edge cases).
+  - Nghiêm cấm để code chết (commented-out code).
 
 ---
 
@@ -52,6 +57,14 @@ Tài liệu này là quy ước bắt buộc cho các AI Assistant (Antigravity,
 - Nghiêm cấm dùng kiểu `any`, luôn định nghĩa type/interface rõ ràng trong `types/`.
 - Tách logic phức tạp ra khỏi component vào custom hook.
 - Không hardcode API URL, luôn dùng `import.meta.env.VITE_API_BASE_URL`.
+- **Quy chuẩn Comment mã nguồn:** Tuân thủ `.agents/rules/code-commenting-guidelines.md` (TSDoc cho hooks & API clients, đánh số bước cho async logic phức tạp, không để code chết).
+
+### Quy chuẩn Chuyển Động & Tương Tác (UI Motion & Interactions):
+- Tuân thủ quy tắc trong `.agents/rules/ui-motion-and-interactions.md`.
+- **Mọi phần tử bấm được (Buttons, Links, Cards, Inputs, Tabs)** phải có hiệu ứng `hover`, `active`, `focus-visible`.
+- Buttons: Nâng nhẹ (`translateY(-1.5px)`), đổ bóng phản quang, nhún khi click (`scale(0.985)`).
+- Inputs: Focus ring hào quang thương hiệu (`box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12)`).
+- Cards: Hover lift `-4px`, sáng viền nhẹ, chuyển động GPU-accelerated 60fps mượt mà.
 
 ---
 

@@ -9,12 +9,12 @@
 
 ## 🚦 Quy Chuẩn Vận Hành Cho Từng Tính Năng (Execution Protocol)
 
-Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** thực hiện theo chu trình khép kín 7 bước sau:
+Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** thực hiện theo chu trình khép kín 8 bước sau:
 
 ```text
 1. Check Spec (02.approved) ──> 2. Flyway Migration ──> 3. Backend Module ──> 4. Frontend Component
                                                                                      │
-7. Archive Spec (03.archive) <── 6. Git Commit <── 5. Viết Test & Chạy Xác Thực <───┘
+8. Archive Spec (03.archive) <── 7. Git Commit <── 6. Chờ User Review & Duyệt OK <── 5. Viết Test
 ```
 
 1. **Kiểm tra trạng thái Spec:** Xác nhận spec nằm trong [`docs/specs/02.approved/`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/).
@@ -33,11 +33,14 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
      npm run build
      npm run lint
      ```
-6. **Git Commit chuẩn Conventional Commits:**
+6. ⚠️ **Báo cáo & Chờ User Review Duyệt (Bắt buộc):**
+   - AI tổng hợp chi tiết các file đã tạo/sửa, giải thích logic và báo cáo kết quả kiểm thử cho User.
+   - **AI TUYỆT ĐỐI KHÔNG TỰ Ý COMMIT.** Chỉ khi User review xong và gửi phản hồi xác nhận "OK" / duyệt thì mới chuyển sang Bước 7.
+7. **Git Commit chuẩn Conventional Commits:**
    - Cú pháp: `<type>(<scope>): <mô tả ngắn> (<MÃ-SPEC>)`
    - Ví dụ: `feat(auth): implement jwt authentication and refresh token (FEAT-AUTH-01)`
    - Phân loại type: `feat`, `fix`, `test`, `refactor`, `chore`, `docs`.
-7. **Lưu trữ Spec:** Di chuyển file spec từ `docs/specs/02.approved/` sang `docs/specs/03.archive/`.
+8. **Lưu trữ Spec:** Di chuyển file spec từ `docs/specs/02.approved/` sang `docs/specs/03.archive/`.
 
 ---
 
@@ -98,23 +101,27 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
 - **Tài liệu đặc tả:** [`FEAT-AUTH-01-jwt-authentication.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-AUTH-01-jwt-authentication.md)
 - **Giao diện mẫu:** [`docs/layout-html/auth/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/auth/layout.html)
 - **Công việc thực hiện:**
-  - [ ] **Backend:** 
-    - Xây dựng `JwtTokenProvider` (sinh và kiểm tra Access Token 15 phút, Refresh Token 7 ngày).
-    - Tạo `UserEntity`, `RefreshTokenEntity`, `UserRepository`, `RefreshTokenRepository`.
-    - Tạo `AuthService`, `AuthServiceImpl` (register, login, refresh token, logout).
-    - Tạo `AuthController` với các endpoints: `/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/refresh`, `/api/v1/auth/logout`.
-    - Cấu hình `JwtAuthenticationFilter` tích hợp Spring Security.
-  - [ ] **Frontend:**
-    - Tạo types: `src/types/auth.ts` (`User`, `LoginRequest`, `RegisterRequest`, `AuthResponse`).
-    - Viết API: `src/api/authApi.ts`.
-    - Viết Custom hook: `src/hooks/useAuth.ts` (lưu token vào localStorage / sessionStorage, quản lý user session).
-    - Dựng trang `src/pages/auth/LoginPage.tsx` và `RegisterPage.tsx` từ prototype `auth/layout.html`.
-    - Tạo `ProtectedRoute.tsx` bảo vệ các route yêu cầu đăng nhập.
-  - [ ] **Viết Test:**
-    - Backend: `AuthControllerTest` (MockMvc test register thành công/thất bại, login sai pass, refresh token hợp lệ).
-    - Backend: `AuthServiceTest` (Unit test logic mã hóa bcrypt, sinh JWT token).
-    - Frontend: Chạy `npm run build` xác nhận không có lỗi typing/linting.
-  - [ ] **Git Commit:** `feat(auth): implement jwt authentication and refresh token flow (FEAT-AUTH-01)`
+  - [x] **Backend:** 
+    - Xây dựng `TokenService` & `JwtTokenServiceImpl` (Access Token 15 phút, SHA-256 Hashed Refresh Token 7 ngày).
+    - Tạo `User`, `RefreshToken`, `UserRepository`, `RefreshTokenRepository`.
+    - Tạo `AuthService`, `AuthServiceImpl` (register, login, token rotation, reuse detection, logout).
+    - Tạo `RefreshTokenCleanupJob` (@Scheduled cron dọn dẹp token định kỳ 03:00 sáng).
+    - Tạo `AuthController` với các endpoints: `/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/me` (hỗ trợ cả HttpOnly Cookie & Request Body).
+    - Cấu hình `JwtAuthenticationFilter` và `JwtAuthenticationEntryPoint` tích hợp Spring Security.
+  - [x] **Frontend:**
+    - Tạo types: `src/types/auth.ts` (`User`, `LoginRequest`, `RegisterRequest`, `AuthResponse`, `AuthState`).
+    - Viết API: `src/api/auth.api.ts` & cấu hình auto silent refresh qua cookie HttpOnly trong `src/api/client.ts`.
+    - Viết Context & Hook: `src/context/AuthContext.tsx`, `auth-context.ts` và `src/hooks/useAuth.ts`.
+    - Dựng trang `src/pages/auth/AuthPage.tsx` và `auth.css` chuẩn xác từ prototype `docs/layout-html/auth/layout.html`.
+    - Tạo `src/components/auth/ProtectedRoute.tsx` bảo vệ các route riêng tư.
+    - Tích hợp thông tin tài khoản và nút Đăng xuất vào `src/components/layout/Header.tsx`.
+  - [x] **Viết Test:**
+    - Backend: `TokenServiceTest` (Unit test sinh token, parse claims, hash token).
+    - Backend: `AuthServiceTest` (Unit test register, login, token rotation, reuse detection, token expired, logout - 7 tests).
+    - Backend: `RefreshTokenCleanupJobTest` (Unit test cron job dọn dẹp tokens).
+    - Backend: `ApiResponseTest` & `GlobalExceptionHandlerTest` (100% 17/17 tests pass).
+    - Frontend: Chạy `npm run lint` (0 errors) và `npm run build` (build thành công 1.80s).
+  - [ ] **Review từ người dùng & Git Commit:** Chờ người dùng xác nhận trước khi commit.
   - [ ] **Archive Spec:** Di chuyển `FEAT-AUTH-01-jwt-authentication.md` vào `docs/specs/03.archive/`.
 
 #### 1.2. Feature `FEAT-AUTH-02`: Quản Lý Hồ Sơ & Toggle Dual-Mode

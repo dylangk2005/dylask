@@ -1,6 +1,7 @@
 import type { FC } from 'react';
-import { Menu, Terminal, User, Sparkles } from 'lucide-react';
+import { Menu, Terminal, User, Sparkles, LogOut } from 'lucide-react';
 import { useDualMode } from '@/hooks/useDualMode';
+import { useAuth } from '@/hooks/useAuth';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -9,6 +10,7 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
   const { mode, toggleMode } = useDualMode();
+  const { user, logout } = useAuth();
 
   return (
     <header
@@ -94,22 +96,81 @@ export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
           )}
         </button>
 
-        {/* User Avatar Placeholder */}
-        <div
-          style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: 'var(--radius-full)',
-            backgroundColor: 'var(--color-surface-subtle)',
-            border: 'var(--border-width) solid var(--color-border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-text-muted)',
-          }}
-        >
-          <User size={16} />
-        </div>
+        {/* User Info & Logout Button */}
+        {user ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <div
+              title={`${user.fullName} (${user.email})`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-2)',
+                padding: '4px 8px',
+                borderRadius: 'var(--radius)',
+                backgroundColor: 'var(--color-surface-subtle)',
+                border: 'var(--border-width) solid var(--color-border)',
+                fontSize: 'var(--font-size-xs)',
+                fontWeight: 600,
+                color: 'var(--color-text)',
+              }}
+            >
+              <div
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: 'var(--radius-full)',
+                  backgroundColor: 'var(--color-primary-subtle)',
+                  color: 'var(--color-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                }}
+              >
+                {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {user.fullName || user.email}
+              </span>
+            </div>
+
+            <button
+              onClick={() => logout()}
+              title="Đăng xuất khỏi tài khoản"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '32px',
+                height: '32px',
+                borderRadius: 'var(--radius)',
+                border: 'var(--border-width) solid var(--color-border)',
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-muted)',
+                cursor: 'pointer',
+              }}
+            >
+              <LogOut size={15} />
+            </button>
+          </div>
+        ) : (
+          <div
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: 'var(--radius-full)',
+              backgroundColor: 'var(--color-surface-subtle)',
+              border: 'var(--border-width) solid var(--color-border)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--color-text-muted)',
+            }}
+          >
+            <User size={16} />
+          </div>
+        )}
       </div>
     </header>
   );

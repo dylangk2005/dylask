@@ -4,6 +4,48 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080
 
 interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
+  skipAuthRefresh?: boolean;
+}
+
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({}),
+      });
+
+      if (!res.ok) {
+        localStorage.removeItem('access_token');
+        return null;
+      }
+
+      const json = await res.json();
+      if (json.success && json.data?.accessToken) {
+        const newToken: string = json.data.accessToken;
+        localStorage.setItem('access_token', newToken);
+        return newToken;
+      }
+
+      localStorage.removeItem('access_token');
+      return null;
+    } catch {
+      localStorage.removeItem('access_token');
+      return null;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
 }
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
@@ -19,10 +61,25 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(url, {
+  let response = await fetch(url, {
+    credentials: 'include',
     ...options,
     headers,
   });
+
+  // Tự động làm mới access token nếu gặp lỗi 401 Unauthorized (trừ các endpoint xác thực)
+  const isAuthEndpoint = endpoint.includes('/auth/login') || endpoint.includes('/auth/register') || endpoint.includes('/auth/refresh');
+  if (response.status === 401 && !isAuthEndpoint && !options.skipAuthRefresh) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      headers['Authorization'] = `Bearer ${newToken}`;
+      response = await fetch(url, {
+        credentials: 'include',
+        ...options,
+        headers,
+      });
+    }
+  }
 
   let json: ApiResponse<T>;
   try {

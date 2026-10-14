@@ -13,6 +13,9 @@ public enum ErrorCode {
     UNAUTHORIZED("UNAUTHORIZED", "Chưa xác thực hoặc token không hợp lệ", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED("TOKEN_EXPIRED", "Phiên đăng nhập đã hết hạn", HttpStatus.UNAUTHORIZED),
     INVALID_CREDENTIALS("INVALID_CREDENTIALS", "Email hoặc mật khẩu không chính xác", HttpStatus.UNAUTHORIZED),
+    EMAIL_NOT_VERIFIED("EMAIL_NOT_VERIFIED", "Tài khoản chưa được kích hoạt. Vui lòng xác thực email.", HttpStatus.UNAUTHORIZED),
+    INVALID_OTP("INVALID_OTP", "Mã xác thực OTP không chính xác", HttpStatus.BAD_REQUEST),
+    OTP_EXPIRED("OTP_EXPIRED", "Mã xác thực OTP đã hết hạn. Vui lòng yêu cầu gửi lại mã mới.", HttpStatus.BAD_REQUEST),
     
     // 403 Forbidden
     FORBIDDEN("FORBIDDEN", "Bạn không có quyền truy cập tài nguyên này", HttpStatus.FORBIDDEN),
