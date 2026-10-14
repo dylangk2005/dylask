@@ -4,8 +4,10 @@ services:
     container_name: dylask-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root_password}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
       MYSQL_DATABASE: ${DB_NAME:-dylask_db}
+      MYSQL_USER: ${DB_USERNAME:-dylask_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-root_password}
     ports:
       - "${DB_PORT:-3306}:3306"
     volumes:
