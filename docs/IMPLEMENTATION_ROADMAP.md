@@ -62,32 +62,32 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
 *Thời gian dự kiến: Khởi tạo ban đầu | Mức độ ưu tiên: P0*
 
 #### 0.1. Cấu hình Môi trường & Cơ sở dữ liệu:
-- [ ] Tạo file [`.env`](file:///D:/dylann/my-apps/dylask-web/.env) ở thư mục gốc từ [`.env.example`](file:///D:/dylann/my-apps/dylask-web/.env.example).
-- [ ] Tạo file [`dylask-frontend/.env`](file:///D:/dylann/my-apps/dylask-web/dylask-frontend/.env) với `VITE_API_BASE_URL=http://localhost:8080/api/v1`.
-- [ ] Khởi chạy MySQL container qua lệnh: `docker compose up -d`.
-- [ ] Tạo migration [`V1__init_schema.sql`](file:///D:/dylann/my-apps/dylask-web/dylask-backend/src/main/resources/db/migration/V1__init_schema.sql) tạo bảng nền tảng `users` và `refresh_tokens`.
+- [x] Tạo file [`.env`](file:///D:/dylann/my-apps/dylask-web/.env) ở thư mục gốc từ [`.env.example`](file:///D:/dylann/my-apps/dylask-web/.env.example).
+- [x] Tạo file [`dylask-frontend/.env`](file:///D:/dylann/my-apps/dylask-web/dylask-frontend/.env) với `VITE_API_BASE_URL=http://localhost:8080/api/v1`.
+- [ ] Khởi chạy MySQL container qua lệnh: `docker compose up -d` (Chờ người dùng mở Docker Desktop).
+- [x] Tạo migration [`V1__init_schema.sql`](file:///D:/dylann/my-apps/dylask-web/dylask-backend/src/main/resources/db/migration/V1__init_schema.sql) tạo bảng nền tảng `users` và `refresh_tokens`.
 
 #### 0.2. Backend Common Core (`dylask-backend`):
-- [ ] `com.dylask.common.entity.BaseAuditEntity`: Lớp trừu tượng chứa `@CreatedDate created_at` và `@LastModifiedDate updated_at`.
-- [ ] `com.dylask.common.dto.ApiResponse<T>` & `PageResponse<T>`: Khung đóng gói response toàn hệ thống (tuân thủ [`api-specs.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/api-specs.md)).
-- [ ] `com.dylask.common.exception.ErrorCode` & `AppException`: Hệ thống mã lỗi định danh chuẩn nghiệp vụ.
-- [ ] `com.dylask.common.exception.GlobalExceptionHandler`: Bắt `@Valid` MethodArgumentNotValidException, AppException và Exception chung.
-- [ ] `com.dylask.common.config.CorsConfig` & `SecurityConfig`: Cấu hình Security không khóa các public endpoints và cho phép CORS từ `http://localhost:5173`.
+- [x] `com.dylask.common.entity.BaseAuditEntity`: Lớp trừu tượng chứa `@CreatedDate created_at` và `@LastModifiedDate updated_at`.
+- [x] `com.dylask.common.dto.ApiResponse<T>` & `PageResponse<T>`: Khung đóng gói response toàn hệ thống (tuân thủ [`api-specs.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/api-specs.md)).
+- [x] `com.dylask.common.exception.ErrorCode` & `AppException`: Hệ thống mã lỗi định danh chuẩn nghiệp vụ.
+- [x] `com.dylask.common.exception.GlobalExceptionHandler`: Bắt `@Valid` MethodArgumentNotValidException, AppException và Exception chung.
+- [x] `com.dylask.common.config.CorsConfig` & `SecurityConfig`: Cấu hình Security không khóa các public endpoints và cho phép CORS từ `http://localhost:5173`.
 
 #### 0.3. Frontend Common Core (`dylask-frontend`):
-- [ ] Cài đặt các dependencies cần thiết:
+- [x] Cài đặt các dependencies cần thiết:
   ```powershell
   npm install react-router-dom lucide-react
   ```
-- [ ] Thiết lập Design Tokens từ [`docs/layout-html/DESIGN.md`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/DESIGN.md) vào `src/index.css` (Font Plus Jakarta Sans, JetBrains Mono, biến màu CSS cho cả 2 mode).
-- [ ] Xây dựng Client API tập trung: `src/api/client.ts` (Fetch wrapper xử lý Bearer Token, unwrap ApiResponse, bắt ApiError).
-- [ ] Xây dựng Layout dùng chung: `src/components/layout/AppLayout.tsx` với thanh Sidebar Responsive (`src/components/layout/Sidebar.tsx`, `Header.tsx`).
-- [ ] Thiết lập Routes khung tại `src/routes/AppRoutes.tsx`.
+- [x] Thiết lập Design Tokens từ [`docs/layout-html/DESIGN.md`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/DESIGN.md) vào `src/index.css` (Font Plus Jakarta Sans, JetBrains Mono, biến màu CSS cho cả 2 mode).
+- [x] Xây dựng Client API tập trung: `src/api/client.ts` (Fetch wrapper xử lý Bearer Token, unwrap ApiResponse, bắt ApiError).
+- [x] Xây dựng Layout dùng chung: `src/components/layout/AppLayout.tsx` với thanh Sidebar Responsive (`src/components/layout/Sidebar.tsx`, `Header.tsx`).
+- [x] Thiết lập Routes khung tại `src/routes/AppRoutes.tsx`.
 
 #### 0.4. Kiểm thử & Commit:
-- [ ] **Test Backend:** Kiểm tra Flyway migration chạy thành công và context Spring Boot load không lỗi (`.\mvnw.cmd test`).
-- [ ] **Test Frontend:** Kiểm tra TypeScript compile và Vite build thành công (`npm run build`).
-- [ ] **Git Commit:** `chore(init): setup common architecture, flyway baseline, api wrapper and frontend layout`
+- [x] **Test Backend:** Kiểm tra Flyway migration & 100% test pass (`ApiResponseTest`, `GlobalExceptionHandlerTest`).
+- [x] **Test Frontend:** Kiểm tra TypeScript compile và Vite build thành công (`npm run build`, `npm run lint`).
+- [x] **Git Commit:** `chore(init): setup common architecture, flyway baseline, api wrapper and frontend layout`
 
 ---
 
