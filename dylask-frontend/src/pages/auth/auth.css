@@ -53,8 +53,8 @@
   border-right: var(--border-width) solid var(--color-border);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: var(--space-8) var(--space-12);
+  justify-content: flex-start;
+  padding: clamp(20px, 4vh, 40px) clamp(24px, 4.5vw, 48px);
   overflow-y: auto;
   position: relative;
   z-index: 2;
@@ -62,9 +62,10 @@
 
 .auth-form-card {
   width: 100%;
+  margin: auto 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: clamp(14px, 2.2vh, 22px);
   animation: fadeInSlide 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -599,3 +600,109 @@
     display: none;
   }
 }
+
+/* ==========================================================================
+   SOCIAL AUTH (OAUTH2 GOOGLE & GITHUB BUTTONS)
+   ========================================================================== */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: var(--space-2) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.auth-divider span {
+  padding: 0 var(--space-3);
+  letter-spacing: 0.02em;
+}
+
+.social-auth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: 2px;
+}
+
+.btn-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 14px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+  text-decoration: none;
+  user-select: none;
+  will-change: transform, box-shadow;
+}
+
+.btn-social:focus-visible {
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  border-color: var(--color-primary);
+}
+
+/* Nút Google */
+.btn-social-google {
+  color: #1F2937;
+  background-color: #FFFFFF;
+  border-color: #E5E7EB;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.btn-social-google:hover {
+  background-color: #F9FAFB;
+  border-color: #D1D5DB;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.btn-social-google:active {
+  transform: scale(0.985);
+}
+
+/* Nút GitHub */
+.btn-social-github {
+  color: #FFFFFF;
+  background-color: #24292F;
+  border-color: #24292F;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.btn-social-github:hover {
+  background-color: #1B1F23;
+  border-color: #1B1F23;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(36, 41, 47, 0.25);
+}
+
+.btn-social-github:active {
+  transform: scale(0.985);
+}
+
+.social-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+

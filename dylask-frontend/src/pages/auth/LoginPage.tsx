@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/types/api';
 import { Check, Eye, EyeOff, AlertCircle, Loader2, Sparkles, Terminal, ArrowLeft } from 'lucide-react';
+import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import './auth.css';
 
 export const LoginPage: React.FC = () => {
@@ -192,6 +193,9 @@ export const LoginPage: React.FC = () => {
               </button>
             </div>
           </form>
+
+          {/* Đăng nhập nhanh bằng Google & GitHub */}
+          <SocialAuthButtons mode="login" disabled={isSubmitting} />
 
           {/* Chuyển sang trang Đăng ký riêng biệt */}
           <p className="auth-switch-text">

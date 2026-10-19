@@ -7,7 +7,8 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
-    @UniqueConstraint(name = "uk_users_email", columnNames = "email")
+    @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
+    @UniqueConstraint(name = "uq_users_provider", columnNames = {"auth_provider", "provider_id"})
 })
 @Getter
 @Setter
@@ -20,7 +21,13 @@ public class User extends BaseAuditEntity {
     @Column(name = "email", nullable = false, length = 255)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
+    @Column(name = "auth_provider", nullable = false, length = 20)
+    private String authProvider = "local";
+
+    @Column(name = "provider_id", length = 100)
+    private String providerId;
+
+    @Column(name = "password_hash", length = 255)
     private String passwordHash;
 
     @Column(name = "full_name", nullable = false, length = 150)
@@ -53,11 +60,14 @@ public class User extends BaseAuditEntity {
     public User() {
     }
 
-    public User(Long id, String email, String passwordHash, String fullName, String avatarUrl,
-                String defaultMode, Boolean isVerified, Boolean isAiEnabled, Integer aiTrialCount, Integer aiTrialLimit,
+    public User(Long id, String email, String authProvider, String providerId, String passwordHash,
+                String fullName, String avatarUrl, String defaultMode, Boolean isVerified,
+                Boolean isAiEnabled, Integer aiTrialCount, Integer aiTrialLimit,
                 String aiProvider, String aiApiKeyEncrypted) {
         this.id = id;
         this.email = email;
+        this.authProvider = authProvider != null ? authProvider : "local";
+        this.providerId = providerId;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
         this.avatarUrl = avatarUrl;
@@ -77,6 +87,8 @@ public class User extends BaseAuditEntity {
     public static class Builder {
         private Long id;
         private String email;
+        private String authProvider = "local";
+        private String providerId;
         private String passwordHash;
         private String fullName;
         private String avatarUrl;
@@ -90,6 +102,8 @@ public class User extends BaseAuditEntity {
 
         public Builder id(Long id) { this.id = id; return this; }
         public Builder email(String email) { this.email = email; return this; }
+        public Builder authProvider(String authProvider) { this.authProvider = authProvider; return this; }
+        public Builder providerId(String providerId) { this.providerId = providerId; return this; }
         public Builder passwordHash(String passwordHash) { this.passwordHash = passwordHash; return this; }
         public Builder fullName(String fullName) { this.fullName = fullName; return this; }
         public Builder avatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; return this; }
@@ -102,7 +116,7 @@ public class User extends BaseAuditEntity {
         public Builder aiApiKeyEncrypted(String aiApiKeyEncrypted) { this.aiApiKeyEncrypted = aiApiKeyEncrypted; return this; }
 
         public User build() {
-            return new User(id, email, passwordHash, fullName, avatarUrl, defaultMode, isVerified, isAiEnabled, aiTrialCount, aiTrialLimit, aiProvider, aiApiKeyEncrypted);
+            return new User(id, email, authProvider, providerId, passwordHash, fullName, avatarUrl, defaultMode, isVerified, isAiEnabled, aiTrialCount, aiTrialLimit, aiProvider, aiApiKeyEncrypted);
         }
     }
 }

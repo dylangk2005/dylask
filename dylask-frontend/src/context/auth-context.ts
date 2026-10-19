@@ -10,6 +10,7 @@ export interface AuthContextType {
   register: (data: RegisterRequest) => Promise<RegisterResponse>;
   verifyEmail: (data: VerifyEmailRequest) => Promise<void>;
   resendVerification: (email: string) => Promise<void>;
+  handleOAuth2Success: (token: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 

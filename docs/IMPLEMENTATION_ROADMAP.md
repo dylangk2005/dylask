@@ -121,10 +121,20 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
     - Backend: `RefreshTokenCleanupJobTest` (Unit test cron job dọn dẹp tokens).
     - Backend: `ApiResponseTest` & `GlobalExceptionHandlerTest` (100% 17/17 tests pass).
     - Frontend: Chạy `npm run lint` (0 errors) và `npm run build` (build thành công 1.80s).
-  - [ ] **Review từ người dùng & Git Commit:** Chờ người dùng xác nhận trước khi commit.
-  - [ ] **Archive Spec:** Di chuyển `FEAT-AUTH-01-jwt-authentication.md` vào `docs/specs/03.archive/`.
+  - [x] **Review từ người dùng & Git Commit:** Đã commit `feat(auth): complete JWT auth, 2-step email verification with Gmail SMTP, UI motion rules, and code commenting guidelines`.
+  - [x] **Archive Spec:** Đã di chuyển `FEAT-AUTH-01-jwt-authentication.md` vào `docs/specs/03.archive/`.
 
-#### 1.2. Feature `FEAT-AUTH-02`: Quản Lý Hồ Sơ & Toggle Dual-Mode
+#### 1.2. Feature `FEAT-AUTH-03`: Đăng Nhập Mạng Xã Hội Qua Google & GitHub (OAuth2 Social Login)
+- **Tài liệu đặc tả:** [`FEAT-AUTH-03-oauth2-social-login.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/03.archive/FEAT-AUTH-03-oauth2-social-login.md)
+- **Trạng thái:** `03.archive` (Đã hoàn thành lập trình và 100% kiểm thử tự động)
+- **Công việc thực hiện:**
+  - [x] **Review Spec:** Đã duyệt spec và chuyển sang thực thi.
+  - [x] **Database Migration:** Tạo `V3__add_oauth2_providers.sql` (bổ sung `auth_provider`, `provider_id`, cho phép `password_hash` null, đã migrate version 3 lên MySQL thành công).
+  - [x] **Backend:** Tích hợp `spring-boot-starter-oauth2-client`, cấu hình Google & GitHub OAuth2 providers trong `application.yaml`, viết `OAuth2AuthService`, `OAuth2AuthServiceImpl`, `CustomOAuth2UserService`, `OAuth2AuthenticationSuccessHandler`, `OAuth2AuthenticationFailureHandler`, cập nhật `SecurityConfig`.
+  - [x] **Frontend:** Thêm component `SocialAuthButtons` với logo SVG chuẩn và hiệu ứng hover/active motion vào `LoginPage` và `RegisterPage`, tạo trang `/oauth2/callback`, xử lý lưu token vào `AuthContext`.
+  - [x] **Kiểm thử & Archive:** Viết `OAuth2AuthServiceTest` (4 test cases cho cả Google, GitHub, Account Linking), toàn bộ 22/22 unit tests pass 100%, frontend build thành công, di chuyển spec sang `03.archive/`.
+
+#### 1.3. Feature `FEAT-AUTH-02`: Quản Lý Hồ Sơ & Toggle Dual-Mode
 - **Tài liệu đặc tả:** [`FEAT-AUTH-02-dual-mode-toggle.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-AUTH-02-dual-mode-toggle.md)
 - **Giao diện mẫu:** [`docs/layout-html/settings/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/settings/layout.html)
 - **Công việc thực hiện:**

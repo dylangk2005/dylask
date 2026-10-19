@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
+import { OAuth2CallbackPage } from '@/pages/auth/OAuth2CallbackPage';
 import { LandingPage } from '@/pages/landing/LandingPage';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { StandardTasksPlaceholder } from '@/pages/standard/StandardTasksPlaceholder';
@@ -49,6 +50,7 @@ export const AppRoutes = () => {
           {/* Dedicated Login & Register Pages */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/oauth2/callback" element={<OAuth2CallbackPage />} />
 
           {/* Protected Application Workspace */}
           <Route

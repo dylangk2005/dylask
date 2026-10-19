@@ -14,6 +14,7 @@ import {
   Mail,
   RotateCcw,
 } from 'lucide-react';
+import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import './auth.css';
 
 export const RegisterPage: React.FC = () => {
@@ -375,6 +376,9 @@ export const RegisterPage: React.FC = () => {
                   </button>
                 </div>
               </form>
+
+              {/* Đăng ký nhanh bằng Google & GitHub */}
+              <SocialAuthButtons mode="register" disabled={isSubmitting} />
 
               <p className="auth-switch-text">
                 <span>Đã có tài khoản?</span>

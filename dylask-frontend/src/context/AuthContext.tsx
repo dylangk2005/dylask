@@ -79,6 +79,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await authApi.resendVerification(email);
   };
 
+  const handleOAuth2Success = async (token: string) => {
+    localStorage.setItem('access_token', token);
+    setAccessToken(token);
+    try {
+      const currentUser = await authApi.getMe();
+      setUser(currentUser);
+    } catch (err) {
+      console.error('Không thể lấy thông tin người dùng sau khi đăng nhập OAuth2:', err);
+    }
+  };
+
   const logout = async () => {
     try {
       await authApi.logout();
@@ -102,6 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         verifyEmail,
         resendVerification,
+        handleOAuth2Success,
         logout,
       }}
     >
