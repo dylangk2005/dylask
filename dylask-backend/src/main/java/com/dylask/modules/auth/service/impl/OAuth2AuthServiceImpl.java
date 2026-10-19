@@ -8,7 +8,6 @@ import com.dylask.modules.auth.service.TokenService;
 import com.dylask.modules.user.entity.User;
 import com.dylask.modules.user.mapper.UserMapper;
 import com.dylask.modules.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
