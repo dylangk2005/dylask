@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Menu, Terminal, User, Sparkles, LogOut } from 'lucide-react';
+import { Terminal, User, Sparkles, LogOut } from 'lucide-react';
 import { useDualMode } from '@/hooks/useDualMode';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -28,21 +28,18 @@ export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
         <button
+          type="button"
           onClick={onToggleSidebar}
-          aria-label="Toggle navigation sidebar"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '32px',
-            height: '32px',
-            borderRadius: 'var(--radius)',
-            border: 'var(--border-width) solid var(--color-border)',
-            backgroundColor: isSidebarOpen ? 'var(--color-surface-subtle)' : 'transparent',
-            color: 'var(--color-text)',
-          }}
+          className={`sidebar-toggle-btn ${isSidebarOpen ? 'is-open' : ''}`}
+          aria-label={isSidebarOpen ? 'Thu gọn thanh điều hướng' : 'Mở rộng thanh điều hướng'}
+          aria-expanded={isSidebarOpen}
+          title={isSidebarOpen ? 'Thu gọn thanh điều hướng (Sidebar đang mở)' : 'Mở rộng thanh điều hướng (Sidebar đang đóng)'}
         >
-          <Menu size={18} />
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <line x1="4" y1="6" x2="20" y2="6" className="hamburger-line line-top" />
+            <line x1="4" y1="12" x2="20" y2="12" className="hamburger-line line-mid" />
+            <line x1="4" y1="18" x2="20" y2="18" className="hamburger-line line-bot" />
+          </svg>
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
