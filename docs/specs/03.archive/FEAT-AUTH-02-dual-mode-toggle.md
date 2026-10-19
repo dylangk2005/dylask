@@ -3,7 +3,7 @@
 
 - **Mã tính năng:** `FEAT-AUTH-02`
 - **Phân hệ:** User Profile & Dual-Mode UI System
-- **Trạng thái:** `01.draft` (Chờ người dùng review)
+- **Trạng thái:** `03.archive` (Đã hoàn thành lập trình và kiểm thử tự động 31/31 unit tests 100%)
 - **Độ ưu tiên:** `P1 (Critical - Trải nghiệm cốt lõi của Dylask)`
 
 ---

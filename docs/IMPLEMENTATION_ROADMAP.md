@@ -135,21 +135,24 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
   - [x] **Kiểm thử & Archive:** Viết `OAuth2AuthServiceTest` (4 test cases cho cả Google, GitHub, Account Linking), toàn bộ 22/22 unit tests pass 100%, frontend build thành công, di chuyển spec sang `03.archive/`.
 
 #### 1.3. Feature `FEAT-AUTH-02`: Quản Lý Hồ Sơ & Toggle Dual-Mode
-- **Tài liệu đặc tả:** [`FEAT-AUTH-02-dual-mode-toggle.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-AUTH-02-dual-mode-toggle.md)
+- **Tài liệu đặc tả:** [`FEAT-AUTH-02-dual-mode-toggle.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/03.archive/FEAT-AUTH-02-dual-mode-toggle.md)
 - **Giao diện mẫu:** [`docs/layout-html/settings/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/settings/layout.html)
 - **Công việc thực hiện:**
-  - [ ] **Backend:**
-    - Cập nhật `UserController`: `GET /api/v1/users/me`, `PATCH /api/v1/users/me/profile`, `PATCH /api/v1/users/me/mode`.
-    - `UserServiceImpl`: Xử lý cập nhật thông tin cá nhân và chế độ mặc định (`standard` hoặc `developer`).
-  - [ ] **Frontend:**
-    - Tạo `src/hooks/useDualMode.ts` (chuyển đổi class trên thẻ `<body>`, đồng bộ state chế độ và lưu backend).
-    - Dựng `src/pages/settings/SettingsPage.tsx` (Tab Profile, Tab Appearance có nút gạt Dual-Mode Switch).
-    - Gắn component `DualModeToggle` lên Header hoặc Sidebar để chuyển mode nhanh.
-  - [ ] **Viết Test:**
-    - Backend: `UserControllerTest` (Test lấy profile, đổi mode thành công).
-    - Frontend: Test chuyển mode thay đổi CSS variables tương ứng.
-  - [ ] **Git Commit:** `feat(user): add profile management and dual mode toggle (FEAT-AUTH-02)`
-  - [ ] **Archive Spec:** Di chuyển `FEAT-AUTH-02-dual-mode-toggle.md` vào `docs/specs/03.archive/`.
+  - [x] **Backend:**
+    - Cung cấp `UserController`: `GET /api/v1/users/me`, `PATCH /api/v1/users/me/mode`, `PUT /api/v1/users/me/profile`, `PUT /api/v1/users/me/password`.
+    - `UserServiceImpl`: Xử lý lấy hồ sơ, cập nhật họ tên, đổi chế độ mặc định, đổi mật khẩu và thu hồi toàn bộ Refresh Token phiên cũ an toàn.
+    - Sửa lỗi tương thích Java 25 bytecode verification constructor tường minh.
+  - [x] **Frontend:**
+    - Nâng cấp `src/hooks/useDualMode.ts` (Optimistic UI < 16ms, đồng bộ `data-mode` trên thẻ `<html>` và `<body>`, lưu `localStorage`, đồng bộ ngầm backend).
+    - Thêm inline theme script trong `index.html` ngăn chặn triệt để hiện tượng FOUC.
+    - Xây dựng component `ModeSwitcher.tsx` dạng segmented button gắn tại chân Sidebar và Header.
+    - Xây dựng màn hình `src/pages/settings/SettingsPage.tsx` và `settings.css` (3 tabs: Giao diện & Chế độ, Hồ sơ & Bảo mật, Trí tuệ nhân tạo).
+  - [x] **Viết Test & Kiểm thử:**
+    - Backend: `UserServiceTest` với 9 unit tests bao phủ 100% các tình huống (31/31 unit tests backend pass).
+    - Frontend: `npm run lint` (0 errors) và `npm run build` thành công.
+    - Kiểm thử tự động trên trình duyệt thành công 100%.
+  - [x] **Git Commit:** `feat(user): add profile management and dual mode toggle (FEAT-AUTH-02)`
+  - [x] **Archive Spec:** Đã di chuyển `FEAT-AUTH-02-dual-mode-toggle.md` vào `docs/specs/03.archive/`.
 
 ---
 

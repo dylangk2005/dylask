@@ -4,7 +4,18 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>dylask-frontend</title>
+    <title>Dylask - Nền tảng quản lý công việc đa chế độ</title>
+    <!-- Ngăn ngừa hiện tượng nhấp nháy FOUC khi tải trang -->
+    <script>
+      (function() {
+        try {
+          var mode = localStorage.getItem('dylask_app_mode');
+          if (mode === 'developer' || mode === 'standard') {
+            document.documentElement.setAttribute('data-mode', mode);
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

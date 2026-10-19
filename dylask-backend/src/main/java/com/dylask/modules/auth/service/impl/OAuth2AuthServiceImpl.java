@@ -22,7 +22,6 @@ import java.util.Optional;
  * Hỗ trợ liên kết tài khoản tự động (Account Linking) giữa đăng ký thường và mạng xã hội.
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class OAuth2AuthServiceImpl implements OAuth2AuthService {
 
@@ -33,6 +32,17 @@ public class OAuth2AuthServiceImpl implements OAuth2AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenService tokenService;
     private final UserMapper userMapper;
+
+    public OAuth2AuthServiceImpl(
+            UserRepository userRepository,
+            RefreshTokenRepository refreshTokenRepository,
+            TokenService tokenService,
+            UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.tokenService = tokenService;
+        this.userMapper = userMapper;
+    }
 
     /**
      * Đồng bộ người dùng từ OAuth2 Provider (Google hoặc GitHub) vào cơ sở dữ liệu.

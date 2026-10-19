@@ -90,6 +90,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUser = useCallback((updated: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...updated } : null));
+  }, []);
+
   const logout = async () => {
     try {
       await authApi.logout();
@@ -114,6 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         verifyEmail,
         resendVerification,
         handleOAuth2Success,
+        updateUser,
         logout,
       }}
     >

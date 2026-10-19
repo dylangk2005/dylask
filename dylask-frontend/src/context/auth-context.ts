@@ -11,6 +11,7 @@ export interface AuthContextType {
   verifyEmail: (data: VerifyEmailRequest) => Promise<void>;
   resendVerification: (email: string) => Promise<void>;
   handleOAuth2Success: (token: string) => Promise<void>;
+  updateUser: (updated: Partial<User>) => void;
   logout: () => Promise<void>;
 }
 

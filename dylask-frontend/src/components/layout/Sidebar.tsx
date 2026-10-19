@@ -14,6 +14,7 @@ import {
   LineChart,
 } from 'lucide-react';
 import { useDualMode } from '@/hooks/useDualMode';
+import { ModeSwitcher } from '@/components/common/ModeSwitcher';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -100,13 +101,20 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen }) => {
         </nav>
       </div>
 
-      {/* Footer Navigation */}
+      {/* Footer Navigation & Dual-Mode Switcher */}
       <div
         style={{
           padding: 'var(--space-3)',
           borderTop: 'var(--border-width) solid var(--color-border)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
         }}
       >
+        <div style={{ marginBottom: '2px' }}>
+          <ModeSwitcher />
+        </div>
+
         <NavLink
           to="/settings"
           style={({ isActive }) => ({

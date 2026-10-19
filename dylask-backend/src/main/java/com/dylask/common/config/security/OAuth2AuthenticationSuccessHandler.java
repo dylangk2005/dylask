@@ -26,7 +26,6 @@ import java.util.Map;
  * HttpOnly Cookie và chuyển hướng trình duyệt về giao diện Frontend kèm Access Token.
  */
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -37,6 +36,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private String frontendUrl;
 
     private final OAuth2AuthService oAuth2AuthService;
+
+    public OAuth2AuthenticationSuccessHandler(OAuth2AuthService oAuth2AuthService) {
+        super();
+        this.oAuth2AuthService = oAuth2AuthService;
+    }
 
     /**
      * Điểm tiếp nhận sự kiện xác thực OAuth2 thành công.

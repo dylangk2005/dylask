@@ -8,6 +8,7 @@ import { OAuth2CallbackPage } from '@/pages/auth/OAuth2CallbackPage';
 import { LandingPage } from '@/pages/landing/LandingPage';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { StandardTasksPlaceholder } from '@/pages/standard/StandardTasksPlaceholder';
+import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { Loader2 } from 'lucide-react';
 
 const RootIndex = () => {
@@ -70,7 +71,7 @@ export const AppRoutes = () => {
             <Route path="/developer/focus" element={<StandardTasksPlaceholder />} />
             <Route path="/developer/git" element={<StandardTasksPlaceholder />} />
             <Route path="/developer/metrics" element={<StandardTasksPlaceholder />} />
-            <Route path="/settings" element={<StandardTasksPlaceholder />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
 
           {/* Fallback */}
