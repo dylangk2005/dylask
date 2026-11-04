@@ -1,0 +1,154 @@
+/* ==========================================================================
+   TASK LIST PAGE STYLES (STANDARD MODE)
+   Tuân thủ nghiêm ngặt docs/layout-html/DESIGN.md & ui-motion-and-interactions.md
+   ========================================================================== */
+
+.task-list-page {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  animation: fadeInSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stage-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stage-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.4px;
+}
+
+.stage-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Nút chính Tạo công việc mới (UI Motion & Interactions) */
+.create-task-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-family: var(--font-sans);
+  color: #FFFFFF;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.15s ease,
+              background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.create-task-btn:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(15, 118, 110, 0.28);
+}
+
+.create-task-btn:active {
+  transform: translateY(0px) scale(0.985);
+}
+
+/* Category & Filter Navigation Chips */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.category-pills {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.category-pill {
+  padding: 4px 12px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.category-pill:hover {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text);
+  transform: translateY(-1px);
+}
+
+.category-pill.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #FFFFFF;
+}
+
+/* Task Cards Interaction */
+.task-row-card:hover {
+  border-color: var(--color-border-strong) !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.task-checkbox-btn:hover {
+  border-color: var(--color-primary) !important;
+  transform: scale(1.08);
+}
+
+.delete-hover-btn:hover {
+  color: var(--color-danger) !important;
+  opacity: 1 !important;
+  background-color: #FEF2F2;
+}
+
+/* Group Headers */
+.task-group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: var(--space-2);
+}
+
+.task-group-count {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+/* Empty State */
+.tasks-empty-state {
+  text-align: center;
+  padding: var(--space-10) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+}

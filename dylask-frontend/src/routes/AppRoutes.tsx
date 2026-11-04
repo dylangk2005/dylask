@@ -7,6 +7,7 @@ import { RegisterPage } from '@/pages/auth/RegisterPage';
 import { OAuth2CallbackPage } from '@/pages/auth/OAuth2CallbackPage';
 import { LandingPage } from '@/pages/landing/LandingPage';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { TaskListPage } from '@/pages/standard/TaskListPage';
 import { StandardTasksPlaceholder } from '@/pages/standard/StandardTasksPlaceholder';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { Loader2 } from 'lucide-react';
@@ -61,7 +62,7 @@ export const AppRoutes = () => {
               </ProtectedRoute>
             }
           >
-            <Route path="/tasks" element={<StandardTasksPlaceholder />} />
+            <Route path="/tasks" element={<TaskListPage />} />
             <Route path="/my-day" element={<StandardTasksPlaceholder />} />
             <Route path="/calendar" element={<StandardTasksPlaceholder />} />
             <Route path="/planning" element={<StandardTasksPlaceholder />} />

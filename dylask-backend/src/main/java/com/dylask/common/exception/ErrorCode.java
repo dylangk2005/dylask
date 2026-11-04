@@ -24,6 +24,8 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", "Tài nguyên yêu cầu không tồn tại", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND("USER_NOT_FOUND", "Không tìm thấy người dùng", HttpStatus.NOT_FOUND),
     TASK_NOT_FOUND("TASK_NOT_FOUND", "Không tìm thấy công việc", HttpStatus.NOT_FOUND),
+    CHECKLIST_NOT_FOUND("CHECKLIST_NOT_FOUND", "Không tìm thấy mục kiểm tra con", HttpStatus.NOT_FOUND),
+    PROJECT_NOT_FOUND("PROJECT_NOT_FOUND", "Không tìm thấy danh mục hoặc dự án", HttpStatus.NOT_FOUND),
     
     // 409 Conflict
     RESOURCE_ALREADY_EXISTS("RESOURCE_ALREADY_EXISTS", "Dữ liệu đã tồn tại trong hệ thống", HttpStatus.CONFLICT),
