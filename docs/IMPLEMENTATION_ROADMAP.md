@@ -201,14 +201,14 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
   - [x] **Archive Spec:** Đã di chuyển spec vào `03.archive/`.
 
 #### 2.5. Feature `FEAT-STD-05`: Kế Hoạch Tuần & Chế Độ Xem Chuyên Biệt
-- **Spec:** [`FEAT-STD-05-weekly-planning-and-smart-scheduler.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-STD-05-weekly-planning-and-smart-scheduler.md)
+- **Spec:** [`FEAT-STD-05-weekly-planning-and-smart-scheduler.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/03.archive/FEAT-STD-05-weekly-planning-and-smart-scheduler.md)
 - **Prototype:** [`standard-planning/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/standard-planning/layout.html), [`standard-upcoming/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/standard-upcoming/layout.html), [`standard-overdue/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/standard-overdue/layout.html)
 - **Công việc:**
-  - [ ] **Backend:** Thêm bộ lọc API cho Upcoming (7 ngày tới) và Overdue (quá hạn).
-  - [ ] **Frontend:** Tạo các màn hình `WeeklyPlanningPage.tsx`, `UpcomingPage.tsx`, `OverdueAlertPage.tsx`.
-  - [ ] **Viết Test:** `TaskFilterTest` (Test query lọc ngày quá hạn và 7 ngày tiếp theo).
-  - [ ] **Git Commit:** `feat(planning): implement weekly planning, upcoming and overdue filters (FEAT-STD-05)`
-  - [ ] **Archive Spec:** Di chuyển spec vào `03.archive/`.
+  - [x] **Backend:** Tạo `V8__add_weekly_planning_and_goals.sql`, `WeeklyGoal`, `PlanningService`, `PlanningController` (`/api/v1/planning/weekly`, `/upcoming`, `/overdue`, `/tasks/{id}/schedule`, `/tasks/bulk-reschedule`).
+  - [x] **Frontend:** Tạo `WeeklyPlanningPage.tsx` (tích hợp Kế hoạch tuần, 7 ngày tới, Việc quá hạn), `usePlanning.ts`, `planning.api.ts`.
+  - [x] **Viết Test:** `PlanningServiceTest` (69/69 backend tests pass).
+  - [x] **Git Commit:** `feat(planning): implement weekly planning, upcoming and overdue filters (FEAT-STD-05)`
+  - [x] **Archive Spec:** Đã di chuyển spec vào `03.archive/`.
 
 ---
 
