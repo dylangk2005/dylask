@@ -4,7 +4,6 @@ import {
   Flame,
   Clock,
   AlertTriangle,
-  Loader2,
   AlertCircle,
   Sparkles,
 } from 'lucide-react';
@@ -54,19 +53,17 @@ export const PersonalAnalyticsPage: React.FC = () => {
       </div>
 
       {isLoading && !data ? (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 'var(--space-10)',
-            gap: '8px',
-            color: 'var(--color-text-muted)',
-          }}
-        >
-          <Loader2 className="spinner" size={20} color="var(--color-primary)" />
-          <span>Đang tổng hợp dữ liệu năng suất...</span>
-        </div>
+        <>
+          <div className="analytics-kpi-grid">
+            {[1, 2, 3, 4].map((idx) => (
+              <div key={idx} className="skeleton-box" style={{ height: '104px' }} />
+            ))}
+          </div>
+          <div className="analytics-charts-grid">
+            <div className="skeleton-box" style={{ height: '240px' }} />
+            <div className="skeleton-box" style={{ height: '240px' }} />
+          </div>
+        </>
       ) : error ? (
         <div
           style={{

@@ -66,7 +66,7 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen }) => {
               textOverflow: 'ellipsis',
             }}
           >
-            {mode === 'developer' ? 'Developer Workspace' : 'Personal Workspace'}
+            {mode === 'developer' ? 'Developer Workspace' : 'Standard Workspace'}
           </div>
 
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>

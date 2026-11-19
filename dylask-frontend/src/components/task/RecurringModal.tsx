@@ -88,6 +88,7 @@ export const RecurringModal: React.FC<RecurringModalProps> = ({
 
   return (
     <div
+      className="modal-backdrop-anim"
       style={{
         position: 'fixed',
         inset: 0,
@@ -102,6 +103,7 @@ export const RecurringModal: React.FC<RecurringModalProps> = ({
       onClick={onClose}
     >
       <div
+        className="modal-panel-anim"
         style={{
           width: '100%',
           maxWidth: '440px',

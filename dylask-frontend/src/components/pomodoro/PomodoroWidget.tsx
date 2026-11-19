@@ -39,7 +39,12 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({
   onReset,
   onSwitchPhase,
 }) => {
-  const progressPercent = totalSeconds > 0 ? ((totalSeconds - secondsLeft) / totalSeconds) * 100 : 0;
+  const progressRatio = totalSeconds > 0 ? (totalSeconds - secondsLeft) / totalSeconds : 0;
+  const ringSize = 156;
+  const ringStroke = 8;
+  const ringRadius = (ringSize - ringStroke) / 2;
+  const ringCircumference = 2 * Math.PI * ringRadius;
+  const ringOffset = ringCircumference * (1 - progressRatio);
   const filledDots = completedInCycle % 4 === 0 && completedInCycle > 0 && phase === 'longBreak'
     ? 4
     : completedInCycle % 4;
@@ -82,10 +87,48 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({
         </button>
       </div>
 
-      <div className="pomodoro-clock">{formatMMSS(secondsLeft)}</div>
-
-      <div className="pomodoro-progress-bar">
-        <div className="pomodoro-progress-fill" style={{ width: `${progressPercent}%` }} />
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '4px 0' }}>
+        <div style={{ position: 'relative', width: ringSize, height: ringSize }}>
+          <svg width={ringSize} height={ringSize} style={{ transform: 'rotate(-90deg)' }}>
+            <circle
+              cx={ringSize / 2}
+              cy={ringSize / 2}
+              r={ringRadius}
+              fill="transparent"
+              stroke="var(--color-surface-subtle)"
+              strokeWidth={ringStroke}
+            />
+            <circle
+              cx={ringSize / 2}
+              cy={ringSize / 2}
+              r={ringRadius}
+              fill="transparent"
+              stroke="var(--color-primary)"
+              strokeWidth={ringStroke}
+              strokeLinecap="round"
+              strokeDasharray={ringCircumference}
+              strokeDashoffset={ringOffset}
+              style={{ transition: 'stroke-dashoffset 0.5s linear' }}
+            />
+          </svg>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <div className="pomodoro-clock" style={{ fontSize: '34px', padding: 0 }}>
+              {formatMMSS(secondsLeft)}
+            </div>
+            <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
+              {phase === 'work' ? 'Tập trung' : phase === 'shortBreak' ? 'Nghỉ ngắn' : 'Nghỉ dài'}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div>

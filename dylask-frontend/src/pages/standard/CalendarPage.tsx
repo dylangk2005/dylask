@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus, Loader2, AlertCircle } from 'lucide-react';
 import { useCalendar, type CalendarViewMode } from '@/hooks/useCalendar';
+import { useToast } from '@/hooks/useToast';
 import { taskApi } from '@/api/task.api';
 import { MonthGridView } from '@/components/calendar/MonthGridView';
 import { WeekGridView } from '@/components/calendar/WeekGridView';
@@ -39,6 +40,7 @@ export const CalendarPage: React.FC = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [defaultDueDate, setDefaultDueDate] = useState<string>('');
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const { showToast } = useToast();
 
   const headerTitle = useMemo(() => {
     const month = currentDate.getMonth() + 1;
@@ -57,6 +59,7 @@ export const CalendarPage: React.FC = () => {
   const handleCreateTask = async (payload: CreateTaskPayload) => {
     const created = await taskApi.createTask(payload);
     await refresh();
+    showToast(`Đã tạo "${created.title}" trên lịch`, 'success');
     return created;
   };
 
@@ -156,7 +159,10 @@ export const CalendarPage: React.FC = () => {
               onSelectDateToCreate={handleOpenCreateForDate}
               onSelectTask={(id) => setSelectedTaskId(id)}
               onToggleTaskStatus={toggleTaskStatus}
-              onRescheduleTask={rescheduleTask}
+              onRescheduleTask={(taskId, targetDate) => {
+                void rescheduleTask(taskId, targetDate);
+                showToast(`Đã dời lịch sang ${targetDate}`, 'info');
+              }}
             />
           )}
           {viewMode === 'week' && (

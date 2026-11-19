@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { Terminal, User, Sparkles, LogOut } from 'lucide-react';
 import { useDualMode } from '@/hooks/useDualMode';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/useToast';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -11,6 +12,18 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
   const { mode, toggleMode } = useDualMode();
   const { user, logout } = useAuth();
+  const { showToast } = useToast();
+
+  const handleToggleMode = () => {
+    const nextMode = mode === 'standard' ? 'developer' : 'standard';
+    toggleMode();
+    showToast(
+      nextMode === 'developer'
+        ? 'Đã chuyển sang Developer Workspace'
+        : 'Đã chuyển sang Standard Workspace',
+      'info'
+    );
+  };
 
   return (
     <header
@@ -57,7 +70,7 @@ export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
               textTransform: 'uppercase',
             }}
           >
-            {mode === 'developer' ? 'Dev Mode' : 'Standard'}
+            {mode === 'developer' ? 'Developer Workspace' : 'Standard Workspace'}
           </span>
         </div>
       </div>
@@ -65,8 +78,8 @@ export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
         {/* Dual Mode Switch Button */}
         <button
-          onClick={toggleMode}
-          title={`Chuyển sang ${mode === 'standard' ? 'Developer' : 'Standard'} Mode`}
+          onClick={handleToggleMode}
+          title={`Chuyển sang ${mode === 'standard' ? 'Developer Workspace' : 'Standard Workspace'}`}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -83,12 +96,12 @@ export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
           {mode === 'standard' ? (
             <>
               <Terminal size={15} color="var(--color-primary)" />
-              <span>Chuyển Dev Mode</span>
+              <span>To Dev</span>
             </>
           ) : (
             <>
               <Sparkles size={15} color="var(--color-primary)" />
-              <span>Chuyển Standard</span>
+              <span>To Standard</span>
             </>
           )}
         </button>

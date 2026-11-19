@@ -27,7 +27,7 @@ export const StandardTasksPlaceholder = () => {
         <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-base)' }}>
           Bạn đang xem giao diện ở chế độ{' '}
           <strong style={{ color: 'var(--color-primary)' }}>
-            {mode === 'developer' ? 'Developer Mode' : 'Standard Mode'}
+            {mode === 'developer' ? 'Developer Workspace' : 'Standard Workspace'}
           </strong>
           . Bạn có thể nhấn nút chuyển chế độ trên góc phải thanh Header để kiểm tra tính năng Dual-Mode.
         </p>

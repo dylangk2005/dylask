@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useMyDay } from '@/hooks/useMyDay';
 import { usePomodoro } from '@/hooks/usePomodoro';
+import { useToast } from '@/hooks/useToast';
 import { PomodoroWidget } from '@/components/pomodoro/PomodoroWidget';
 import { MyDaySuggestionsDrawer } from '@/components/task/MyDaySuggestionsDrawer';
 import { TaskDetailModal } from '@/components/task/TaskDetailModal';
@@ -37,12 +38,14 @@ export const MyDayPage: React.FC = () => {
   } = useMyDay();
 
   const pomodoro = usePomodoro();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (pomodoro.lastRecordedSession) {
       applyPomodoroResult(pomodoro.lastRecordedSession);
+      showToast('Đã ghi nhận +1 phiên Pomodoro (25 phút)!', 'success');
     }
-  }, [pomodoro.lastRecordedSession, applyPomodoroResult]);
+  }, [pomodoro.lastRecordedSession, applyPomodoroResult, showToast]);
 
   const [quickTitle, setQuickTitle] = useState('');
   const [isAdding, setIsAdding] = useState(false);
@@ -78,6 +81,7 @@ export const MyDayPage: React.FC = () => {
   const handleCompleteActiveFocusTask = async () => {
     if (!activeFocusTask) return;
     await toggleTaskStatus(activeFocusTask.id, activeFocusTask.status);
+    showToast(`Đã hoàn thành "${activeFocusTask.title}"`, 'success');
     const nextTodo = todoTasks.find((t) => t.id !== activeFocusTask.id) ?? null;
     pomodoro.setActiveTask(nextTodo);
   };
@@ -175,9 +179,10 @@ export const MyDayPage: React.FC = () => {
         </form>
 
         {isLoading ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-10)', gap: '8px', color: 'var(--color-text-muted)' }}>
-            <Loader2 className="spinner" size={20} color="var(--color-primary)" />
-            <span>Đang chuẩn bị danh sách hôm nay...</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {[1, 2, 3].map((idx) => (
+              <div key={idx} className="skeleton-box" style={{ height: '58px', width: '100%' }} />
+            ))}
           </div>
         ) : error ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 'var(--space-8)', gap: '10px', color: 'var(--color-danger)' }}>
@@ -298,7 +303,10 @@ export const MyDayPage: React.FC = () => {
 
         <MyDaySuggestionsDrawer
           suggestions={suggestions}
-          onAdd={(id) => void addToMyDay(id)}
+          onAdd={(id) => {
+            void addToMyDay(id);
+            showToast('Đã thêm công việc vào Kế hoạch hôm nay', 'success');
+          }}
         />
       </aside>
 

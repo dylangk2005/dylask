@@ -204,7 +204,7 @@ export const SettingsPage: React.FC = () => {
                 </div>
                 <div className="mode-card-title">
                   <Sparkles size={18} color="var(--color-primary)" />
-                  <span>Standard Mode</span>
+                  <span>Standard Workspace</span>
                 </div>
                 <p className="mode-card-desc">
                   Giao diện tối giản, gam màu nhẹ nhàng, trực quan. Phù hợp cho việc quản lý công việc hàng ngày, thói quen sinh hoạt, lịch trình và chu kỳ Pomodoro.
@@ -217,12 +217,12 @@ export const SettingsPage: React.FC = () => {
                 onClick={() => switchMode('developer')}
               >
                 <div className="mode-card-header">
-                  <span className="mode-card-badge">Kỹ thuật</span>
+                  <span className="mode-card-badge">Agile &amp; Git</span>
                   <div className="mode-radio-circle" />
                 </div>
                 <div className="mode-card-title">
                   <Terminal size={18} color="var(--color-primary)" />
-                  <span>Developer Mode</span>
+                  <span>Developer Workspace</span>
                 </div>
                 <p className="mode-card-desc">
                   Mật độ thông tin cao, phông chữ kỹ thuật JetBrains Mono, bảng Kanban 5 cột chuẩn Agile, tối ưu hóa tích hợp Git và phím tắt điều hướng nhanh.

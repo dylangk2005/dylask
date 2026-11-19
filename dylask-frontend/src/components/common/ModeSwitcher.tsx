@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDualMode } from '@/hooks/useDualMode';
+import { useToast } from '@/hooks/useToast';
 import { Sparkles, Terminal } from 'lucide-react';
 
 interface ModeSwitcherProps {
@@ -12,6 +13,18 @@ interface ModeSwitcherProps {
  */
 export const ModeSwitcher: React.FC<ModeSwitcherProps> = ({ compact = false }) => {
   const { mode, switchMode } = useDualMode();
+  const { showToast } = useToast();
+
+  const handleSwitch = (nextMode: 'standard' | 'developer') => {
+    if (nextMode === mode) return;
+    switchMode(nextMode);
+    showToast(
+      nextMode === 'developer'
+        ? 'Đã chuyển sang Developer Workspace'
+        : 'Đã chuyển sang Standard Workspace',
+      'info'
+    );
+  };
 
   return (
     <div
@@ -30,7 +43,7 @@ export const ModeSwitcher: React.FC<ModeSwitcherProps> = ({ compact = false }) =
       {/* Nút Standard Mode */}
       <button
         type="button"
-        onClick={() => switchMode('standard')}
+        onClick={() => handleSwitch('standard')}
         style={{
           flex: 1,
           display: 'flex',
@@ -48,16 +61,16 @@ export const ModeSwitcher: React.FC<ModeSwitcherProps> = ({ compact = false }) =
           cursor: 'pointer',
           whiteSpace: 'nowrap',
         }}
-        title="Chế độ Cá nhân (Standard Mode): Tối giản, tập trung vào công việc và thói quen"
+        title="Standard Workspace: Tối giản, tập trung vào công việc hàng ngày và thói quen"
       >
         <Sparkles size={14} color={mode === 'standard' ? 'var(--color-primary)' : 'currentColor'} />
-        <span>Cá nhân</span>
+        <span>Standard</span>
       </button>
 
       {/* Nút Developer Mode */}
       <button
         type="button"
-        onClick={() => switchMode('developer')}
+        onClick={() => handleSwitch('developer')}
         style={{
           flex: 1,
           display: 'flex',
@@ -75,7 +88,7 @@ export const ModeSwitcher: React.FC<ModeSwitcherProps> = ({ compact = false }) =
           cursor: 'pointer',
           whiteSpace: 'nowrap',
         }}
-        title="Chế độ Lập trình viên (Developer Mode): Kanban Sprint, mật độ cao, tối ưu Git"
+        title="Developer Workspace: Kanban Sprint, mật độ cao, tối ưu Git"
       >
         <Terminal size={14} color={mode === 'developer' ? 'var(--color-primary)' : 'currentColor'} />
         <span>Developer</span>
