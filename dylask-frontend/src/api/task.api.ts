@@ -5,11 +5,15 @@ import type {
   ChecklistItem,
   CreateChecklistPayload,
   CreateTaskPayload,
+  MyDayResponse,
+  PomodoroSessionResult,
   RecurringConfig,
   SetRecurringPayload,
   TaskDetail,
   TaskFilterParams,
   TaskSummary,
+  ToggleMyDayPayload,
+  ToggleMyDayResponse,
   UpdateChecklistPayload,
   UpdateStatusPayload,
   UpdateTaskPayload,
@@ -125,6 +129,27 @@ export const taskApi = {
    */
   clearRecurring: (taskId: number): Promise<RecurringConfig> => {
     return api.delete<RecurringConfig>(`/tasks/${taskId}/recurring`);
+  },
+
+  /**
+   * Lấy danh sách công việc trọng tâm hôm nay và gợi ý thông minh (My Day).
+   */
+  getMyDay: (): Promise<MyDayResponse> => {
+    return api.get<MyDayResponse>('/tasks/my-day');
+  },
+
+  /**
+   * Thêm hoặc gỡ công việc khỏi Kế hoạch hôm nay (My Day).
+   */
+  toggleMyDay: (taskId: number, payload: ToggleMyDayPayload): Promise<ToggleMyDayResponse> => {
+    return api.patch<ToggleMyDayResponse>(`/tasks/${taskId}/my-day`, payload);
+  },
+
+  /**
+   * Ghi nhận hoàn thành 1 phiên Pomodoro 25 phút cho công việc.
+   */
+  completePomodoro: (taskId: number): Promise<PomodoroSessionResult> => {
+    return api.post<PomodoroSessionResult>(`/tasks/${taskId}/pomodoro/complete`);
   },
 };
 

@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,8 @@ import java.util.List;
     @Index(name = "idx_tasks_user_status", columnList = "user_id, status"),
     @Index(name = "idx_tasks_user_due_date", columnList = "user_id, due_date"),
     @Index(name = "idx_tasks_project_id", columnList = "project_id"),
-    @Index(name = "idx_tasks_recurring", columnList = "user_id, recurring_pattern")
+    @Index(name = "idx_tasks_recurring", columnList = "user_id, recurring_pattern"),
+    @Index(name = "idx_tasks_my_day", columnList = "user_id, my_day_date, is_my_day")
 })
 @Getter
 @Setter
@@ -87,6 +89,15 @@ public class Task extends BaseAuditEntity {
     @Column(name = "reminder_minutes_before")
     private Integer reminderMinutesBefore;
 
+    @Column(name = "my_day_date")
+    private LocalDate myDayDate;
+
+    @Column(name = "pomodoro_sessions_completed", nullable = false)
+    private Integer pomodoroSessionsCompleted = 0;
+
+    @Column(name = "pomodoro_total_minutes", nullable = false)
+    private Integer pomodoroTotalMinutes = 0;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC, id ASC")
     private List<TaskChecklist> checklists = new ArrayList<>();
@@ -99,7 +110,8 @@ public class Task extends BaseAuditEntity {
                 Boolean isMyDay, BigDecimal estimatedHours, BigDecimal actualHours,
                 Integer storyPoints, String gitBranchName,
                 String recurringPattern, Integer recurringInterval, Instant recurringUntil,
-                Long parentTaskId, Integer reminderMinutesBefore) {
+                Long parentTaskId, Integer reminderMinutesBefore,
+                LocalDate myDayDate, Integer pomodoroSessionsCompleted, Integer pomodoroTotalMinutes) {
         this.id = id;
         this.user = user;
         this.project = project;
@@ -119,6 +131,9 @@ public class Task extends BaseAuditEntity {
         this.recurringUntil = recurringUntil;
         this.parentTaskId = parentTaskId;
         this.reminderMinutesBefore = reminderMinutesBefore;
+        this.myDayDate = myDayDate;
+        this.pomodoroSessionsCompleted = pomodoroSessionsCompleted != null ? pomodoroSessionsCompleted : 0;
+        this.pomodoroTotalMinutes = pomodoroTotalMinutes != null ? pomodoroTotalMinutes : 0;
     }
 
     public static Builder builder() {
@@ -145,6 +160,9 @@ public class Task extends BaseAuditEntity {
         private Instant recurringUntil;
         private Long parentTaskId;
         private Integer reminderMinutesBefore;
+        private LocalDate myDayDate;
+        private Integer pomodoroSessionsCompleted = 0;
+        private Integer pomodoroTotalMinutes = 0;
 
         public Builder id(Long id) {
             this.id = id;
@@ -241,10 +259,26 @@ public class Task extends BaseAuditEntity {
             return this;
         }
 
+        public Builder myDayDate(LocalDate myDayDate) {
+            this.myDayDate = myDayDate;
+            return this;
+        }
+
+        public Builder pomodoroSessionsCompleted(Integer pomodoroSessionsCompleted) {
+            this.pomodoroSessionsCompleted = pomodoroSessionsCompleted;
+            return this;
+        }
+
+        public Builder pomodoroTotalMinutes(Integer pomodoroTotalMinutes) {
+            this.pomodoroTotalMinutes = pomodoroTotalMinutes;
+            return this;
+        }
+
         public Task build() {
             return new Task(id, user, project, sprintId, title, description, status, priority, dueDate,
                     isMyDay, estimatedHours, actualHours, storyPoints, gitBranchName,
-                    recurringPattern, recurringInterval, recurringUntil, parentTaskId, reminderMinutesBefore);
+                    recurringPattern, recurringInterval, recurringUntil, parentTaskId, reminderMinutesBefore,
+                    myDayDate, pomodoroSessionsCompleted, pomodoroTotalMinutes);
         }
     }
 }

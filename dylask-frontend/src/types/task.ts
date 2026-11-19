@@ -161,3 +161,62 @@ export interface RecurringConfig {
   reminderMinutesBefore?: number | null;
 }
 
+/**
+ * Công việc trong danh sách Kế hoạch hôm nay (My Day).
+ */
+export interface MyDayTask {
+  id: number;
+  title: string;
+  priority: TaskPriority;
+  status: TaskStatus;
+  pomodoroSessionsCompleted: number;
+  pomodoroTotalMinutes: number;
+  dueDate?: string | null;
+  categoryName?: string | null;
+}
+
+/**
+ * Công việc được gợi ý thông minh để thêm vào My Day.
+ */
+export interface MyDaySuggestion {
+  id: number;
+  title: string;
+  priority: TaskPriority;
+  dueDate?: string | null;
+  reason: string;
+}
+
+/**
+ * Dữ liệu phản hồi tổng hợp cho trang Kế hoạch hôm nay (My Day).
+ */
+export interface MyDayResponse {
+  date: string;
+  tasks: MyDayTask[];
+  suggestions: MyDaySuggestion[];
+}
+
+/**
+ * Payload thêm/gỡ công việc khỏi My Day.
+ */
+export interface ToggleMyDayPayload {
+  isMyDay: boolean;
+}
+
+/**
+ * Kết quả sau khi cập nhật trạng thái My Day.
+ */
+export interface ToggleMyDayResponse {
+  id: number;
+  isMyDay: boolean;
+  myDayDate?: string | null;
+}
+
+/**
+ * Kết quả sau khi hoàn thành 1 phiên Pomodoro 25 phút.
+ */
+export interface PomodoroSessionResult {
+  taskId: number;
+  pomodoroSessionsCompleted: number;
+  pomodoroTotalMinutes: number;
+}
+

@@ -181,14 +181,14 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
   - [x] **Archive Spec:** Đã di chuyển spec vào `03.archive/`.
 
 #### 2.3. Feature `FEAT-STD-03`: Kế Hoạch Hôm Nay (My Day) & Đồng Hồ Pomodoro
-- **Spec:** [`FEAT-STD-03-my-day-and-pomodoro.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-STD-03-my-day-and-pomodoro.md)
+- **Spec:** [`FEAT-STD-03-my-day-and-pomodoro.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/03.archive/FEAT-STD-03-my-day-and-pomodoro.md)
 - **Prototype:** [`docs/layout-html/my-day/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/my-day/layout.html)
 - **Công việc:**
-  - [ ] **Backend:** Bổ sung flag `is_my_day` và bảng `pomodoro_sessions` (lưu số phút tập trung, task liên kết).
-  - [ ] **Frontend:** Tạo `src/pages/standard/MyDayPage.tsx`, component `PomodoroWidget.tsx` (đồng hồ 25/5 phút, âm thanh thông báo kết thúc phiên).
-  - [ ] **Viết Test:** `PomodoroServiceTest` (Ghi nhận phiên tập trung, reset my day mỗi 00:00).
-  - [ ] **Git Commit:** `feat(my-day): add my-day focus list and pomodoro timer (FEAT-STD-03)`
-  - [ ] **Archive Spec:** Di chuyển spec vào `03.archive/`.
+  - [x] **Backend:** Tạo `V6__add_my_day_and_pomodoro_columns.sql`, `TaskMyDayService` (Clean Slate & Smart Suggestions), `TaskPomodoroService`, `TaskMyDayController` & `TaskPomodoroController`.
+  - [x] **Frontend:** Tạo `MyDayPage.tsx`, `PomodoroWidget.tsx`, `PomodoroMiniBar.tsx`, `PomodoroContext`, `MyDaySuggestionsDrawer.tsx`, `usePomodoroTimer` (Web Worker + Web Audio API + Notification).
+  - [x] **Viết Test:** `TaskMyDayServiceTest`, `TaskPomodoroServiceTest` (59/59 backend tests pass).
+  - [x] **Git Commit:** `feat(my-day): add my-day focus list and pomodoro timer (FEAT-STD-03)`
+  - [x] **Archive Spec:** Đã di chuyển spec vào `03.archive/`.
 
 #### 2.4. Feature `FEAT-STD-04`: Thống Kê & Phân Tích Năng Suất Cá Nhân
 - **Spec:** [`FEAT-STD-04-personal-analytics.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-STD-04-personal-analytics.md)

@@ -9,6 +9,7 @@ import { LandingPage } from '@/pages/landing/LandingPage';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { TaskListPage } from '@/pages/standard/TaskListPage';
 import { CalendarPage } from '@/pages/standard/CalendarPage';
+import { MyDayPage } from '@/pages/standard/MyDayPage';
 import { StandardTasksPlaceholder } from '@/pages/standard/StandardTasksPlaceholder';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { Loader2 } from 'lucide-react';
@@ -64,7 +65,7 @@ export const AppRoutes = () => {
             }
           >
             <Route path="/tasks" element={<TaskListPage />} />
-            <Route path="/my-day" element={<StandardTasksPlaceholder />} />
+            <Route path="/my-day" element={<MyDayPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/planning" element={<StandardTasksPlaceholder />} />
             <Route path="/analytics" element={<StandardTasksPlaceholder />} />
