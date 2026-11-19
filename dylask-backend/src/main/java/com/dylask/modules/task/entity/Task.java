@@ -20,7 +20,8 @@ import java.util.List;
 @Table(name = "tasks", indexes = {
     @Index(name = "idx_tasks_user_status", columnList = "user_id, status"),
     @Index(name = "idx_tasks_user_due_date", columnList = "user_id, due_date"),
-    @Index(name = "idx_tasks_project_id", columnList = "project_id")
+    @Index(name = "idx_tasks_project_id", columnList = "project_id"),
+    @Index(name = "idx_tasks_recurring", columnList = "user_id, recurring_pattern")
 })
 @Getter
 @Setter
@@ -71,6 +72,21 @@ public class Task extends BaseAuditEntity {
     @Column(name = "git_branch_name", length = 255)
     private String gitBranchName;
 
+    @Column(name = "recurring_pattern", length = 30)
+    private String recurringPattern;
+
+    @Column(name = "recurring_interval", nullable = false)
+    private Integer recurringInterval = 1;
+
+    @Column(name = "recurring_until")
+    private Instant recurringUntil;
+
+    @Column(name = "parent_task_id")
+    private Long parentTaskId;
+
+    @Column(name = "reminder_minutes_before")
+    private Integer reminderMinutesBefore;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC, id ASC")
     private List<TaskChecklist> checklists = new ArrayList<>();
@@ -81,7 +97,9 @@ public class Task extends BaseAuditEntity {
     public Task(Long id, User user, Project project, Long sprintId, String title,
                 String description, String status, String priority, Instant dueDate,
                 Boolean isMyDay, BigDecimal estimatedHours, BigDecimal actualHours,
-                Integer storyPoints, String gitBranchName) {
+                Integer storyPoints, String gitBranchName,
+                String recurringPattern, Integer recurringInterval, Instant recurringUntil,
+                Long parentTaskId, Integer reminderMinutesBefore) {
         this.id = id;
         this.user = user;
         this.project = project;
@@ -96,6 +114,11 @@ public class Task extends BaseAuditEntity {
         this.actualHours = actualHours;
         this.storyPoints = storyPoints;
         this.gitBranchName = gitBranchName;
+        this.recurringPattern = recurringPattern;
+        this.recurringInterval = recurringInterval != null ? recurringInterval : 1;
+        this.recurringUntil = recurringUntil;
+        this.parentTaskId = parentTaskId;
+        this.reminderMinutesBefore = reminderMinutesBefore;
     }
 
     public static Builder builder() {
@@ -117,6 +140,11 @@ public class Task extends BaseAuditEntity {
         private BigDecimal actualHours;
         private Integer storyPoints;
         private String gitBranchName;
+        private String recurringPattern;
+        private Integer recurringInterval = 1;
+        private Instant recurringUntil;
+        private Long parentTaskId;
+        private Integer reminderMinutesBefore;
 
         public Builder id(Long id) {
             this.id = id;
@@ -188,9 +216,35 @@ public class Task extends BaseAuditEntity {
             return this;
         }
 
+        public Builder recurringPattern(String recurringPattern) {
+            this.recurringPattern = recurringPattern;
+            return this;
+        }
+
+        public Builder recurringInterval(Integer recurringInterval) {
+            this.recurringInterval = recurringInterval;
+            return this;
+        }
+
+        public Builder recurringUntil(Instant recurringUntil) {
+            this.recurringUntil = recurringUntil;
+            return this;
+        }
+
+        public Builder parentTaskId(Long parentTaskId) {
+            this.parentTaskId = parentTaskId;
+            return this;
+        }
+
+        public Builder reminderMinutesBefore(Integer reminderMinutesBefore) {
+            this.reminderMinutesBefore = reminderMinutesBefore;
+            return this;
+        }
+
         public Task build() {
             return new Task(id, user, project, sprintId, title, description, status, priority, dueDate,
-                    isMyDay, estimatedHours, actualHours, storyPoints, gitBranchName);
+                    isMyDay, estimatedHours, actualHours, storyPoints, gitBranchName,
+                    recurringPattern, recurringInterval, recurringUntil, parentTaskId, reminderMinutesBefore);
         }
     }
 }

@@ -16,6 +16,8 @@ public record TaskSummaryDTO(
         String categoryName,
         Integer totalChecklists,
         Integer completedChecklists,
+        Boolean isRecurring,
+        String recurringPattern,
         Instant createdAt,
         Instant updatedAt
 ) {

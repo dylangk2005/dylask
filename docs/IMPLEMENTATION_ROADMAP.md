@@ -160,25 +160,25 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
 *Mục tiêu: Đạt trải nghiệm quản lý công việc cá nhân, lịch trình và theo dõi kỷ luật.*
 
 #### 2.1. Feature `FEAT-STD-01`: CRUD Task Cá Nhân & Subtask Checklists
-- **Spec:** [`FEAT-STD-01-core-task-and-checklists.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-STD-01-core-task-and-checklists.md)
+- **Spec:** [`FEAT-STD-01-core-task-and-checklists.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/03.archive/FEAT-STD-01-core-task-and-checklists.md)
 - **Prototype:** [`docs/layout-html/standard-list/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/standard-list/layout.html) & [`standard-task-modal/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/standard-task-modal/layout.html)
 - **Công việc:**
-  - [ ] **Database:** Tạo migration `V2__create_standard_tasks_and_checklists.sql` (bảng `categories`, `tasks`, `task_checklists`).
-  - [ ] **Backend:** Xây dựng module `com.dylask.modules.task` (Entities, DTOs, TaskService, TaskController: CRUD task, toggle complete, checklist add/check/delete).
-  - [ ] **Frontend:** Tạo `src/pages/standard/StandardTaskListPage.tsx`, `TaskItemRow.tsx`, `TaskModal.tsx`, `ChecklistSection.tsx`.
-  - [ ] **Viết Test:** `TaskControllerTest`, `TaskServiceTest` (Unit/Integration test CRUD, checklist sorting).
-  - [ ] **Git Commit:** `feat(task): implement personal task crud and subtask checklists (FEAT-STD-01)`
-  - [ ] **Archive Spec:** Di chuyển spec vào `03.archive/`.
+  - [x] **Database:** Tạo migration `V4__create_projects_tasks_checklists.sql` (bảng `projects`, `tasks`, `task_checklists`).
+  - [x] **Backend:** Xây dựng module `com.dylask.modules.task` (Entities, DTOs, TaskService, TaskController: CRUD task, toggle complete, checklist add/check/delete).
+  - [x] **Frontend:** Tạo `src/pages/standard/TaskListPage.tsx`, `TaskItemRow.tsx`, `TaskDetailModal.tsx`, `ChecklistSection.tsx`.
+  - [x] **Viết Test:** `TaskServiceTest`, `TaskChecklistServiceTest`.
+  - [x] **Git Commit:** `feat(task): implement personal task crud and subtask checklists (FEAT-STD-01)`
+  - [x] **Archive Spec:** Đã di chuyển spec vào `03.archive/`.
 
 #### 2.2. Feature `FEAT-STD-02`: Lịch Trình (Calendar) & Công Việc Lặp Lại (Recurring)
-- **Spec:** [`FEAT-STD-02-calendar-and-recurring.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-STD-02-calendar-and-recurring.md)
+- **Spec:** [`FEAT-STD-02-calendar-and-recurring.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/03.archive/FEAT-STD-02-calendar-and-recurring.md)
 - **Prototype:** [`docs/layout-html/calendar/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/calendar/layout.html)
 - **Công việc:**
-  - [ ] **Backend:** Bổ sung trường recurring (`daily`, `weekly`, `monthly`), cấu hình `@Scheduled` cron tự sinh task lặp lại hàng ngày.
-  - [ ] **Frontend:** Tạo `src/pages/standard/CalendarPage.tsx` (Lưới Tháng / Tuần / Ngày, hiển thị task badge theo due date).
-  - [ ] **Viết Test:** `RecurringTaskSchedulerTest` (Test tự động sinh task lặp lại).
-  - [ ] **Git Commit:** `feat(calendar): implement calendar view and recurring task scheduler (FEAT-STD-02)`
-  - [ ] **Archive Spec:** Di chuyển spec vào `03.archive/`.
+  - [x] **Backend:** Tạo `V5__add_recurring_columns_to_tasks.sql`, `RecurringTaskService`, `DateTimeRecurrenceUtils`, `TaskCalendarController` và tự động nhân bản task lặp khi hoàn thành.
+  - [x] **Frontend:** Tạo `src/pages/standard/CalendarPage.tsx` (Lưới Tháng / Tuần / Ngày, kéo thả đổi ngày, tạo nhanh theo ngày), `RecurringModal.tsx`.
+  - [x] **Viết Test:** `DateTimeRecurrenceUtilsTest`, `RecurringTaskServiceTest`, `TaskServiceTest` (53/53 unit tests pass).
+  - [x] **Git Commit:** `feat(calendar): implement calendar view and recurring task scheduler (FEAT-STD-02)`
+  - [x] **Archive Spec:** Đã di chuyển spec vào `03.archive/`.
 
 #### 2.3. Feature `FEAT-STD-03`: Kế Hoạch Hôm Nay (My Day) & Đồng Hồ Pomodoro
 - **Spec:** [`FEAT-STD-03-my-day-and-pomodoro.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-STD-03-my-day-and-pomodoro.md)

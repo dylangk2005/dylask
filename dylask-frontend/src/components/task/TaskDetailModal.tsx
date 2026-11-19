@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { X, Calendar, Flag, Tag, Trash2, Check, Loader2 } from 'lucide-react';
+import { X, Calendar, Flag, Tag, Trash2, Check, Loader2, Repeat } from 'lucide-react';
 import type { TaskDetail, TaskPriority, TaskSummary } from '@/types/task';
 import { taskApi } from '@/api/task.api';
 import { ChecklistSection } from './ChecklistSection';
+import { RecurringModal } from './RecurringModal';
 import { STANDARD_CATEGORIES } from '@/hooks/useStandardTasks';
 
 interface TaskDetailModalProps {
@@ -26,6 +27,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   const [detail, setDetail] = useState<TaskDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isRecurringOpen, setIsRecurringOpen] = useState(false);
 
   // Form states
   const [title, setTitle] = useState('');
@@ -426,6 +428,34 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
 
               {/* Ghi chú chi tiết */}
               <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                  <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <Repeat size={13} /> Lặp lại định kỳ
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsRecurringOpen(true)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      padding: '4px 10px',
+                      borderRadius: 'var(--radius-sm)',
+                      border: 'var(--border-width) solid var(--color-border)',
+                      backgroundColor: detail?.recurringPattern ? 'var(--color-primary-subtle)' : 'var(--color-surface)',
+                      color: detail?.recurringPattern ? 'var(--color-primary)' : 'var(--color-text)',
+                      fontSize: 'var(--font-size-xs)',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Repeat size={12} />
+                    {detail?.recurringPattern ? `Đang lặp: ${detail.recurringPattern}` : 'Thiết lập lặp lại'}
+                  </button>
+                </div>
+              </div>
+
+              <div>
                 <label
                   style={{
                     display: 'block',
@@ -548,6 +578,32 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
           </form>
         )}
       </div>
+
+      {detail && (
+        <RecurringModal
+          isOpen={isRecurringOpen}
+          taskId={taskId}
+          initialPattern={detail.recurringPattern}
+          initialInterval={detail.recurringInterval}
+          initialUntil={detail.recurringUntil}
+          initialReminderMinutes={detail.reminderMinutesBefore}
+          onClose={() => setIsRecurringOpen(false)}
+          onSaved={(config) => {
+            setDetail((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    isRecurring: Boolean(config.recurringPattern),
+                    recurringPattern: config.recurringPattern,
+                    recurringInterval: config.recurringInterval,
+                    recurringUntil: config.recurringUntil,
+                    reminderMinutesBefore: config.reminderMinutesBefore,
+                  }
+                : null
+            );
+          }}
+        />
+      )}
     </div>
   );
 };

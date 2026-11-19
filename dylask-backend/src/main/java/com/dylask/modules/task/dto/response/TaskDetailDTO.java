@@ -15,6 +15,11 @@ public record TaskDetailDTO(
         Instant dueDate,
         Boolean isMyDay,
         String categoryName,
+        Boolean isRecurring,
+        String recurringPattern,
+        Integer recurringInterval,
+        Instant recurringUntil,
+        Integer reminderMinutesBefore,
         List<ChecklistItemDTO> checklists,
         Instant createdAt,
         Instant updatedAt

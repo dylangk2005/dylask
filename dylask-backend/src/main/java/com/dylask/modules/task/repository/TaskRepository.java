@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -35,5 +37,15 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
      * @return Số lượng task
      */
     long countByUserIdAndStatus(Long userId, String status);
+
+    /**
+     * Lấy danh sách công việc có hạn hoàn thành nằm trong khoảng thời gian cho Calendar View.
+     *
+     * @param userId    ID người dùng
+     * @param startDate Thời điểm bắt đầu khoảng lịch
+     * @param endDate   Thời điểm kết thúc khoảng lịch
+     * @return Danh sách công việc sắp xếp theo thời gian đến hạn tăng dần
+     */
+    List<Task> findByUserIdAndDueDateBetweenOrderByDueDateAsc(Long userId, Instant startDate, Instant endDate);
 }
 

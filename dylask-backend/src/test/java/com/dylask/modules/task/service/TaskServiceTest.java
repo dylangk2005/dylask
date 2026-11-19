@@ -13,6 +13,7 @@ import com.dylask.modules.task.dto.response.TaskSummaryDTO;
 import com.dylask.modules.task.entity.Task;
 import com.dylask.modules.task.mapper.TaskMapper;
 import com.dylask.modules.task.repository.TaskRepository;
+import com.dylask.modules.task.service.RecurringTaskService;
 import com.dylask.modules.task.service.impl.TaskServiceImpl;
 import com.dylask.modules.user.entity.User;
 import com.dylask.modules.user.repository.UserRepository;
@@ -55,6 +56,9 @@ class TaskServiceTest {
     @Mock
     private TaskMapper taskMapper;
 
+    @Mock
+    private RecurringTaskService recurringTaskService;
+
     private TaskService taskService;
 
     private User sampleUser;
@@ -63,7 +67,7 @@ class TaskServiceTest {
 
     @BeforeEach
     void setUp() {
-        taskService = new TaskServiceImpl(taskRepository, projectRepository, userRepository, taskMapper);
+        taskService = new TaskServiceImpl(taskRepository, projectRepository, userRepository, taskMapper, recurringTaskService);
 
         sampleUser = User.builder()
                 .id(1L)
@@ -114,7 +118,7 @@ class TaskServiceTest {
 
         TaskSummaryDTO expectedDto = new TaskSummaryDTO(
                 102L, "Học từ vựng tiếng Anh", "Ôn 50 từ mới", "high", "todo",
-                request.dueDate(), false, "Cá nhân", 0, 0, Instant.now(), Instant.now()
+                request.dueDate(), false, "Cá nhân", 0, 0, false, null, Instant.now(), Instant.now()
         );
         when(taskMapper.toSummaryDto(any(Task.class))).thenReturn(expectedDto);
 
@@ -173,7 +177,7 @@ class TaskServiceTest {
 
         TaskSummaryDTO summary = new TaskSummaryDTO(
                 101L, "Đóng tiền điện", "Hạn chót ngày 15", "high", "todo",
-                sampleTask.getDueDate(), false, "Cá nhân", 0, 0, Instant.now(), Instant.now()
+                sampleTask.getDueDate(), false, "Cá nhân", 0, 0, false, null, Instant.now(), Instant.now()
         );
         when(taskMapper.toSummaryDto(sampleTask)).thenReturn(summary);
 
@@ -192,8 +196,8 @@ class TaskServiceTest {
 
         TaskDetailDTO detailDto = new TaskDetailDTO(
                 101L, "Đóng tiền điện", "Hạn chót ngày 15", "high", "todo",
-                sampleTask.getDueDate(), false, "Cá nhân", Collections.emptyList(),
-                Instant.now(), Instant.now()
+                sampleTask.getDueDate(), false, "Cá nhân", false, null, 1, null, null,
+                Collections.emptyList(), Instant.now(), Instant.now()
         );
         when(taskMapper.toDetailDto(sampleTask)).thenReturn(detailDto);
 
@@ -222,8 +226,8 @@ class TaskServiceTest {
 
         TaskDetailDTO expectedDetail = new TaskDetailDTO(
                 101L, "Đóng tiền điện", "Hạn chót ngày 15", "high", "todo",
-                sampleTask.getDueDate(), false, "Công việc", Collections.emptyList(),
-                Instant.now(), Instant.now()
+                sampleTask.getDueDate(), false, "Công việc", false, null, 1, null, null,
+                Collections.emptyList(), Instant.now(), Instant.now()
         );
         when(taskMapper.toDetailDto(any(Task.class))).thenReturn(expectedDetail);
 
@@ -259,7 +263,7 @@ class TaskServiceTest {
 
         TaskSummaryDTO doneDto = new TaskSummaryDTO(
                 101L, "Đóng tiền điện", "Hạn chót ngày 15", "high", "done",
-                sampleTask.getDueDate(), false, "Cá nhân", 0, 0, Instant.now(), Instant.now()
+                sampleTask.getDueDate(), false, "Cá nhân", 0, 0, false, null, Instant.now(), Instant.now()
         );
         when(taskMapper.toSummaryDto(any(Task.class))).thenReturn(doneDto);
 
@@ -268,6 +272,7 @@ class TaskServiceTest {
         assertNotNull(result);
         assertEquals("done", result.status());
         assertEquals("done", sampleTask.getStatus());
+        verify(recurringTaskService).generateNextOccurrenceIfRecurring(sampleTask);
     }
 
     @Test

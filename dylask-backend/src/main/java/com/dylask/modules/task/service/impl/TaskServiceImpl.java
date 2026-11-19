@@ -15,6 +15,7 @@ import com.dylask.modules.task.entity.TaskChecklist;
 import com.dylask.modules.task.mapper.TaskMapper;
 import com.dylask.modules.task.repository.TaskRepository;
 import com.dylask.modules.task.repository.TaskSpecifications;
+import com.dylask.modules.task.service.RecurringTaskService;
 import com.dylask.modules.task.service.TaskService;
 import com.dylask.modules.user.entity.User;
 import com.dylask.modules.user.repository.UserRepository;
@@ -41,6 +42,7 @@ public class TaskServiceImpl implements TaskService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final TaskMapper taskMapper;
+    private final RecurringTaskService recurringTaskService;
 
     @Override
     public PageResponse<TaskSummaryDTO> getTasks(
@@ -178,9 +180,16 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findByIdAndUserId(taskId, userId)
                 .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
 
-        // 2. Cập nhật trạng thái
-        task.setStatus(request.status().toLowerCase());
+        // 2. Cập nhật trạng thái và ghi nhận chuyển đổi sang 'done'
+        String previousStatus = task.getStatus();
+        String normalizedStatus = request.status().toLowerCase();
+        task.setStatus(normalizedStatus);
         Task updatedTask = taskRepository.save(task);
+
+        // 3. Nếu vừa hoàn thành task có cấu hình lặp lại -> tự động nhân bản task chu kỳ kế tiếp
+        if ("done".equals(normalizedStatus) && !"done".equalsIgnoreCase(previousStatus)) {
+            recurringTaskService.generateNextOccurrenceIfRecurring(updatedTask);
+        }
 
         return taskMapper.toSummaryDto(updatedTask);
     }

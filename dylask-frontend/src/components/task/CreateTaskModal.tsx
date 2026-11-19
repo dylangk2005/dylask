@@ -8,6 +8,7 @@ interface CreateTaskModalProps {
   onClose: () => void;
   onCreate: (payload: CreateTaskPayload) => Promise<TaskSummary>;
   initialCategory?: string;
+  defaultDueDate?: string;
 }
 
 /**
@@ -20,11 +21,12 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   onClose,
   onCreate,
   initialCategory = 'Cá nhân',
+  defaultDueDate = '',
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<TaskPriority>('medium');
-  const [dueDate, setDueDate] = useState('');
+  const [dueDate, setDueDate] = useState(defaultDueDate);
   const [categoryName, setCategoryName] = useState(() =>
     initialCategory !== 'Tất cả' ? initialCategory : 'Cá nhân'
   );
@@ -37,12 +39,12 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     setTitle('');
     setDescription('');
     setPriority('medium');
-    setDueDate('');
+    setDueDate(defaultDueDate);
     setCategoryName(initialCategory !== 'Tất cả' ? initialCategory : 'Cá nhân');
     setIsCustomCategory(false);
     setSubtasks([]);
     setNewSubtask('');
-  }, [initialCategory]);
+  }, [initialCategory, defaultDueDate]);
 
   const handleClose = useCallback(() => {
     resetForm();

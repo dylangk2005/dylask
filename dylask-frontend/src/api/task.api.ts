@@ -1,9 +1,12 @@
 import { api } from '@/api/client';
 import type { PageResponse } from '@/types/api';
 import type {
+  CalendarTask,
   ChecklistItem,
   CreateChecklistPayload,
   CreateTaskPayload,
+  RecurringConfig,
+  SetRecurringPayload,
   TaskDetail,
   TaskFilterParams,
   TaskSummary,
@@ -100,6 +103,28 @@ export const taskApi = {
    */
   deleteChecklist: (taskId: number, checklistId: number): Promise<void> => {
     return api.delete<void>(`/tasks/${taskId}/checklists/${checklistId}`);
+  },
+
+  /**
+   * Lấy danh sách công việc trong khoảng thời gian cho Calendar View.
+   */
+  getCalendarTasks: (startDate: string, endDate: string): Promise<CalendarTask[]> => {
+    const query = new URLSearchParams({ startDate, endDate });
+    return api.get<CalendarTask[]>(`/tasks/calendar?${query.toString()}`);
+  },
+
+  /**
+   * Cấu hình quy tắc lặp lại định kỳ cho công việc.
+   */
+  setRecurring: (taskId: number, payload: SetRecurringPayload): Promise<RecurringConfig> => {
+    return api.put<RecurringConfig>(`/tasks/${taskId}/recurring`, payload);
+  },
+
+  /**
+   * Hủy bỏ quy tắc lặp lại định kỳ của công việc.
+   */
+  clearRecurring: (taskId: number): Promise<RecurringConfig> => {
+    return api.delete<RecurringConfig>(`/tasks/${taskId}/recurring`);
   },
 };
 

@@ -1,5 +1,6 @@
 package com.dylask.modules.task.mapper;
 
+import com.dylask.modules.task.dto.response.CalendarTaskDTO;
 import com.dylask.modules.task.dto.response.TaskDetailDTO;
 import com.dylask.modules.task.dto.response.TaskSummaryDTO;
 import com.dylask.modules.task.entity.Task;
@@ -17,11 +18,17 @@ public interface TaskMapper {
     @Mapping(target = "categoryName", expression = "java(task.getProject() != null ? task.getProject().getName() : null)")
     @Mapping(target = "totalChecklists", expression = "java(countTotalChecklists(task))")
     @Mapping(target = "completedChecklists", expression = "java(countCompletedChecklists(task))")
+    @Mapping(target = "isRecurring", expression = "java(task.getRecurringPattern() != null && !task.getRecurringPattern().isBlank())")
     TaskSummaryDTO toSummaryDto(Task task);
 
     @Mapping(target = "categoryName", expression = "java(task.getProject() != null ? task.getProject().getName() : null)")
+    @Mapping(target = "isRecurring", expression = "java(task.getRecurringPattern() != null && !task.getRecurringPattern().isBlank())")
     @Mapping(target = "checklists", source = "checklists")
     TaskDetailDTO toDetailDto(Task task);
+
+    @Mapping(target = "categoryName", expression = "java(task.getProject() != null ? task.getProject().getName() : null)")
+    @Mapping(target = "isRecurring", expression = "java(task.getRecurringPattern() != null && !task.getRecurringPattern().isBlank())")
+    CalendarTaskDTO toCalendarDto(Task task);
 
     default Integer countTotalChecklists(Task task) {
         if (task == null || task.getChecklists() == null) {

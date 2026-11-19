@@ -9,6 +9,11 @@ export type TaskPriority = 'low' | 'medium' | 'high';
 export type TaskStatus = 'todo' | 'done';
 
 /**
+ * Chu kỳ lặp lại định kỳ của công việc.
+ */
+export type RecurringPattern = 'DAILY' | 'WEEKDAYS' | 'WEEKLY' | 'MONTHLY';
+
+/**
  * Mục danh sách kiểm tra con (Checklist item / subtask).
  */
 export interface ChecklistItem {
@@ -33,6 +38,8 @@ export interface TaskSummary {
   categoryName?: string | null;
   totalChecklists: number;
   completedChecklists: number;
+  isRecurring?: boolean;
+  recurringPattern?: RecurringPattern | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -49,6 +56,11 @@ export interface TaskDetail {
   dueDate?: string | null;
   isMyDay?: boolean;
   categoryName?: string | null;
+  isRecurring?: boolean;
+  recurringPattern?: RecurringPattern | null;
+  recurringInterval?: number;
+  recurringUntil?: string | null;
+  reminderMinutesBefore?: number | null;
   checklists: ChecklistItem[];
   createdAt: string;
   updatedAt: string;
@@ -112,5 +124,40 @@ export interface TaskFilterParams {
   page?: number;
   size?: number;
   sort?: string;
+}
+
+/**
+ * Thẻ công việc hiển thị trên lưới Lịch trình (Calendar View).
+ */
+export interface CalendarTask {
+  id: number;
+  title: string;
+  dueDate: string;
+  priority: TaskPriority;
+  status: TaskStatus;
+  isRecurring: boolean;
+  recurringPattern?: RecurringPattern | null;
+  categoryName?: string | null;
+}
+
+/**
+ * Payload cấu hình quy tắc lặp lại định kỳ cho công việc.
+ */
+export interface SetRecurringPayload {
+  pattern: RecurringPattern;
+  interval: number;
+  until?: string | null;
+  reminderMinutesBefore?: number | null;
+}
+
+/**
+ * Cấu hình lặp lại định kỳ trả về từ backend.
+ */
+export interface RecurringConfig {
+  id: number;
+  recurringPattern: RecurringPattern | null;
+  recurringInterval: number;
+  recurringUntil?: string | null;
+  reminderMinutesBefore?: number | null;
 }
 
