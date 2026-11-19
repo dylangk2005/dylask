@@ -66,5 +66,13 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
      * @return Danh sách công việc chưa hoàn thành
      */
     List<Task> findByUserIdAndStatusOrderByDueDateAsc(Long userId, String status);
+
+    /**
+     * Lấy toàn bộ công việc của người dùng phục vụ tính toán thống kê & Streak cá nhân.
+     *
+     * @param userId ID người dùng
+     * @return Danh sách công việc thuộc quyền sở hữu của người dùng
+     */
+    List<Task> findByUserId(Long userId);
 }
 

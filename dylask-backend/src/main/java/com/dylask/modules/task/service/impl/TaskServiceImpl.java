@@ -27,6 +27,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+
 /**
  * Hiện thực nghiệp vụ quản lý công việc (TaskServiceImpl).
  */
@@ -180,10 +182,17 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findByIdAndUserId(taskId, userId)
                 .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
 
-        // 2. Cập nhật trạng thái và ghi nhận chuyển đổi sang 'done'
+        // 2. Cập nhật trạng thái và ghi nhận mốc thời gian hoàn thành (completedAt)
         String previousStatus = task.getStatus();
         String normalizedStatus = request.status().toLowerCase();
         task.setStatus(normalizedStatus);
+        if ("done".equals(normalizedStatus)) {
+            if (task.getCompletedAt() == null) {
+                task.setCompletedAt(Instant.now());
+            }
+        } else {
+            task.setCompletedAt(null);
+        }
         Task updatedTask = taskRepository.save(task);
 
         // 3. Nếu vừa hoàn thành task có cấu hình lặp lại -> tự động nhân bản task chu kỳ kế tiếp

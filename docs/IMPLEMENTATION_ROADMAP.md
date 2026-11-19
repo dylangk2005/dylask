@@ -191,14 +191,14 @@ Mỗi tính năng trong bất kỳ giai đoạn nào đều **bắt buộc** th�
   - [x] **Archive Spec:** Đã di chuyển spec vào `03.archive/`.
 
 #### 2.4. Feature `FEAT-STD-04`: Thống Kê & Phân Tích Năng Suất Cá Nhân
-- **Spec:** [`FEAT-STD-04-personal-analytics.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-STD-04-personal-analytics.md)
+- **Spec:** [`FEAT-STD-04-personal-analytics.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/03.archive/FEAT-STD-04-personal-analytics.md)
 - **Prototype:** [`docs/layout-html/standard-analytics/layout.html`](file:///D:/dylann/my-apps/dylask-web/docs/layout-html/standard-analytics/layout.html)
 - **Công việc:**
-  - [ ] **Backend:** Viết các câu truy vấn SQL Aggregation tính chuỗi ngày duy trì (Streak 🔥), tỷ lệ hoàn thành, tổng giờ Pomodoro.
-  - [ ] **Frontend:** Tạo `src/pages/standard/StandardAnalyticsPage.tsx` (Vẽ biểu đồ thuần SVG Donut, Bar Chart).
-  - [ ] **Viết Test:** `AnalyticsServiceTest` (Test thuật toán tính toán Streak liên tiếp).
-  - [ ] **Git Commit:** `feat(analytics): add personal productivity analytics and streak calculation (FEAT-STD-04)`
-  - [ ] **Archive Spec:** Di chuyển spec vào `03.archive/`.
+  - [x] **Backend:** Tạo `V7__add_analytics_columns_and_indexes.sql` (`completed_at`, `pomodoro_logs`), `PersonalAnalyticsService`, `PersonalAnalyticsController` (`/api/v1/analytics/personal/overview`).
+  - [x] **Frontend:** Tạo `PersonalAnalyticsPage.tsx`, `MetricCard.tsx`, `CategoryDonutChart.tsx`, `WeeklyBarChart.tsx`, `usePersonalAnalytics.ts`.
+  - [x] **Viết Test:** `PersonalAnalyticsServiceTest` (64/64 backend tests pass).
+  - [x] **Git Commit:** `feat(analytics): add personal productivity analytics and streak calculation (FEAT-STD-04)`
+  - [x] **Archive Spec:** Đã di chuyển spec vào `03.archive/`.
 
 #### 2.5. Feature `FEAT-STD-05`: Kế Hoạch Tuần & Chế Độ Xem Chuyên Biệt
 - **Spec:** [`FEAT-STD-05-weekly-planning-and-smart-scheduler.md`](file:///D:/dylann/my-apps/dylask-web/docs/specs/02.approved/FEAT-STD-05-weekly-planning-and-smart-scheduler.md)

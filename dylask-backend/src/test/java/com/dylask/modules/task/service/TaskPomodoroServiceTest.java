@@ -5,6 +5,7 @@ import com.dylask.common.exception.ErrorCode;
 import com.dylask.modules.project.entity.Project;
 import com.dylask.modules.task.dto.response.PomodoroSessionResultDTO;
 import com.dylask.modules.task.entity.Task;
+import com.dylask.modules.task.repository.PomodoroLogRepository;
 import com.dylask.modules.task.repository.TaskRepository;
 import com.dylask.modules.task.service.impl.TaskPomodoroServiceImpl;
 import com.dylask.modules.user.entity.User;
@@ -31,11 +32,14 @@ class TaskPomodoroServiceTest {
     @Mock
     private TaskRepository taskRepository;
 
+    @Mock
+    private PomodoroLogRepository pomodoroLogRepository;
+
     private TaskPomodoroService taskPomodoroService;
 
     @BeforeEach
     void setUp() {
-        taskPomodoroService = new TaskPomodoroServiceImpl(taskRepository);
+        taskPomodoroService = new TaskPomodoroServiceImpl(taskRepository, pomodoroLogRepository);
     }
 
     @Test
