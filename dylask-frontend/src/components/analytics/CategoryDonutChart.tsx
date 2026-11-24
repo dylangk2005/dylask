@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { CategoryShare } from '@/types/analytics';
 
 interface CategoryDonutChartProps {
@@ -7,11 +7,14 @@ interface CategoryDonutChartProps {
 
 /**
  * Biểu đồ Donut vẽ bằng SVG thuần (stroke-dasharray) thể hiện tỷ trọng theo danh mục.
+ * Hỗ trợ tương tác hover giữa lát biểu đồ và danh sách chú thích.
  */
 export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({ items }) => {
-  const size = 160;
-  const strokeWidth = 24;
-  const radius = (size - strokeWidth) / 2;
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const size = 164;
+  const strokeWidth = 22;
+  const radius = (size - 28) / 2;
   const circumference = 2 * Math.PI * radius;
 
   const totalTasks = items.reduce((sum, item) => sum + item.taskCount, 0);
@@ -20,7 +23,7 @@ export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({ items })
     return (
       <div className="analytics-panel">
         <div className="analytics-panel-title">Phân bổ theo danh mục</div>
-        <div style={{ padding: 'var(--space-8) 0', textAlign: 'center', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>
+        <div className="analytics-empty-chart">
           Chưa có công việc nào trong khoảng thời gian này.
         </div>
       </div>
@@ -37,37 +40,56 @@ export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({ items })
     return acc;
   }, []);
 
+  const activeItem = hoveredIndex !== null ? items[hoveredIndex] : null;
+
   return (
     <div className="analytics-panel">
-      <div className="analytics-panel-title">Phân bổ theo danh mục</div>
+      <div className="analytics-panel-header">
+        <div className="analytics-panel-title">Phân bổ theo danh mục</div>
+        <span className="analytics-panel-meta">{items.length} danh mục</span>
+      </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-5)', flexWrap: 'wrap', padding: 'var(--space-2) 0' }}>
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-label="Biểu đồ tròn phân bổ danh mục">
+      <div className="analytics-donut-body">
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          aria-label="Biểu đồ tròn phân bổ danh mục"
+          className="analytics-donut-svg"
+        >
           <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
-            {segments.map(({ item, segmentLength, dashOffset }) => (
-              <circle
-                key={`${item.categoryId}-${item.name}`}
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="transparent"
-                stroke={item.color}
-                strokeWidth={strokeWidth}
-                strokeDasharray={`${segmentLength} ${circumference}`}
-                strokeDashoffset={dashOffset}
-              />
-            ))}
+            {segments.map(({ item, segmentLength, dashOffset }, idx) => {
+              const isHovered = hoveredIndex === idx;
+              const isDimmed = hoveredIndex !== null && !isHovered;
+              return (
+                <circle
+                  key={`${item.categoryId}-${item.name}`}
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  fill="transparent"
+                  stroke={item.color}
+                  strokeWidth={isHovered ? strokeWidth + 4 : strokeWidth}
+                  strokeDasharray={`${segmentLength} ${circumference}`}
+                  strokeDashoffset={dashOffset}
+                  opacity={isDimmed ? 0.4 : 1}
+                  style={{ transition: 'stroke-width 0.18s ease, opacity 0.18s ease', cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredIndex(idx)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                />
+              );
+            })}
           </g>
           <text
             x="50%"
-            y="48%"
+            y="47%"
             textAnchor="middle"
             fill="var(--color-text)"
             fontSize="20"
             fontWeight="700"
-            fontFamily="var(--font-family-mono)"
+            fontFamily="var(--font-mono)"
           >
-            {totalTasks}
+            {activeItem ? `${activeItem.percentage}%` : totalTasks}
           </text>
           <text
             x="50%"
@@ -76,35 +98,41 @@ export const CategoryDonutChart: React.FC<CategoryDonutChartProps> = ({ items })
             fill="var(--color-text-muted)"
             fontSize="11"
           >
-            công việc
+            {activeItem ? activeItem.name : 'công việc'}
           </text>
         </svg>
 
-        <div style={{ flex: 1, minWidth: '160px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {items.map((item) => (
-            <div
-              key={`${item.categoryId}-${item.name}-legend`}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 'var(--font-size-sm)' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                <span
-                  style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '2px',
-                    backgroundColor: item.color,
-                    flexShrink: 0,
-                  }}
-                />
-                <span style={{ color: 'var(--color-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {item.name}
-                </span>
+        <div className="analytics-donut-legend">
+          {items.map((item, idx) => {
+            const isHovered = hoveredIndex === idx;
+            return (
+              <div
+                key={`${item.categoryId}-${item.name}-legend`}
+                className={`analytics-donut-legend-row ${isHovered ? 'active' : ''}`}
+                onMouseEnter={() => setHoveredIndex(idx)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                <div className="analytics-donut-legend-top">
+                  <div className="analytics-donut-legend-name-wrap">
+                    <span
+                      className="analytics-donut-swatch"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="analytics-donut-legend-name">{item.name}</span>
+                  </div>
+                  <span className="analytics-donut-legend-count">
+                    {item.taskCount} ({item.percentage}%)
+                  </span>
+                </div>
+                <div className="analytics-donut-track" aria-hidden="true">
+                  <div
+                    className="analytics-donut-fill"
+                    style={{ width: `${item.percentage}%`, backgroundColor: item.color }}
+                  />
+                </div>
               </div>
-              <span style={{ fontFamily: 'var(--font-family-mono)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-                {item.taskCount} ({item.percentage}%)
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,33 +1,33 @@
 import React, { useMemo, useState } from 'react';
-import { Repeat, Plus, CheckCircle2, Circle } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import type { CalendarTask, TaskStatus } from '@/types/task';
+import { CalendarTaskChip } from '@/components/calendar/CalendarTaskChip';
+import { DAY_SHORT_LABELS, toLocalDateKey } from '@/components/calendar/calendarUtils';
 
 interface MonthGridViewProps {
   currentDate: Date;
+  selectedDateKey: string;
   tasks: CalendarTask[];
+  onSelectDate: (dateStr: string) => void;
   onSelectDateToCreate: (dateStr: string) => void;
+  onShowMoreForDate: (dateStr: string) => void;
   onSelectTask: (taskId: number) => void;
   onToggleTaskStatus: (taskId: number, currentStatus: TaskStatus) => void;
   onRescheduleTask: (taskId: number, targetDateStr: string) => void;
 }
 
-const WEEKDAY_LABELS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-
-function toLocalDateKey(date: Date): string {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
-}
-
 /**
  * Lưới Tháng (Month Grid View) hiển thị 7 cột x 6 hàng.
- * Hỗ trợ tối đa 3 thẻ/ô (+N việc nữa), click ô trống tạo task nhanh, và kéo thả đổi ngày.
+ * Hỗ trợ chọn ngày xem Agenda, bấm nút (+) hoặc double-click để tạo task,
+ * bấm "+N việc nữa" để xem đầy đủ việc trong ngày và kéo thả đổi hạn.
  */
 export const MonthGridView: React.FC<MonthGridViewProps> = ({
   currentDate,
+  selectedDateKey,
   tasks,
+  onSelectDate,
   onSelectDateToCreate,
+  onShowMoreForDate,
   onSelectTask,
   onToggleTaskStatus,
   onRescheduleTask,
@@ -66,18 +66,23 @@ export const MonthGridView: React.FC<MonthGridViewProps> = ({
   return (
     <div className="month-grid-container">
       <div className="month-weekdays-header">
-        {WEEKDAY_LABELS.map((label) => (
-          <div key={label} className="month-weekday-cell">
+        {DAY_SHORT_LABELS.map((label, idx) => (
+          <div
+            key={label}
+            className={`month-weekday-cell ${idx >= 5 ? 'is-weekend' : ''}`}
+          >
             {label}
           </div>
         ))}
       </div>
 
       <div className="month-cells-grid">
-        {days.map((day) => {
+        {days.map((day, idx) => {
           const dateKey = toLocalDateKey(day);
           const isOutside = day.getMonth() !== activeMonth;
           const isToday = dateKey === todayKey;
+          const isSelected = dateKey === selectedDateKey;
+          const isWeekend = idx % 7 >= 5;
           const dayTasks = tasksByDate.get(dateKey) ?? [];
           const visibleTasks = dayTasks.slice(0, 3);
           const extraCount = dayTasks.length - visibleTasks.length;
@@ -86,9 +91,12 @@ export const MonthGridView: React.FC<MonthGridViewProps> = ({
             <div
               key={dateKey}
               className={`month-day-cell ${isOutside ? 'is-outside' : ''} ${
-                isToday ? 'is-today' : ''
-              } ${dragOverDateKey === dateKey ? 'is-drag-over' : ''}`}
-              onClick={() => onSelectDateToCreate(dateKey)}
+                isWeekend ? 'is-weekend' : ''
+              } ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''} ${
+                dragOverDateKey === dateKey ? 'is-drag-over' : ''
+              }`}
+              onClick={() => onSelectDate(dateKey)}
+              onDoubleClick={() => onSelectDateToCreate(dateKey)}
               onDragOver={(e) => {
                 e.preventDefault();
                 if (dragOverDateKey !== dateKey) {
@@ -111,58 +119,45 @@ export const MonthGridView: React.FC<MonthGridViewProps> = ({
               }}
             >
               <div className="month-day-header">
-                <span className="month-day-number">{day.getDate()}</span>
-                <span className="month-day-add-hint" title="Thêm công việc ngày này">
+                <div className="month-day-number-wrap">
+                  <span className="month-day-number">{day.getDate()}</span>
+                  {isToday && <span className="month-today-tag">Hôm nay</span>}
+                </div>
+                <button
+                  type="button"
+                  className="month-day-add-btn"
+                  title="Thêm công việc vào ngày này"
+                  aria-label={`Thêm công việc ngày ${dateKey}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectDateToCreate(dateKey);
+                  }}
+                >
                   <Plus size={12} />
-                </span>
+                </button>
               </div>
 
               <div className="month-day-tasks">
                 {visibleTasks.map((task) => (
-                  <div
+                  <CalendarTaskChip
                     key={task.id}
-                    draggable
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData('text/plain', String(task.id));
-                      e.stopPropagation();
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectTask(task.id);
-                    }}
-                    className={`calendar-task-chip priority-${task.priority} ${
-                      task.status === 'done' ? 'is-done' : ''
-                    }`}
-                    title={task.title}
-                  >
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleTaskStatus(task.id, task.status);
-                      }}
-                      style={{
-                        border: 'none',
-                        background: 'transparent',
-                        padding: 0,
-                        display: 'inline-flex',
-                        color: task.status === 'done' ? 'var(--color-success)' : 'var(--color-text-muted)',
-                        cursor: 'pointer',
-                        flexShrink: 0,
-                      }}
-                      aria-label="Đánh dấu hoàn thành"
-                    >
-                      {task.status === 'done' ? <CheckCircle2 size={12} /> : <Circle size={12} />}
-                    </button>
-                    <span className="calendar-task-title">{task.title}</span>
-                    {task.isRecurring && (
-                      <Repeat size={11} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
-                    )}
-                  </div>
+                    task={task}
+                    onSelect={onSelectTask}
+                    onToggleStatus={onToggleTaskStatus}
+                  />
                 ))}
 
                 {extraCount > 0 && (
-                  <div className="calendar-more-badge">+{extraCount} việc nữa</div>
+                  <button
+                    type="button"
+                    className="calendar-more-badge"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onShowMoreForDate(dateKey);
+                    }}
+                  >
+                    +{extraCount} việc nữa
+                  </button>
                 )}
               </div>
             </div>

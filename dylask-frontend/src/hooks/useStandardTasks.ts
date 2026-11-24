@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { taskApi } from '@/api/task.api';
-import type { TaskSummary, CreateTaskPayload, TaskStatus } from '@/types/task';
+import type { TaskSummary, CreateTaskPayload, TaskStatus, TaskPriority } from '@/types/task';
 
 export const STANDARD_CATEGORIES = [
   'Tất cả',
@@ -11,10 +11,38 @@ export const STANDARD_CATEGORIES = [
   'Gia đình',
 ];
 
+export type TaskSortOption = 'newest' | 'priority' | 'dueDate';
+
+const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
+  high: 0,
+  medium: 1,
+  low: 2,
+};
+
+const sortTasksByOption = (items: TaskSummary[], sortBy: TaskSortOption): TaskSummary[] => {
+  if (sortBy === 'newest') return items;
+
+  return [...items].sort((a, b) => {
+    if (sortBy === 'priority') {
+      const diff = PRIORITY_WEIGHT[a.priority] - PRIORITY_WEIGHT[b.priority];
+      if (diff !== 0) return diff;
+    }
+
+    // Ưu tiên công việc có hạn chót sớm hơn đứng trước
+    if (a.dueDate && b.dueDate) {
+      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    }
+    if (a.dueDate) return -1;
+    if (b.dueDate) return 1;
+
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+};
+
 /**
  * Custom Hook quản lý trạng thái danh sách công việc ở chế độ Standard Mode.
  * Hỗ trợ bộ lọc danh mục, bộ lọc ngày (hôm nay, sắp tới, quá hạn), tìm kiếm từ khóa,
- * và cập nhật giao diện lạc quan (Optimistic UI < 16ms) khi đánh dấu hoàn thành.
+ * sắp xếp, ghim vào My Day và cập nhật giao diện lạc quan (Optimistic UI < 16ms).
  */
 export const useStandardTasks = () => {
   const [tasks, setTasks] = useState<TaskSummary[]>([]);
@@ -22,10 +50,11 @@ export const useStandardTasks = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
-  // Bộ lọc
+  // Bộ lọc & sắp xếp
   const [activeCategory, setActiveCategory] = useState<string>('Tất cả');
   const [activeFilter, setActiveFilter] = useState<'all' | 'today' | 'upcoming' | 'overdue'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<TaskSortOption>('newest');
 
   useEffect(() => {
     let isCancelled = false;
@@ -101,6 +130,30 @@ export const useStandardTasks = () => {
   };
 
   /**
+   * Ghim hoặc gỡ công việc khỏi Kế hoạch hôm nay (My Day) trực tiếp từ danh sách.
+   */
+  const toggleMyDay = async (taskId: number) => {
+    const target = tasks.find((t) => t.id === taskId);
+    if (!target) return;
+
+    const nextMyDay = !target.isMyDay;
+
+    // 1. Cập nhật trạng thái My Day lạc quan trên UI
+    setTasks((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, isMyDay: nextMyDay } : t))
+    );
+
+    // 2. Đồng bộ với endpoint PATCH /tasks/{id}/my-day
+    try {
+      await taskApi.toggleMyDay(taskId, { isMyDay: nextMyDay });
+    } catch {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === taskId ? { ...t, isMyDay: target.isMyDay } : t))
+      );
+    }
+  };
+
+  /**
    * Xóa công việc.
    */
   const deleteTask = async (taskId: number) => {
@@ -130,9 +183,15 @@ export const useStandardTasks = () => {
     setRefreshTrigger((prev) => prev + 1);
   }, []);
 
-  // Thống kê phân loại công việc
-  const activeTasks = useMemo(() => tasks.filter((t) => t.status === 'todo'), [tasks]);
-  const completedTasks = useMemo(() => tasks.filter((t) => t.status === 'done'), [tasks]);
+  // Thống kê phân loại và sắp xếp công việc
+  const activeTasks = useMemo(
+    () => sortTasksByOption(tasks.filter((t) => t.status === 'todo'), sortBy),
+    [tasks, sortBy]
+  );
+  const completedTasks = useMemo(
+    () => sortTasksByOption(tasks.filter((t) => t.status === 'done'), sortBy),
+    [tasks, sortBy]
+  );
 
   return {
     tasks,
@@ -146,9 +205,12 @@ export const useStandardTasks = () => {
     setActiveFilter,
     searchQuery,
     setSearchQuery,
+    sortBy,
+    setSortBy,
     categories: STANDARD_CATEGORIES,
     createTask,
     toggleTaskStatus,
+    toggleMyDay,
     deleteTask,
     updateLocalTask,
     refresh: handleRefresh,

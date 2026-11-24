@@ -67,6 +67,54 @@ export function usePlanning() {
     };
   }, []);
 
+  /**
+   * Đổi trạng thái hoàn thành ('todo' <-> 'done') của công việc từ bất kỳ tab nào (Optimistic UI).
+   */
+  const toggleTaskStatus = useCallback(
+    async (taskId: number, currentStatus: 'todo' | 'done') => {
+      const nextStatus = currentStatus === 'done' ? 'todo' : 'done';
+
+      setWeekly((prev) => {
+        if (!prev) return prev;
+        const nextByDay: typeof prev.scheduledByDay = {};
+        for (const [day, items] of Object.entries(prev.scheduledByDay)) {
+          nextByDay[day] = items.map((t) =>
+            t.id === taskId ? { ...t, status: nextStatus } : t
+          );
+        }
+        return {
+          ...prev,
+          unscheduledTasks: prev.unscheduledTasks.map((t) =>
+            t.id === taskId ? { ...t, status: nextStatus } : t
+          ),
+          scheduledByDay: nextByDay,
+        };
+      });
+
+      setUpcoming((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          days: prev.days.map((g) => ({
+            ...g,
+            tasks: g.tasks.map((t) =>
+              t.id === taskId ? { ...t, status: nextStatus } : t
+            ),
+          })),
+        };
+      });
+
+      try {
+        await taskApi.updateStatus(taskId, { status: nextStatus });
+        await loadAll(weekly?.weekNumber, weekly?.year);
+      } catch (err) {
+        console.error('Lỗi cập nhật trạng thái công việc:', err);
+        await loadAll(weekly?.weekNumber, weekly?.year);
+      }
+    },
+    [loadAll, weekly]
+  );
+
   const scheduleTask = useCallback(
     async (taskId: number, targetDate: string) => {
       await planningApi.scheduleTask(taskId, targetDate);
@@ -76,8 +124,8 @@ export function usePlanning() {
   );
 
   const createInboxTask = useCallback(
-    async (title: string) => {
-      await taskApi.createTask({ title, priority: 'medium' });
+    async (title: string, priority: 'low' | 'medium' | 'high' = 'medium') => {
+      await taskApi.createTask({ title, priority });
       await loadAll(weekly?.weekNumber, weekly?.year);
     },
     [loadAll, weekly?.weekNumber, weekly?.year]
@@ -124,6 +172,10 @@ export function usePlanning() {
     [loadAll, weekly?.weekNumber, weekly?.year]
   );
 
+  const goToCurrentWeek = useCallback(async () => {
+    await loadAll();
+  }, [loadAll]);
+
   const shiftWeek = useCallback(
     async (delta: number) => {
       if (!weekly) return;
@@ -150,6 +202,7 @@ export function usePlanning() {
     isLoading,
     error,
     refresh: () => loadAll(weekly?.weekNumber, weekly?.year),
+    toggleTaskStatus,
     scheduleTask,
     createInboxTask,
     createTaskForDate,
@@ -157,6 +210,7 @@ export function usePlanning() {
     toggleGoal,
     deleteGoal,
     bulkReschedule,
+    goToCurrentWeek,
     shiftWeek,
   };
 }

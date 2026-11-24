@@ -160,7 +160,13 @@ code, kbd, samp, pre {
 .page-container {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-6);
+  padding: 0;
+  min-height: 0;
+}
+
+.page-enter-wrapper {
+  min-height: 100%;
+  animation: dylaskPageEnter 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* App Sidebar & Smooth Reveal Transition (UI Motion) */
@@ -170,13 +176,52 @@ code, kbd, samp, pre {
   height: 100%;
   flex-shrink: 0;
   overflow: hidden;
-  background-color: var(--color-surface);
+  background-color: var(--color-surface-subtle);
   border-right: var(--border-width) solid var(--color-border);
   transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
               min-width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s ease;
+              border-color 0.2s ease,
+              background-color 0.25s ease;
   will-change: width;
   z-index: 20;
+}
+
+.sidebar-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.sidebar-nav-link:hover {
+  background-color: var(--color-surface);
+  transform: translateX(2px);
+}
+
+.sidebar-nav-link.is-active {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.sidebar-nav-link.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background-color: var(--color-primary);
 }
 
 .app-sidebar.is-closed {
@@ -292,10 +337,6 @@ html, body, .app-container, .app-sidebar, .page-container {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.page-enter-wrapper {
-  animation: dylaskPageEnter 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes dylaskBackdropFade {

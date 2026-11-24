@@ -33,35 +33,55 @@ export const MyDaySuggestionsDrawer: React.FC<MyDaySuggestionsDrawerProps> = ({
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto' }}>
-          {suggestions.map((item) => (
-            <div key={item.id} className="suggestion-item">
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div
-                  style={{
-                    fontSize: 'var(--font-size-sm)',
-                    fontWeight: 600,
-                    color: 'var(--color-text)',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {item.title}
-                </div>
-                <span className="suggestion-reason">{item.reason}</span>
-              </div>
+          {suggestions.map((item) => {
+            const isOverdue = item.reason.includes('quá hạn');
+            const isToday = item.reason.includes('hôm nay');
+            const badgeColor = isOverdue
+              ? 'var(--color-danger)'
+              : isToday
+              ? 'var(--color-primary)'
+              : 'var(--color-warning)';
 
-              <button
-                type="button"
-                className="myday-icon-btn"
-                onClick={() => onAdd(item.id)}
-                title="Thêm vào Kế hoạch hôm nay"
-              >
-                <Plus size={13} />
-                <span>Thêm</span>
-              </button>
-            </div>
-          ))}
+            return (
+              <div key={item.id} className="suggestion-item">
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: 'var(--font-size-sm)',
+                      fontWeight: 600,
+                      color: 'var(--color-text)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {item.title}
+                  </div>
+                  <span
+                    className="suggestion-reason"
+                    style={{
+                      color: badgeColor,
+                      backgroundColor: 'var(--color-surface-subtle)',
+                      padding: '1px 7px',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    {item.reason}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  className="myday-icon-btn"
+                  onClick={() => onAdd(item.id)}
+                  title="Thêm vào Kế hoạch hôm nay"
+                >
+                  <Plus size={13} />
+                  <span>Thêm</span>
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
     </section>

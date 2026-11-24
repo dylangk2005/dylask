@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { Link } from 'react-router-dom';
 import { Terminal, User, Sparkles, LogOut } from 'lucide-react';
 import { useDualMode } from '@/hooks/useDualMode';
 import { useAuth } from '@/hooks/useAuth';
@@ -109,19 +110,22 @@ export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
         {/* User Info & Logout Button */}
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-            <div
-              title={`${user.fullName} (${user.email})`}
+            <Link
+              to="/settings"
+              title={`${user.fullName} (${user.email}) · Mở cài đặt`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 'var(--space-2)',
-                padding: '4px 8px',
+                padding: '4px 10px 4px 6px',
                 borderRadius: 'var(--radius)',
                 backgroundColor: 'var(--color-surface-subtle)',
                 border: 'var(--border-width) solid var(--color-border)',
                 fontSize: 'var(--font-size-xs)',
                 fontWeight: 600,
                 color: 'var(--color-text)',
+                textDecoration: 'none',
+                transition: 'border-color 0.15s ease, transform 0.15s ease',
               }}
             >
               <div
@@ -143,7 +147,7 @@ export const Header: FC<HeaderProps> = ({ onToggleSidebar, isSidebarOpen }) => {
               <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {user.fullName || user.email}
               </span>
-            </div>
+            </Link>
 
             <button
               onClick={() => logout()}

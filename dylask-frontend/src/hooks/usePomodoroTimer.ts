@@ -59,12 +59,18 @@ export function usePomodoroTimer(onSessionRecorded?: (result: PomodoroSessionRes
   const [secondsLeft, setSecondsLeft] = useState<number>(PHASE_DURATION_SECONDS.work);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [completedInCycle, setCompletedInCycle] = useState<number>(0);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
 
   const workerRef = useRef<Worker | null>(null);
   const phaseRef = useRef<PomodoroPhase>(phase);
   const activeTaskRef = useRef<MyDayTask | null>(activeTask);
   const completedInCycleRef = useRef<number>(completedInCycle);
+  const soundEnabledRef = useRef<boolean>(soundEnabled);
   const onSessionRecordedRef = useRef(onSessionRecorded);
+
+  useEffect(() => {
+    soundEnabledRef.current = soundEnabled;
+  }, [soundEnabled]);
 
   useEffect(() => {
     phaseRef.current = phase;
@@ -84,7 +90,9 @@ export function usePomodoroTimer(onSessionRecorded?: (result: PomodoroSessionRes
 
   const handlePhaseComplete = useCallback(async () => {
     setIsRunning(false);
-    playGentleChime();
+    if (soundEnabledRef.current) {
+      playGentleChime();
+    }
 
     const currentPhase = phaseRef.current;
     const task = activeTaskRef.current;
@@ -191,6 +199,10 @@ export function usePomodoroTimer(onSessionRecorded?: (result: PomodoroSessionRes
     setSecondsLeft(PHASE_DURATION_SECONDS[nextPhase]);
   }, []);
 
+  const toggleSound = useCallback(() => {
+    setSoundEnabled((prev) => !prev);
+  }, []);
+
   return {
     activeTask,
     setActiveTask,
@@ -199,6 +211,8 @@ export function usePomodoroTimer(onSessionRecorded?: (result: PomodoroSessionRes
     totalSeconds: PHASE_DURATION_SECONDS[phase],
     isRunning,
     completedInCycle,
+    soundEnabled,
+    toggleSound,
     startForTask,
     toggleRun,
     resetTimer,

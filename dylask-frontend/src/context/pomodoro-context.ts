@@ -10,7 +10,9 @@ export interface PomodoroContextValue {
   totalSeconds: number;
   isRunning: boolean;
   completedInCycle: number;
+  soundEnabled: boolean;
   lastRecordedSession: PomodoroSessionResult | null;
+  toggleSound: () => void;
   startForTask: (task: MyDayTask) => void;
   toggleRun: () => void;
   resetTimer: () => void;

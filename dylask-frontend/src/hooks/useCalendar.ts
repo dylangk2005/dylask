@@ -133,21 +133,40 @@ export function useCalendar() {
   );
 
   /**
-   * Kéo thả công việc sang ngày mới trên lưới lịch để cập nhật dueDate.
+   * Kéo thả công việc sang ngày/giờ mới trên lưới lịch để cập nhật dueDate (Optimistic UI).
    */
   const rescheduleTask = useCallback(
-    async (taskId: number, targetDateStr: string) => {
+    async (taskId: number, targetDateStr: string, targetHour?: number): Promise<boolean> => {
+      const targetTask = tasks.find((t) => t.id === taskId);
+      const [yyyy, mm, dd] = targetDateStr.split('-').map(Number);
+      const currentDue = targetTask?.dueDate ? new Date(targetTask.dueDate) : new Date();
+      const optimisticDate = new Date(
+        yyyy,
+        mm - 1,
+        dd,
+        targetHour !== undefined ? targetHour : currentDue.getHours(),
+        targetHour !== undefined ? 0 : currentDue.getMinutes(),
+        0,
+        0
+      );
+
+      // 1. Cập nhật vị trí trên lưới ngay lập tức để thao tác kéo thả mượt mà
+      const previousTasks = tasks;
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === taskId ? { ...t, dueDate: optimisticDate.toISOString() } : t
+        )
+      );
+
       try {
         const detail = await taskApi.getTaskById(taskId);
-        // Giữ nguyên giờ/phút cũ nếu có, chỉ đổi ngày/tháng/năm sang ngày đích
-        const [yyyy, mm, dd] = targetDateStr.split('-').map(Number);
         const oldDate = detail.dueDate ? new Date(detail.dueDate) : new Date();
         const updatedDate = new Date(
           yyyy,
           mm - 1,
           dd,
-          oldDate.getHours(),
-          oldDate.getMinutes(),
+          targetHour !== undefined ? targetHour : oldDate.getHours(),
+          targetHour !== undefined ? 0 : oldDate.getMinutes(),
           0,
           0
         );
@@ -160,11 +179,14 @@ export function useCalendar() {
           dueDate: updatedDate.toISOString(),
         });
         await fetchCalendarTasks();
+        return true;
       } catch (err) {
         console.error('Không thể dời ngày công việc:', err);
+        setTasks(previousTasks);
+        return false;
       }
     },
-    [fetchCalendarTasks]
+    [fetchCalendarTasks, tasks]
   );
 
   return {

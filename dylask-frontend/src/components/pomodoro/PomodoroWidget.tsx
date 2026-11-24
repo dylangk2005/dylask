@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, RotateCcw, Timer } from 'lucide-react';
+import { Play, Pause, RotateCcw, Timer, Volume2, VolumeX } from 'lucide-react';
 import type { MyDayTask } from '@/types/task';
 import type { PomodoroPhase } from '@/hooks/usePomodoroTimer';
 
@@ -12,6 +12,8 @@ interface PomodoroWidgetProps {
   totalSeconds: number;
   isRunning: boolean;
   completedInCycle: number;
+  soundEnabled: boolean;
+  onToggleSound: () => void;
   onToggleRun: () => void;
   onReset: () => void;
   onSwitchPhase: (phase: PomodoroPhase) => void;
@@ -35,16 +37,24 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({
   totalSeconds,
   isRunning,
   completedInCycle,
+  soundEnabled,
+  onToggleSound,
   onToggleRun,
   onReset,
   onSwitchPhase,
 }) => {
   const progressRatio = totalSeconds > 0 ? (totalSeconds - secondsLeft) / totalSeconds : 0;
-  const ringSize = 156;
-  const ringStroke = 8;
+  const ringSize = 132;
+  const ringStroke = 7;
   const ringRadius = (ringSize - ringStroke) / 2;
   const ringCircumference = 2 * Math.PI * ringRadius;
   const ringOffset = ringCircumference * (1 - progressRatio);
+  const ringColor =
+    phase === 'work'
+      ? 'var(--color-primary)'
+      : phase === 'shortBreak'
+      ? 'var(--color-info)'
+      : '#8B5CF6';
   const filledDots = completedInCycle % 4 === 0 && completedInCycle > 0 && phase === 'longBreak'
     ? 4
     : completedInCycle % 4;
@@ -53,13 +63,30 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({
     <section className="pomodoro-card" aria-label="Đồng hồ Pomodoro">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: 'var(--font-size-sm)' }}>
-          <Timer size={16} color="var(--color-primary)" />
+          <Timer size={16} color={ringColor} />
           <span>Pomodoro Focus</span>
         </div>
-        <div className="pomodoro-cycle-dots" title={`Đã xong ${completedInCycle} phiên`}>
-          {[0, 1, 2, 3].map((idx) => (
-            <span key={idx} className={`pomodoro-dot ${idx < filledDots ? 'filled' : ''}`} />
-          ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            type="button"
+            onClick={onToggleSound}
+            title={soundEnabled ? 'Đang bật chuông báo' : 'Đang tắt chuông báo'}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              color: soundEnabled ? 'var(--color-primary)' : 'var(--color-text-muted)',
+              display: 'inline-flex',
+              cursor: 'pointer',
+              padding: '2px',
+            }}
+          >
+            {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+          </button>
+          <div className="pomodoro-cycle-dots" title={`Đã xong ${completedInCycle} phiên`}>
+            {[0, 1, 2, 3].map((idx) => (
+              <span key={idx} className={`pomodoro-dot ${idx < filledDots ? 'filled' : ''}`} />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -103,7 +130,7 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({
               cy={ringSize / 2}
               r={ringRadius}
               fill="transparent"
-              stroke="var(--color-primary)"
+              stroke={ringColor}
               strokeWidth={ringStroke}
               strokeLinecap="round"
               strokeDasharray={ringCircumference}
@@ -121,7 +148,7 @@ export const PomodoroWidget: React.FC<PomodoroWidgetProps> = ({
               justifyContent: 'center',
             }}
           >
-            <div className="pomodoro-clock" style={{ fontSize: '34px', padding: 0 }}>
+            <div className="pomodoro-clock" style={{ fontSize: '28px', padding: 0 }}>
               {formatMMSS(secondsLeft)}
             </div>
             <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>

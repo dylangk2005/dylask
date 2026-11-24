@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { taskApi } from '@/api/task.api';
-import type { MyDaySuggestion, MyDayTask, PomodoroSessionResult, TaskStatus } from '@/types/task';
+import type { MyDaySuggestion, MyDayTask, PomodoroSessionResult, TaskPriority, TaskStatus } from '@/types/task';
 
 /**
  * Custom hook quản lý dữ liệu Kế hoạch hôm nay (My Day) và Ngăn gợi ý thông minh.
@@ -80,8 +80,8 @@ export function useMyDay() {
   );
 
   const createMyDayTask = useCallback(
-    async (title: string) => {
-      const created = await taskApi.createTask({ title, priority: 'medium' });
+    async (title: string, priority: TaskPriority = 'medium') => {
+      const created = await taskApi.createTask({ title, priority });
       await taskApi.toggleMyDay(created.id, { isMyDay: true });
       await refresh();
     },

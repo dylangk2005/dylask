@@ -76,20 +76,9 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen }) => {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  style={({ isActive }) => ({
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--space-3)',
-                    padding: '8px 12px',
-                    borderRadius: 'var(--radius)',
-                    fontSize: 'var(--font-size-sm)',
-                    fontWeight: isActive ? 600 : 500,
-                    color: isActive ? 'var(--color-primary)' : 'var(--color-text)',
-                    backgroundColor: isActive ? 'var(--color-primary-subtle)' : 'transparent',
-                    textDecoration: 'none',
-                    transition: 'background-color 0.15s ease',
-                    whiteSpace: 'nowrap',
-                  })}
+                  className={({ isActive }) =>
+                    `sidebar-nav-link ${isActive ? 'is-active' : ''}`
+                  }
                 >
                   <Icon size={16} style={{ flexShrink: 0 }} />
                   <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -117,19 +106,9 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen }) => {
 
           <NavLink
             to="/settings"
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-3)',
-              padding: '8px 12px',
-              borderRadius: 'var(--radius)',
-              fontSize: 'var(--font-size-sm)',
-              fontWeight: 600,
-              color: isActive ? 'var(--color-primary)' : 'var(--color-text)',
-              backgroundColor: isActive ? 'var(--color-primary-subtle)' : 'transparent',
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-            })}
+            className={({ isActive }) =>
+              `sidebar-nav-link ${isActive ? 'is-active' : ''}`
+            }
           >
             <Settings size={16} style={{ flexShrink: 0 }} />
             <span style={{ whiteSpace: 'nowrap' }}>Cài đặt hệ thống</span>
