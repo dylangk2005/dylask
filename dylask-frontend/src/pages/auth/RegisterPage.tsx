@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/types/api';
@@ -8,13 +8,12 @@ import {
   EyeOff,
   AlertCircle,
   Loader2,
-  Sparkles,
-  Terminal,
   ArrowLeft,
   Mail,
   RotateCcw,
 } from 'lucide-react';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
+import { AuthShowcasePane } from '@/components/auth/AuthShowcasePane';
 import './auth.css';
 
 export const RegisterPage: React.FC = () => {
@@ -31,6 +30,13 @@ export const RegisterPage: React.FC = () => {
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [shakeForm, setShakeForm] = useState(false);
+  const otpInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  const triggerShake = () => {
+    setShakeForm(false);
+    requestAnimationFrame(() => setShakeForm(true));
+  };
 
   const { register, verifyEmail, resendVerification } = useAuth();
   const navigate = useNavigate();
@@ -89,7 +95,10 @@ export const RegisterPage: React.FC = () => {
     setGlobalError(null);
     setSuccessNotice(null);
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      triggerShake();
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -102,6 +111,7 @@ export const RegisterPage: React.FC = () => {
         navigate('/tasks', { replace: true });
       }
     } catch (err) {
+      triggerShake();
       if (err instanceof ApiError) {
         if (err.errors && err.errors.length > 0) {
           const map: Record<string, string> = {};
@@ -128,6 +138,7 @@ export const RegisterPage: React.FC = () => {
 
     if (!otp.trim() || otp.trim().length !== 6) {
       setGlobalError('Vui lòng nhập đúng mã xác thực gồm 6 chữ số.');
+      triggerShake();
       return;
     }
 
@@ -136,6 +147,7 @@ export const RegisterPage: React.FC = () => {
       await verifyEmail({ email: email.trim(), otp: otp.trim() });
       navigate('/tasks', { replace: true });
     } catch (err) {
+      triggerShake();
       if (err instanceof ApiError) {
         setGlobalError(err.message || 'Mã xác thực không chính xác.');
       } else {
@@ -170,12 +182,44 @@ export const RegisterPage: React.FC = () => {
   const hasUpperCase = /[A-Z]/.test(password);
   const hasLowerCase = /[a-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
+  const pwdScore = [hasMinLength, hasUpperCase, hasLowerCase, hasNumber].filter(Boolean).length;
+  const pwdStrengthColor =
+    pwdScore <= 1 ? '#DC2626' : pwdScore <= 3 ? '#F59E0B' : '#16A34A';
+  const pwdStrengthLabel =
+    pwdScore === 0 ? '' : pwdScore <= 1 ? 'Yếu' : pwdScore <= 3 ? 'Trung bình' : 'Mạnh';
+
+  const handleOtpDigitChange = (index: number, raw: string) => {
+    const digits = raw.replace(/[^0-9]/g, '');
+    if (digits.length > 1) {
+      const merged = digits.slice(0, 6);
+      setOtp(merged);
+      const focusIdx = Math.min(5, merged.length);
+      otpInputRefs.current[focusIdx]?.focus();
+      return;
+    }
+    const chars = Array.from({ length: 6 }, (_, i) => otp[i] || '');
+    chars[index] = digits;
+    setOtp(chars.join(''));
+    if (digits && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    }
+  };
 
   return (
     <div className="auth-container">
       {/* CỘT TRÁI: FORM ĐĂNG KÝ HOẶC FORM NHẬP OTP */}
       <main className="auth-left-pane">
-        <div className="auth-form-card">
+        <div
+          key={step}
+          className={`auth-form-card ${shakeForm ? 'auth-shake' : ''}`}
+          onAnimationEnd={() => setShakeForm(false)}
+        >
           {/* Header Top Bar */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Link to="/" className="back-home-link" title="Quay lại trang giới thiệu">
@@ -191,13 +235,26 @@ export const RegisterPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Stepper 2 bước */}
+          <div className="auth-stepper" aria-label="Tiến trình tạo tài khoản">
+            <div className={`auth-step-item ${step === 'OTP' ? 'done' : 'active'}`}>
+              <span className="auth-step-num">{step === 'OTP' ? '✓' : '1'}</span>
+              <span>Thông tin</span>
+            </div>
+            <div className="auth-step-divider" />
+            <div className={`auth-step-item ${step === 'OTP' ? 'active' : ''}`}>
+              <span className="auth-step-num">2</span>
+              <span>Xác thực Email</span>
+            </div>
+          </div>
+
           {/* BƯỚC 1: FORM ĐĂNG KÝ BAN ĐẦU */}
           {step === 'FORM' && (
             <>
               <div className="auth-header">
                 <h1 className="auth-title">Tạo tài khoản</h1>
                 <p className="auth-subtitle">
-                  Bước 1: Khởi tạo thông tin cơ bản để thiết lập tài khoản của bạn.
+                  Tạo tài khoản Dylask miễn phí để bắt đầu quản lý công việc và Sprint.
                 </p>
               </div>
 
@@ -304,7 +361,27 @@ export const RegisterPage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Chips tiêu chuẩn mật khẩu */}
+                  {/* Thanh độ mạnh & Chips tiêu chuẩn mật khẩu */}
+                  {password.length > 0 && (
+                    <div className="pwd-strength-row">
+                      <div className="pwd-strength-bars">
+                        {[1, 2, 3, 4].map((level) => (
+                          <span
+                            key={level}
+                            className="pwd-strength-seg"
+                            style={{
+                              backgroundColor:
+                                pwdScore >= level ? pwdStrengthColor : 'var(--color-border)',
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: pwdStrengthColor }}>
+                        {pwdStrengthLabel}
+                      </span>
+                    </div>
+                  )}
+
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '-4px' }}>
                     <span className={`pwd-chip ${hasMinLength ? 'met' : ''}`}>
                       {hasMinLength ? '✓' : '•'} 8+ ký tự
@@ -432,19 +509,36 @@ export const RegisterPage: React.FC = () => {
                     <label className="field-label" style={{ justifyContent: 'center' }}>
                       Nhập mã OTP 6 chữ số
                     </label>
-                    <input
-                      className="otp-input-field"
-                      type="text"
-                      maxLength={6}
-                      placeholder="000000"
-                      value={otp}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/[^0-9]/g, '');
-                        setOtp(val);
+                    <div
+                      className="otp-boxes-row"
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const pasted = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+                        if (pasted) {
+                          setOtp(pasted);
+                          otpInputRefs.current[Math.min(5, pasted.length - 1)]?.focus();
+                        }
                       }}
-                      autoFocus
-                      disabled={isSubmitting}
-                    />
+                    >
+                      {[0, 1, 2, 3, 4, 5].map((idx) => (
+                        <input
+                          key={idx}
+                          ref={(el) => {
+                            otpInputRefs.current[idx] = el;
+                          }}
+                          className="otp-digit-box"
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={1}
+                          value={otp[idx] || ''}
+                          onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
+                          onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                          autoFocus={idx === 0}
+                          disabled={isSubmitting}
+                          aria-label={`Chữ số OTP thứ ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
                   </div>
 
                   <button className="btn-primary" type="submit" disabled={isSubmitting || otp.length !== 6}>
@@ -501,58 +595,8 @@ export const RegisterPage: React.FC = () => {
         </div>
       </main>
 
-      {/* CỘT PHẢI: HERO SHOWCASE */}
-      <aside className="auth-right-pane">
-        <div className="showcase-content-wrapper">
-          <div className="hero-image-card">
-            <div className="hero-mock-header">
-              <span className="mock-dot red"></span>
-              <span className="mock-dot yellow"></span>
-              <span className="mock-dot green"></span>
-            </div>
-            <img
-              src="/auth-hero.jpg"
-              alt="Dylask Dual-Mode Workspace"
-              className="hero-img"
-            />
-          </div>
-
-          <div className="intro-statement-card">
-            <div className="intro-badge">
-              <Sparkles size={13} />
-              <span>DUAL-MODE PRODUCTIVITY</span>
-            </div>
-            <p className="intro-statement">
-              Bảo mật 2 lớp an toàn cho mọi tài khoản cá nhân và kỹ thuật.
-            </p>
-            <p className="intro-meta">
-              Xác thực email tức thì giúp bảo vệ dữ liệu dự án và nhiệm vụ của bạn khỏi truy cập trái phép.
-            </p>
-
-            <div className="mode-feature-pills">
-              <div className="feature-pill">
-                <div className="feature-pill-title">
-                  <Sparkles size={13} color="#2DD4BF" />
-                  <span>Standard Mode</span>
-                </div>
-                <div className="feature-pill-desc">
-                  Thói quen, Checklist & Lịch biểu cá nhân
-                </div>
-              </div>
-
-              <div className="feature-pill">
-                <div className="feature-pill-title">
-                  <Terminal size={13} color="#2DD4BF" />
-                  <span>Developer Mode</span>
-                </div>
-                <div className="feature-pill-desc">
-                  Quản lý Sprint, Git Triggers & Code Focus
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
+      {/* CỘT PHẢI: SHOWCASE TƯƠNG TÁC */}
+      <AuthShowcasePane variant="register" />
     </div>
   );
 };

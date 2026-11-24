@@ -44,12 +44,37 @@
 /* ==========================================================================
    LEFT PANE: FORM & INTERACTION
    ========================================================================== */
+@keyframes authShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.auth-shake {
+  animation: authShake 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
 .auth-left-pane {
+  /* Khóa bảng màu sáng chuẩn cho form Auth bất kể người dùng vừa dùng Developer Workspace trước đó */
+  --color-bg: #FAFAF7;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F4F3EF;
+  --color-border: #E7E5E0;
+  --color-border-strong: #D1CFCA;
+  --color-text: #1C1B18;
+  --color-text-muted: #6B6A63;
+  --color-primary: #0F766E;
+  --color-primary-hover: #115E59;
+  --color-primary-subtle: #E6F4F1;
+
   width: 48%;
   min-width: 440px;
   max-width: 520px;
   height: 100vh;
   background-color: #FAFAF7;
+  color: #1C1B18;
   border-right: var(--border-width) solid var(--color-border);
   display: flex;
   flex-direction: column;
@@ -58,6 +83,120 @@
   overflow-y: auto;
   position: relative;
   z-index: 2;
+}
+
+/* 2-Step Registration Stepper */
+.auth-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+}
+
+.auth-step-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.auth-step-item.active {
+  color: var(--color-primary);
+}
+
+.auth-step-item.done {
+  color: #16A34A;
+}
+
+.auth-step-num {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  background-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.auth-step-item.active .auth-step-num {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+}
+
+.auth-step-item.done .auth-step-num {
+  background-color: #16A34A;
+  color: #FFFFFF;
+}
+
+.auth-step-divider {
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-border-strong);
+}
+
+/* Password Strength Meter */
+.pwd-strength-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.pwd-strength-bars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  flex: 1;
+}
+
+.pwd-strength-seg {
+  height: 4px;
+  border-radius: 9999px;
+  background-color: var(--color-border);
+  transition: background-color 0.25s ease;
+}
+
+/* 6-Digit Separated OTP Boxes */
+.otp-boxes-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.otp-digit-box {
+  height: 50px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background-color: #FFFFFF;
+  color: #1C1B18;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+
+.otp-digit-box:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  transform: translateY(-1px);
+}
+
+.auth-dot-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+  background-size: 26px 26px;
 }
 
 .auth-form-card {

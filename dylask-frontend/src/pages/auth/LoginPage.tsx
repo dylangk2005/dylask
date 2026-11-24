@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/types/api';
-import { Check, Eye, EyeOff, AlertCircle, Loader2, Sparkles, Terminal, ArrowLeft } from 'lucide-react';
+import { Check, Eye, EyeOff, AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
+import { AuthShowcasePane } from '@/components/auth/AuthShowcasePane';
 import './auth.css';
 
 export const LoginPage: React.FC = () => {
@@ -13,6 +14,12 @@ export const LoginPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [shakeForm, setShakeForm] = useState(false);
+
+  const triggerShake = () => {
+    setShakeForm(false);
+    requestAnimationFrame(() => setShakeForm(true));
+  };
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -40,6 +47,7 @@ export const LoginPage: React.FC = () => {
     setGlobalError(null);
 
     if (!validate()) {
+      triggerShake();
       return;
     }
 
@@ -49,6 +57,7 @@ export const LoginPage: React.FC = () => {
       const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/tasks';
       navigate(from, { replace: true });
     } catch (err) {
+      triggerShake();
       if (err instanceof ApiError) {
         if (err.errors && err.errors.length > 0) {
           const map: Record<string, string> = {};
@@ -71,7 +80,10 @@ export const LoginPage: React.FC = () => {
     <div className="auth-container">
       {/* CỘT TRÁI: FORM ĐĂNG NHẬP RIÊNG BIỆT */}
       <main className="auth-left-pane">
-        <div className="auth-form-card">
+        <div
+          className={`auth-form-card ${shakeForm ? 'auth-shake' : ''}`}
+          onAnimationEnd={() => setShakeForm(false)}
+        >
           {/* Top Bar with Back to Landing Page */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Link to="/" className="back-home-link" title="Quay lại trang giới thiệu">
@@ -91,7 +103,7 @@ export const LoginPage: React.FC = () => {
           <div className="auth-header">
             <h1 className="auth-title">Đăng nhập</h1>
             <p className="auth-subtitle">
-              Nhập email và mật khẩu của bạn để truy cập không gian làm việc.
+              Đăng nhập để tiếp tục công việc trong không gian làm việc của bạn.
             </p>
           </div>
 
@@ -207,58 +219,8 @@ export const LoginPage: React.FC = () => {
         </div>
       </main>
 
-      {/* CỘT PHẢI: HERO SHOWCASE */}
-      <aside className="auth-right-pane">
-        <div className="showcase-content-wrapper">
-          <div className="hero-image-card">
-            <div className="hero-mock-header">
-              <span className="mock-dot red"></span>
-              <span className="mock-dot yellow"></span>
-              <span className="mock-dot green"></span>
-            </div>
-            <img
-              src="/auth-hero.jpg"
-              alt="Dylask Dual-Mode Workspace"
-              className="hero-img"
-            />
-          </div>
-
-          <div className="intro-statement-card">
-            <div className="intro-badge">
-              <Sparkles size={13} />
-              <span>DUAL-MODE PRODUCTIVITY</span>
-            </div>
-            <p className="intro-statement">
-              Chào mừng bạn trở lại với không gian năng suất kép Dylask.
-            </p>
-            <p className="intro-meta">
-              Tiếp tục quản lý công việc đời sống và đồng bộ tiến độ kỹ thuật của bạn ngay hôm nay.
-            </p>
-
-            <div className="mode-feature-pills">
-              <div className="feature-pill">
-                <div className="feature-pill-title">
-                  <Sparkles size={13} color="#2DD4BF" />
-                  <span>Standard Mode</span>
-                </div>
-                <div className="feature-pill-desc">
-                  My Day, Checklists & Kỷ luật Pomodoro
-                </div>
-              </div>
-
-              <div className="feature-pill">
-                <div className="feature-pill-title">
-                  <Terminal size={13} color="#2DD4BF" />
-                  <span>Developer Mode</span>
-                </div>
-                <div className="feature-pill-desc">
-                  Kanban Sprints & Git Webhook Automation
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
+      {/* CỘT PHẢI: SHOWCASE TƯƠNG TÁC */}
+      <AuthShowcasePane variant="login" />
     </div>
   );
 };
